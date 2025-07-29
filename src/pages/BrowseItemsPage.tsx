@@ -144,11 +144,11 @@ export function BrowseItemsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-sky-100 py-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Browse Items</h1>
-          <p className="text-gray-600">Discover items shared by your fellow students</p>
+        <div className="mb-6">
+          <h1 className="text-2xl font-semibold text-gray-800">Browse Items</h1>
+          <p className="text-gray-600 text-sm">Discover items shared by your fellow students</p>
         </div>
 
         <ItemFilters
@@ -166,23 +166,23 @@ export function BrowseItemsPage() {
           hasActiveFilters={hasActiveFilters}
         />
 
-        <div className="mb-6 flex items-center justify-between">
-          <p className="text-gray-600">
+        <div className="mb-4 flex items-center justify-between">
+          <p className="text-gray-600 text-sm">
             Showing {filteredItems.length} {filteredItems.length === 1 ? 'item' : 'items'}
           </p>
         </div>
 
         {filteredItems.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {filteredItems.map((item) => (
               <ItemCard key={item.id} item={item} />
             ))}
           </div>
         ) : (
-          <div className="text-center py-16">
-            <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No items found</h3>
-            <p className="text-gray-600">
+          <div className="text-center py-12">
+            <Package className="h-12 w-12 text-gray-400 mx-auto mb-3" />
+            <h3 className="text-base font-medium text-gray-800">No items found</h3>
+            <p className="text-gray-600 text-sm">
               {hasActiveFilters ? 'Try adjusting your filters' : 'No items have been posted yet'}
             </p>
           </div>
