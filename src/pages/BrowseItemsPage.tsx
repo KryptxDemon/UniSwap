@@ -15,7 +15,7 @@ const sampleItems: Item[] = [
     type: 'swap',
     location: 'North Hall',
     department: 'Engineering',
-    images: ['https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg?auto=compress&cs=tinysrgb&w=500'],
+    images: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-6tPiKpc41KxUNviTjL6l_Sgzh4KcEsQkAQ&s'],
     user_id: '1',
     user: { id: '1', username: 'sarah_eng', email: 'sarah@uni.edu', created_at: '2025-01-01' },
     created_at: '2025-01-15T10:30:00Z',
