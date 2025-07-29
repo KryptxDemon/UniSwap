@@ -31,7 +31,7 @@ const sampleItems: Item[] = [
     location: 'Engineering Building',
     images: ['https://img.drz.lazcdn.com/static/bd/p/62656e0d668e19717ebb3351e0c126ff.jpg_2200x2200q80.jpg_.webp'],
     user_id: '2',
-    user: { id: '2', username: 'mike_arch', email: 'mike@uni.edu', created_at: '2025-01-01' },
+    user: { id: '2', username: 'fatema_minju', email: 'fatema_islam_minju@student.cuet.ac.bd', created_at: '2025-01-01' },
     created_at: '2025-01-16T14:20:00Z',
     is_exchanged: false
   },
@@ -45,7 +45,7 @@ const sampleItems: Item[] = [
     location: 'Kazi Nazrul Islam Hall',
     images: ['https://img.drz.lazcdn.com/collect/sg/other/roc/8016040af9c48d8ceb9da5d2075e7bb6.jpg_1200x1200q80.jpg_.webp'],
     user_id: '3',
-    user: { id: '3', username: 'alex_design', email: 'alex@uni.edu', created_at: '2025-01-01' },
+    user: { id: '3', username: 'wahid_afridi60', email: 'wahidafridi@stjoseph.bd', created_at: '2025-01-01' },
     created_at: '2025-01-17T09:15:00Z',
     is_exchanged: false
   },
@@ -59,7 +59,7 @@ const sampleItems: Item[] = [
     location: 'Anywhere in campus',
     images: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5sB3r2LhWuSTNMr13k7WuCSOBfAWb-i8m1Q&s'],
     user_id: '4',
-    user: { id: '4', username: 'tutor_sam', email: 'sam@uni.edu', created_at: '2025-01-01' },
+    user: { id: '4', username: 'shrabonti_sarkar', email: 'shrabo@student.cuet.ac.bd', created_at: '2025-01-01' },
     created_at: '2025-01-18T16:45:00Z',
     is_exchanged: false
   },
@@ -73,22 +73,22 @@ const sampleItems: Item[] = [
     location: 'Abu Sayeed Hall',
     images: ['https://www-cdn.djiits.com/dps/0c7373a3a5fb102f9c36461905e4b44b.jpg'],
     user_id: '5',
-    user: { id: '5', username: 'tech_rental', email: 'tech@uni.edu', created_at: '2025-01-01' },
+    user: { id: '5', username: 'arnob_mozumder', email: 'arnob123@student.cuet.ac.bd', created_at: '2025-01-01' },
     created_at: '2025-01-19T11:30:00Z',
     is_exchanged: false
   },
   {
     id: '6',
-    title: 'Organic Chemistry Textbook',
-    description: 'Essential textbook for Organic Chemistry course. Has some highlighting but all pages are intact. Great for study.',
-    category: 'Textbooks',
+    title: 'Himur Nil Jochona',
+    description: 'হিমুর নীল জোছনা নন্দিত কথাসাহিত্যিক হুমায়ূন আহমেদের সৃষ্ট চরিত্রগুলোর মধ্যে হিমু অন্যতম একটি উপন্যাস। If anyone is a humayun ahmed fan, let me know. Up for opening a community',
+    category: 'Books',
     condition: 'Good',
     type: 'free',
-    location: 'Science Building',
-    department: 'Chemistry',
-    images: ['https://images.pexels.com/photos/256455/pexels-photo-256455.jpeg?auto=compress&cs=tinysrgb&w=500'],
+    location: 'CSE Building',
+    department: 'CSE',
+    images: ['https://sg-test-11.slatic.net/other/roc/8efcfbd7e5763d2899819a690ba30123.jpg'],
     user_id: '6',
-    user: { id: '6', username: 'chem_student', email: 'chem@uni.edu', created_at: '2025-01-01' },
+    user: { id: '6', username: 'asif_anwar', email: 'asifanwar@student.cuet.ac.bd', created_at: '2025-01-01' },
     created_at: '2025-01-20T08:20:00Z',
     is_exchanged: false
   }
