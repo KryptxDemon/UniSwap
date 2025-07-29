@@ -8,14 +8,14 @@ import { Package } from 'lucide-react';
 const sampleItems: Item[] = [
   {
     id: '1',
-    title: 'Physics for Engineers - Giassudin',
-    description: 'Complete textbook for Physics 101. Used for one semester, excellent condition with minimal highlighting. All chapters included.',
+    title: 'Practical Physics - Giassudin',
+    description: 'PHY-142 te kaaje dibe. Used for one semester, excellent condition but a bit dirty',
     category: 'Textbooks',
     condition: 'Like New',
     type: 'swap',
     location: 'North Hall',
     department: 'Engineering',
-    images: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-6tPiKpc41KxUNviTjL6l_Sgzh4KcEsQkAQ&s'],
+    images: ['https://scontent.fdac181-1.fna.fbcdn.net/v/t1.6435-9/205729626_203743011646517_834630484838151940_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=833d8c&_nc_ohc=gCq_2My2XI8Q7kNvwHjQ-bt&_nc_oc=AdmWHIBXoBGR5qGeXiDNHS-TxQk5x7FnrMdwd7KYYOf_SoC-TVynywy94WWneT5WsFA&_nc_zt=23&_nc_ht=scontent.fdac181-1.fna&_nc_gid=5qtSK-16ZLo7VcoeyjXuow&oh=00_AfS98gqqJJppaOn30Ay3d2JKOaA7wiPltQ7zdczbv-u73w&oe=68B000A0'],
     user_id: '1',
     user: { id: '1', username: 'sarah_eng', email: 'sarah@uni.edu', created_at: '2025-01-01' },
     created_at: '2025-01-15T10:30:00Z',
