@@ -1,102 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { ItemCard } from '../components/Items/ItemCard';
 import { ItemFilters } from '../components/Items/ItemFilters';
-import { Item } from '../types';
+import { demoItems } from '../lib/demoData';
 import { Package } from 'lucide-react';
 
-// Sample data - in a real app, this would come from Supabase
-const sampleItems: Item[] = [
-  {
-    id: '1',
-    title: 'Practical Physics - Giassudin',
-    description: 'PHY-142 te kaaje dibe. Used for one semester, excellent condition but a bit dirty',
-    category: 'Textbooks',
-    condition: 'Like New',
-    type: 'swap',
-    location: 'Pahartali',
-    department: 'Engineering',
-    images: ['https://scontent.fdac181-1.fna.fbcdn.net/v/t1.6435-9/205729626_203743011646517_834630484838151940_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=833d8c&_nc_ohc=gCq_2My2XI8Q7kNvwHjQ-bt&_nc_oc=AdmWHIBXoBGR5qGeXiDNHS-TxQk5x7FnrMdwd7KYYOf_SoC-TVynywy94WWneT5WsFA&_nc_zt=23&_nc_ht=scontent.fdac181-1.fna&_nc_gid=5qtSK-16ZLo7VcoeyjXuow&oh=00_AfS98gqqJJppaOn30Ay3d2JKOaA7wiPltQ7zdczbv-u73w&oe=68B000A0'],
-    user_id: '1',
-    user: { id: '1', username: 'sorowarislam', email: 'sorowaryuki@student.cuet.ac.bd', created_at: '2025-01-01' },
-    created_at: '2025-01-15T10:30:00Z',
-    is_exchanged: false
-  },
-  {
-    id: '2',
-    title: 'Used T Scale for donation',
-    description: 'Mecha drawing T-scale ruler in good condition. Free for any engineering student who needs it.',
-    category: 'Stationery',
-    condition: 'Good',
-    type: 'free',
-    location: 'Engineering Building',
-    images: ['https://img.drz.lazcdn.com/static/bd/p/62656e0d668e19717ebb3351e0c126ff.jpg_2200x2200q80.jpg_.webp'],
-    user_id: '2',
-    user: { id: '2', username: 'fatema_minju', email: 'fatema_islam_minju@student.cuet.ac.bd', created_at: '2025-01-01' },
-    created_at: '2025-01-16T14:20:00Z',
-    is_exchanged: false
-  },
-  {
-    id: '3',
-    title: 'Foldable table for exchange',
-    description: 'Compact foldable study table, perfect for dorm rooms. Looking to exchange for a table lamp',
-    category: 'Furniture',
-    condition: 'Good',
-    type: 'swap',
-    location: 'Kazi Nazrul Islam Hall',
-    images: ['https://img.drz.lazcdn.com/collect/sg/other/roc/8016040af9c48d8ceb9da5d2075e7bb6.jpg_1200x1200q80.jpg_.webp'],
-    user_id: '3',
-    user: { id: '3', username: 'wahid_afridi60', email: 'wahidafridi@stjoseph.bd', created_at: '2025-01-01' },
-    created_at: '2025-01-17T09:15:00Z',
-    is_exchanged: false
-  },
-  {
-    id: '4',
-    title: 'Tuition in Halishahar exchange',
-    description: 'Class - 9, Sub - Math, physics and chemistry. Looking for tuition around bahaddarhat or GEC',
-    category: 'Other',
-    condition: 'New',
-    type: 'swap',
-    location: 'Anywhere in campus',
-    images: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5sB3r2LhWuSTNMr13k7WuCSOBfAWb-i8m1Q&s'],
-    user_id: '4',
-    user: { id: '4', username: 'shrabonti_sarkar', email: 'shrabo@student.cuet.ac.bd', created_at: '2025-01-01' },
-    created_at: '2025-01-18T16:45:00Z',
-    is_exchanged: false
-  },
-  {
-    id: '5',
-    title: 'DJI Mini 2 SE drone for rent',
-    description: 'DJI Mini 2 SE is available for short-term rental. You can use it for any event at 1000tk/day',
-    category: 'Electronics',
-    condition: 'Like New',
-    type: 'rent',
-    location: 'Abu Sayeed Hall',
-    images: ['https://www-cdn.djiits.com/dps/0c7373a3a5fb102f9c36461905e4b44b.jpg'],
-    user_id: '5',
-    user: { id: '5', username: 'arnob_mozumder', email: 'arnob123@student.cuet.ac.bd', created_at: '2025-01-01' },
-    created_at: '2025-01-19T11:30:00Z',
-    is_exchanged: false
-  },
-  {
-    id: '6',
-    title: 'Himur Nil Jochona',
-    description: 'হিমুর নীল জোছনা নন্দিত কথাসাহিত্যিক হুমায়ূন আহমেদের সৃষ্ট চরিত্রগুলোর মধ্যে হিমু অন্যতম একটি উপন্যাস। If anyone is a humayun ahmed fan, let me know. Up for opening a community',
-    category: 'Books',
-    condition: 'Good',
-    type: 'free',
-    location: 'CSE Building',
-    department: 'CSE',
-    images: ['https://sg-test-11.slatic.net/other/roc/8efcfbd7e5763d2899819a690ba30123.jpg'],
-    user_id: '6',
-    user: { id: '6', username: 'asif_anwar', email: 'asifanwar@student.cuet.ac.bd', created_at: '2025-01-01' },
-    created_at: '2025-01-20T08:20:00Z',
-    is_exchanged: false
-  }
-];
-
 export function BrowseItemsPage() {
-  const [items, setItems] = useState<Item[]>(sampleItems);
-  const [filteredItems, setFilteredItems] = useState<Item[]>(sampleItems);
+  const [filteredItems, setFilteredItems] = useState(demoItems);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedCondition, setSelectedCondition] = useState('');
@@ -106,7 +15,7 @@ export function BrowseItemsPage() {
   const hasActiveFilters = searchTerm || selectedCategory || selectedCondition || selectedType || selectedLocation;
 
   useEffect(() => {
-    let filtered = items;
+    let filtered = demoItems;
 
     if (searchTerm) {
       filtered = filtered.filter(item =>
@@ -133,7 +42,7 @@ export function BrowseItemsPage() {
     }
 
     setFilteredItems(filtered);
-  }, [items, searchTerm, selectedCategory, selectedCondition, selectedType, selectedLocation]);
+  }, [searchTerm, selectedCategory, selectedCondition, selectedType, selectedLocation]);
 
   const handleClearFilters = () => {
     setSearchTerm('');

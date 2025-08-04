@@ -5,6 +5,9 @@ import { Footer } from './components/Layout/Footer';
 import { HomePage } from './pages/HomePage';
 import { BrowseItemsPage } from './pages/BrowseItemsPage';
 import { PostItemPage } from './pages/PostItemPage';
+import { ItemDetailPage } from './pages/ItemDetailPage';
+import { ProfilePage } from './pages/ProfilePage';
+import { MessagesPage } from './pages/MessagesPage';
 import { LoginForm } from './components/Auth/LoginForm';
 import { SignupForm } from './components/Auth/SignupForm';
 import { useAuth } from './hooks/useAuth';
@@ -32,11 +35,12 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/browse" element={<BrowseItemsPage />} />
             <Route path="/post-item" element={<PostItemPage />} />
+            <Route path="/item/:id" element={<ItemDetailPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/profile/:id" element={<ProfilePage />} />
+            <Route path="/messages" element={<MessagesPage />} />
             <Route path="/login" element={<LoginForm />} />
             <Route path="/signup" element={<SignupForm />} />
-            <Route path="/messages" element={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><p className="text-gray-600">Messages feature coming soon!</p></div>} />
-            <Route path="/profile" element={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><p className="text-gray-600">Profile feature coming soon!</p></div>} />
-            <Route path="/item/:id" element={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><p className="text-gray-600">Item detail feature coming soon!</p></div>} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>

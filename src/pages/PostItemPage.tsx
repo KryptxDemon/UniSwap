@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Upload, X, ImagePlus } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { demoItems } from '../lib/demoData';
 import { Category, Condition } from '../types';
 
 const categories: Category[] = ['Textbooks', 'Electronics', 'Clothing', 'Furniture', 'Stationery', 'Sports', 'Kitchen', 'Other'];
@@ -68,11 +69,22 @@ export function PostItemPage() {
     setError('');
 
     try {
-      // In a real app, this would save to Supabase
+      // In a real app, this would save to backend
       console.log('Posting item:', formData);
       
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Add to demo data (in a real app, this would be handled by the backend)
+      const newItem = {
+        id: String(demoItems.length + 1),
+        ...formData,
+        user_id: user.id,
+        user: user,
+        created_at: new Date().toISOString(),
+        is_exchanged: false
+      };
+      demoItems.push(newItem);
       
       navigate('/browse');
     } catch (err: any) {
