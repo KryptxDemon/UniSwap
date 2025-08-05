@@ -157,4 +157,117 @@ export function PostItemPage() {
           </div>
 
           {/* Location and Department */}
-          <div className="grid grid-cols-1 md:grid-cols
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <SelectInput label="Location *" value={formData.location} onChange={(val) => handleInputChange("location", val)} options={locations} />
+            <div>
+              <label className="block font-medium mb-2">Department (optional)</label>
+              <input
+                type="text"
+                value={formData.department}
+                onChange={(e) => handleInputChange("department", e.target.value)}
+                className="w-full border px-4 py-3 rounded-lg"
+              />
+            </div>
+          </div>
+
+          {/* Image URL Input */}
+          <div>
+            <label className="block font-medium mb-2">Images (up to 5 URLs)</label>
+            <div className="flex gap-2 mb-2">
+              <input
+                type="url"
+                ref={imageInputRef}
+                placeholder="Paste image URL here..."
+                className="flex-1 border px-4 py-3 rounded-lg"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleImageAdd();
+                  }
+                }}
+              />
+              <button
+                type="button"
+                onClick={handleImageAdd}
+                disabled={formData.images.length >= 5}
+                className="bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+              >
+                <ImagePlus className="h-5 w-5" />
+                Add
+              </button>
+            </div>
+
+            {formData.images.length > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {formData.images.map((url, index) => (
+                  <div key={index} className="relative group">
+                    <img src={url} className="w-full h-32 object-cover rounded-lg border" />
+                    <button
+                      type="button"
+                      onClick={() => handleImageRemove(index)}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Submit Buttons */}
+          <div className="flex gap-4">
+            <button
+              type="button"
+              onClick={() => navigate("/browse")}
+              className="flex-1 bg-gray-100 py-3 rounded-lg hover:bg-gray-200"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+            >
+              {loading ? "Posting..." : "Post Item"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function SelectInput({
+  label,
+  value,
+  onChange,
+  options,
+  rawOptions,
+}: {
+  label: string;
+  value: string;
+  onChange: (val: string) => void;
+  options: string[];
+  rawOptions?: string[];
+}) {
+  const actualOptions = rawOptions ?? options;
+  return (
+    <div>
+      <label className="block font-medium mb-2">{label}</label>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full border px-4 py-3 rounded-lg"
+        required
+      >
+        <option value="">Select</option>
+        {actualOptions.map((opt, i) => (
+          <option key={opt} value={rawOptions ? rawOptions[i] : opt}>
+            {opt}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
