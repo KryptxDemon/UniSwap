@@ -1,46 +1,59 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowRight, BookOpen, Recycle, Users, Heart, ShoppingBag, MessageCircle } from 'lucide-react';
+import React from "react";
+import { Link } from "react-router-dom";
+import {
+  ArrowRight,
+  BookOpen,
+  Recycle,
+  Users,
+  Heart,
+  ShoppingBag,
+  MessageCircle,
+} from "lucide-react";
 
 export function HomePage() {
   const features = [
     {
       icon: BookOpen,
-      title: 'Textbooks & Academic Materials',
-      description: 'Find affordable textbooks and course materials from fellow students'
+      title: "Textbooks & Academic Materials",
+      description:
+        "Find affordable textbooks and course materials from fellow students",
     },
     {
       icon: ShoppingBag,
-      title: 'Electronics & Dorm Essentials',
-      description: 'Get electronics, furniture, and everything you need for dorm life'
+      title: "Electronics & Dorm Essentials",
+      description:
+        "Get electronics, furniture, and everything you need for dorm life",
     },
     {
       icon: MessageCircle,
-      title: 'Direct Communication',
-      description: 'Chat directly with other students to arrange exchanges and pickups'
+      title: "Direct Communication",
+      description:
+        "Chat directly with other students to arrange exchanges and pickups",
     },
     {
       icon: Recycle,
-      title: 'Sustainable Exchange',
-      description: 'Reduce waste and save money through item sharing and reuse'
+      title: "Sustainable Exchange",
+      description: "Reduce waste and save money through item sharing and reuse",
     },
     {
       icon: Users,
-      title: 'Campus Community',
-      description: 'Connect with students from your university in a safe environment'
+      title: "Campus Community",
+      description:
+        "Connect with students from your university in a safe environment",
     },
     {
       icon: Heart,
-      title: 'Free & Donation Items',
-      description: 'Give away items you no longer need or find free items from others'
-    }
+      title: "Free & Donation Items",
+      description:
+        "Give away items you no longer need or find free items from others",
+    },
   ];
 
   const stats = [
-    { number: '1,000+', label: 'Active Students' },
-    { number: '5,000+', label: 'Items Exchanged' },
-    { number: '15+', label: 'Campus Locations' },
-    { number: '98%', label: 'Satisfaction Rate' }
+    { number: "500+", label: "Active Students" },
+    { number: "1,000+", label: "Items Exchanged" },
+    { number: "15+", label: "Campus Locations" },
+    { number: "98%", label: "Satisfaction Rate" },
   ];
 
   return (
@@ -54,8 +67,9 @@ export function HomePage() {
               <span className="block text-blue-200">with UniSwap</span>
             </h1>
             <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto text-blue-100">
-              The university marketplace where students exchange textbooks, electronics, 
-              and dorm essentials. Build connections while saving money sustainably.
+              The university marketplace where students exchange textbooks,
+              electronics, and dorm essentials. Build connections while saving
+              money.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
@@ -85,9 +99,7 @@ export function HomePage() {
                 <div className="text-3xl md:text-4xl font-bold text-blue-600 mb-2">
                   {stat.number}
                 </div>
-                <div className="text-gray-600">
-                  {stat.label}
-                </div>
+                <div className="text-gray-600">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -102,23 +114,25 @@ export function HomePage() {
               Everything You Need for University Life
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              UniSwap makes it easy to find, share, and exchange items with your fellow students. 
-              From textbooks to electronics, build a sustainable campus community.
+              UniSwap makes it easy to find, share, and exchange items with your
+              fellow students. From textbooks to electronics, build a
+              sustainable campus community.
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
-              <div key={index} className="bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+              <div
+                key={index}
+                className="bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow"
+              >
                 <div className="bg-blue-100 w-12 h-12 rounded-lg flex items-center justify-center mb-6">
                   <feature.icon className="h-6 w-6 text-blue-600" />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">
                   {feature.title}
                 </h3>
-                <p className="text-gray-600">
-                  {feature.description}
-                </p>
+                <p className="text-gray-600">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -132,8 +146,8 @@ export function HomePage() {
             Ready to Start Exchanging?
           </h2>
           <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of students who are already saving money and reducing waste 
-            through our sustainable exchange platform.
+            Join thousands of students who are already saving money and reducing
+            waste through our sustainable exchange platform.
           </p>
           <Link
             to="/signup"

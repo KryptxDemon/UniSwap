@@ -1,6 +1,6 @@
-import React from 'react';
-import { Search, Filter, X } from 'lucide-react';
-import { Category, Condition } from '../../types';
+import React from "react";
+import { Search, Filter, X } from "lucide-react";
+import { Category, Condition } from "../../types";
 
 interface ItemFiltersProps {
   searchTerm: string;
@@ -17,13 +17,39 @@ interface ItemFiltersProps {
   hasActiveFilters: boolean;
 }
 
-const categories: Category[] = ['Textbooks', 'Electronics', 'Clothing', 'Furniture', 'Stationery', 'Sports', 'Kitchen', 'Other'];
-const conditions: Condition[] = ['New', 'Like New', 'Good', 'Fair', 'Poor'];
-const types = ['free', 'swap', 'rent'];
+const categories: Category[] = [
+  "Textbooks",
+  "Electronics",
+  "Clothing",
+  "Furniture",
+  "Stationery",
+  "Sports",
+  "Kitchen",
+  "Other",
+];
+const conditions: Condition[] = ["New", "Like New", "Good", "Fair", "Poor"];
+const types = ["free", "swap", "rent"];
 const locations = [
-  'North Hall', 'South Hall', 'East Hall', 'West Hall',
-  'Library', 'Student Center', 'Engineering Building',
-  'Science Building', 'Arts Building', 'Sports Complex'
+  "Tarek Huda Hall",
+  "Shah Hall",
+  "Abu Sayeed Hall",
+  "Kazi Nazrul Islam Hall",
+  "Library",
+  "TSC",
+  "CE Building",
+  "ME Building",
+  "EEE Building",
+  "Muktijoddha Hall",
+  "Sufia Kamal Hall",
+  "Taposhi Rabeya Hall",
+  "Shamsun Nahar Hall",
+  "CSE Building",
+  "Architecture Building",
+  "PME Building",
+  "Incubator",
+  "Dr. Qudrat-E-Khuda Hall",
+  "Teachers Dorm",
+  "West Gate",
 ];
 
 export function ItemFilters({
@@ -38,7 +64,7 @@ export function ItemFilters({
   selectedLocation,
   onLocationChange,
   onClearFilters,
-  hasActiveFilters
+  hasActiveFilters,
 }: ItemFiltersProps) {
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm mb-8 space-y-6">
@@ -67,8 +93,10 @@ export function ItemFilters({
             className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="">All Categories</option>
-            {categories.map(category => (
-              <option key={category} value={category}>{category}</option>
+            {categories.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
             ))}
           </select>
         </div>
@@ -84,8 +112,10 @@ export function ItemFilters({
             className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="">Any Condition</option>
-            {conditions.map(condition => (
-              <option key={condition} value={condition}>{condition}</option>
+            {conditions.map((condition) => (
+              <option key={condition} value={condition}>
+                {condition}
+              </option>
             ))}
           </select>
         </div>
@@ -101,7 +131,7 @@ export function ItemFilters({
             className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="">All Types</option>
-            {types.map(type => (
+            {types.map((type) => (
               <option key={type} value={type}>
                 {type.charAt(0).toUpperCase() + type.slice(1)}
               </option>
@@ -120,8 +150,10 @@ export function ItemFilters({
             className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="">All Locations</option>
-            {locations.map(location => (
-              <option key={location} value={location}>{location}</option>
+            {locations.map((location) => (
+              <option key={location} value={location}>
+                {location}
+              </option>
             ))}
           </select>
         </div>

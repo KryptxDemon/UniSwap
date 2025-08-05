@@ -1,8 +1,17 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, MapPin, Calendar, User, MessageCircle, Heart, Share2, Flag } from 'lucide-react';
-import { demoItems, currentUser } from '../lib/demoData';
-import { useAuth } from '../hooks/useAuth';
+import React, { useState } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import {
+  ArrowLeft,
+  MapPin,
+  Calendar,
+  User,
+  MessageCircle,
+  Heart,
+  Share2,
+  Flag,
+} from "lucide-react";
+import { demoItems, currentUser } from "../lib/demoData";
+import { useAuth } from "../hooks/useAuth";
 
 export function ItemDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -10,18 +19,28 @@ export function ItemDetailPage() {
   const { user } = useAuth();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showMessageModal, setShowMessageModal] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
+  const [wishlist, setWishlist] = useState<{ [key: string]: string }>(() => {
+    const stored = localStorage.getItem("wishlist");
+    return stored ? JSON.parse(stored) : {};
+  });
+  const [showWishlistModal, setShowWishlistModal] = useState(false);
+  const [wishlistNote, setWishlistNote] = useState("");
 
-  const item = demoItems.find(item => item.id === id);
+  const item = demoItems.find((item) => item.id === id);
 
   if (!item) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Item Not Found</h2>
-          <p className="text-gray-600 mb-6">The item you're looking for doesn't exist.</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Item Not Found
+          </h2>
+          <p className="text-gray-600 mb-6">
+            The item you're looking for doesn't exist.
+          </p>
           <button
-            onClick={() => navigate('/browse')}
+            onClick={() => navigate("/browse")}
             className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
           >
             Back to Browse
@@ -33,42 +52,73 @@ export function ItemDetailPage() {
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'free': return 'bg-green-100 text-green-800';
-      case 'swap': return 'bg-blue-100 text-blue-800';
-      case 'rent': return 'bg-orange-100 text-orange-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "free":
+        return "bg-green-100 text-green-800";
+      case "swap":
+        return "bg-blue-100 text-blue-800";
+      case "rent":
+        return "bg-orange-100 text-orange-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getConditionColor = (condition: string) => {
     switch (condition) {
-      case 'New': return 'bg-emerald-100 text-emerald-800';
-      case 'Like New': return 'bg-blue-100 text-blue-800';
-      case 'Good': return 'bg-yellow-100 text-yellow-800';
-      case 'Fair': return 'bg-orange-100 text-orange-800';
-      case 'Poor': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "New":
+        return "bg-emerald-100 text-emerald-800";
+      case "Like New":
+        return "bg-blue-100 text-blue-800";
+      case "Good":
+        return "bg-yellow-100 text-yellow-800";
+      case "Fair":
+        return "bg-orange-100 text-orange-800";
+      case "Poor":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
   const handleSendMessage = () => {
     if (!user) {
-      navigate('/login');
+      navigate("/login");
       return;
     }
     // In a real app, this would send the message
-    console.log('Sending message:', message);
+    console.log("Sending message:", message);
     setShowMessageModal(false);
-    setMessage('');
-    alert('Message sent successfully!');
+    setMessage("");
+    alert("Message sent successfully!");
+  };
+
+  const isWishlisted = !!wishlist[item.id];
+
+  const handleWishlist = () => {
+    if (isWishlisted) {
+      const updated = { ...wishlist };
+      delete updated[item.id];
+      setWishlist(updated);
+      localStorage.setItem("wishlist", JSON.stringify(updated));
+    } else {
+      setWishlistNote("");
+      setShowWishlistModal(true);
+    }
+  };
+
+  const handleSaveWishlist = () => {
+    const updated = { ...wishlist, [item.id]: wishlistNote };
+    setWishlist(updated);
+    localStorage.setItem("wishlist", JSON.stringify(updated));
+    setShowWishlistModal(false);
   };
 
   const isOwnItem = user?.id === item.user_id;
@@ -108,7 +158,7 @@ export function ItemDetailPage() {
                 </div>
               )}
             </div>
-            
+
             {item.images && item.images.length > 1 && (
               <div className="flex space-x-2 overflow-x-auto">
                 {item.images.map((image, index) => (
@@ -116,7 +166,9 @@ export function ItemDetailPage() {
                     key={index}
                     onClick={() => setCurrentImageIndex(index)}
                     className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors ${
-                      currentImageIndex === index ? 'border-blue-500' : 'border-gray-200'
+                      currentImageIndex === index
+                        ? "border-blue-500"
+                        : "border-gray-200"
                     }`}
                   >
                     <img
@@ -134,17 +186,27 @@ export function ItemDetailPage() {
           <div className="space-y-6">
             <div>
               <div className="flex items-start justify-between mb-4">
-                <h1 className="text-3xl font-bold text-gray-900">{item.title}</h1>
-                <span className={`px-3 py-1 rounded-full text-sm font-medium ${getTypeColor(item.type)}`}>
+                <h1 className="text-3xl font-bold text-gray-900">
+                  {item.title}
+                </h1>
+                <span
+                  className={`px-3 py-1 rounded-full text-sm font-medium ${getTypeColor(
+                    item.type
+                  )}`}
+                >
                   {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
                 </span>
               </div>
-              
+
               <div className="flex flex-wrap gap-2 mb-4">
                 <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
                   {item.category}
                 </span>
-                <span className={`px-3 py-1 rounded-full text-sm font-medium ${getConditionColor(item.condition)}`}>
+                <span
+                  className={`px-3 py-1 rounded-full text-sm font-medium ${getConditionColor(
+                    item.condition
+                  )}`}
+                >
                   {item.condition}
                 </span>
                 {item.department && (
@@ -156,7 +218,9 @@ export function ItemDetailPage() {
             </div>
 
             <div className="prose max-w-none">
-              <p className="text-gray-700 text-lg leading-relaxed">{item.description}</p>
+              <p className="text-gray-700 text-lg leading-relaxed">
+                {item.description}
+              </p>
             </div>
 
             {/* Item Info */}
@@ -165,12 +229,14 @@ export function ItemDetailPage() {
                 <MapPin className="h-5 w-5 text-gray-400" />
                 <span className="text-gray-700">{item.location}</span>
               </div>
-              
+
               <div className="flex items-center space-x-3">
                 <Calendar className="h-5 w-5 text-gray-400" />
-                <span className="text-gray-700">Posted on {formatDate(item.created_at)}</span>
+                <span className="text-gray-700">
+                  Posted on {formatDate(item.created_at)}
+                </span>
               </div>
-              
+
               <div className="flex items-center space-x-3">
                 <User className="h-5 w-5 text-gray-400" />
                 <Link
@@ -193,23 +259,42 @@ export function ItemDetailPage() {
                   <span>Contact {item.user?.username}</span>
                 </button>
               )}
-              
+
               <div className="flex space-x-4">
-                <button className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-xl font-medium hover:bg-gray-200 transition-colors flex items-center justify-center space-x-2">
-                  <Heart className="h-5 w-5" />
-                  <span>Save</span>
+                <button
+                  className={`flex-1 ${
+                    isWishlisted
+                      ? "bg-green-100 text-green-700"
+                      : "bg-gray-100 text-gray-700"
+                  } py-3 rounded-xl font-medium hover:bg-gray-200 transition-colors flex items-center justify-center space-x-2`}
+                  onClick={handleWishlist}
+                >
+                  <Heart
+                    className="h-5 w-5"
+                    fill={isWishlisted ? "#22c55e" : "none"}
+                  />
+                  <span>{isWishlisted ? "Wishlisted" : "Add to Wishlist"}</span>
                 </button>
-                
+
                 <button className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-xl font-medium hover:bg-gray-200 transition-colors flex items-center justify-center space-x-2">
                   <Share2 className="h-5 w-5" />
                   <span>Share</span>
                 </button>
-                
+
                 <button className="px-4 bg-gray-100 text-gray-700 py-3 rounded-xl font-medium hover:bg-gray-200 transition-colors">
                   <Flag className="h-5 w-5" />
                 </button>
               </div>
             </div>
+
+            {isWishlisted && wishlist[item.id] && (
+              <div className="bg-green-50 border-l-4 border-green-400 p-4 rounded mb-4">
+                <div className="text-green-800 font-semibold mb-1">
+                  Your Wishlist Note:
+                </div>
+                <div className="text-green-900">{wishlist[item.id]}</div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -221,7 +306,7 @@ export function ItemDetailPage() {
             <h3 className="text-xl font-bold text-gray-900 mb-4">
               Send Message to {item.user?.username}
             </h3>
-            
+
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
@@ -229,7 +314,7 @@ export function ItemDetailPage() {
               className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
               rows={4}
             />
-            
+
             <div className="flex space-x-4 mt-6">
               <button
                 onClick={() => setShowMessageModal(false)}
@@ -243,6 +328,38 @@ export function ItemDetailPage() {
                 className="flex-1 bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Send Message
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Wishlist Modal */}
+      {showWishlistModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-md">
+            <h3 className="text-xl font-bold text-gray-900 mb-4">
+              Add Note to Wishlist
+            </h3>
+            <textarea
+              value={wishlistNote}
+              onChange={(e) => setWishlistNote(e.target.value)}
+              placeholder="Add a note about this item..."
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              rows={4}
+            />
+            <div className="flex space-x-4 mt-6">
+              <button
+                onClick={() => setShowWishlistModal(false)}
+                className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveWishlist}
+                className="flex-1 bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+              >
+                Save
               </button>
             </div>
           </div>
