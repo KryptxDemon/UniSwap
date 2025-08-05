@@ -3,6 +3,7 @@ export interface User {
   email: string;
   username: string;
   bio?: string;
+  profile_picture?: string;
   created_at: string;
 }
 
@@ -22,6 +23,18 @@ export interface Item {
   is_exchanged: boolean;
 }
 
+export interface BorrowRecord {
+  id: string;
+  item_id: string;
+  item_title: string;
+  borrower_id: string;
+  lender_id: string;
+  borrowed_at: string;
+  returned_at?: string;
+  due_date?: string;
+  status: 'active' | 'returned' | 'overdue';
+  notes?: string;
+}
 export interface Message {
   id: string;
   content: string;
@@ -31,6 +44,8 @@ export interface Message {
   created_at: string;
   sender?: User;
   receiver?: User;
+  read?: boolean;
+  message_type?: 'text' | 'system';
 }
 
 export interface Conversation {

@@ -1,4 +1,4 @@
-import { User, Item, Message, Conversation } from "../types";
+import { User, Item, Message, Conversation, BorrowRecord } from "../types";
 
 // Demo users
 export const demoUsers: User[] = [
@@ -7,6 +7,7 @@ export const demoUsers: User[] = [
     email: "sorowaryuki@student.cuet.ac.bd",
     username: "sorowarislam",
     bio: "Engineering student passionate about clash of clans, cgpa and cricket.",
+    profile_picture: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400",
     created_at: "2025-01-01T00:00:00Z",
   },
   {
@@ -14,6 +15,7 @@ export const demoUsers: User[] = [
     email: "fatema_islam_minju@student.cuet.ac.bd",
     username: "fatema_minju",
     bio: "Love helping fellow students with study materials and stationery.",
+    profile_picture: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400",
     created_at: "2025-01-01T00:00:00Z",
   },
   {
@@ -21,6 +23,7 @@ export const demoUsers: User[] = [
     email: "wahidafridi@stjoseph.bd",
     username: "wahid_afridi60",
     bio: "Always looking for tuitions.",
+    profile_picture: "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=400",
     created_at: "2025-01-01T00:00:00Z",
   },
   {
@@ -28,6 +31,7 @@ export const demoUsers: User[] = [
     email: "shrabo@student.cuet.ac.bd",
     username: "shrabonti_sarkar",
     bio: "Math and science tutor available for exchange of services.",
+    profile_picture: "https://images.pexels.com/photos/1181519/pexels-photo-1181519.jpeg?auto=compress&cs=tinysrgb&w=400",
     created_at: "2025-01-01T00:00:00Z",
   },
   {
@@ -35,6 +39,7 @@ export const demoUsers: User[] = [
     email: "arnob123@student.cuet.ac.bd",
     username: "arnob_mozumder",
     bio: "Tech enthusiast with various electronics for rent and exchange.",
+    profile_picture: "https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=400",
     created_at: "2025-01-01T00:00:00Z",
   },
   {
@@ -42,6 +47,7 @@ export const demoUsers: User[] = [
     email: "asifanwar@student.cuet.ac.bd",
     username: "asif_anwar",
     bio: "Book lover and literature enthusiast. Always happy to share good reads.",
+    profile_picture: "https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=400",
     created_at: "2025-01-01T00:00:00Z",
   },
 ];
@@ -165,6 +171,8 @@ export const demoMessages: Message[] = [
     created_at: "2025-01-21T10:00:00Z",
     sender: demoUsers[1],
     receiver: demoUsers[0],
+    read: true,
+    message_type: "text",
   },
   {
     id: "2",
@@ -175,6 +183,56 @@ export const demoMessages: Message[] = [
     created_at: "2025-01-21T10:15:00Z",
     sender: demoUsers[0],
     receiver: demoUsers[1],
+    read: true,
+    message_type: "text",
+  },
+  {
+    id: "3",
+    content: "I have a chemistry textbook that might interest you. Would you like to see it?",
+    sender_id: "2",
+    receiver_id: "1",
+    item_id: "1",
+    created_at: "2025-01-21T10:30:00Z",
+    sender: demoUsers[1],
+    receiver: demoUsers[0],
+    read: false,
+    message_type: "text",
+  },
+  {
+    id: "4",
+    content: "That sounds perfect! Can we meet at the library tomorrow?",
+    sender_id: "1",
+    receiver_id: "2",
+    item_id: "1",
+    created_at: "2025-01-21T10:45:00Z",
+    sender: demoUsers[0],
+    receiver: demoUsers[1],
+    read: false,
+    message_type: "text",
+  },
+  {
+    id: "5",
+    content: "Hey! Is the drone still available for rent?",
+    sender_id: "3",
+    receiver_id: "5",
+    item_id: "5",
+    created_at: "2025-01-21T14:00:00Z",
+    sender: demoUsers[2],
+    receiver: demoUsers[4],
+    read: true,
+    message_type: "text",
+  },
+  {
+    id: "6",
+    content: "Yes! It's available. When do you need it?",
+    sender_id: "5",
+    receiver_id: "3",
+    item_id: "5",
+    created_at: "2025-01-21T14:15:00Z",
+    sender: demoUsers[4],
+    receiver: demoUsers[2],
+    read: false,
+    message_type: "text",
   },
 ];
 
@@ -185,13 +243,62 @@ export const demoConversations: Conversation[] = [
     user1_id: "1",
     user2_id: "2",
     item_id: "1",
-    last_message: "Yes, it is! What would you like to exchange for it?",
-    last_message_at: "2025-01-21T10:15:00Z",
+    last_message: "That sounds perfect! Can we meet at the library tomorrow?",
+    last_message_at: "2025-01-21T10:45:00Z",
     created_at: "2025-01-21T10:00:00Z",
     other_user: demoUsers[1],
     item: demoItems[0],
   },
+  {
+    id: "2",
+    user1_id: "3",
+    user2_id: "5",
+    item_id: "5",
+    last_message: "Yes! It's available. When do you need it?",
+    last_message_at: "2025-01-21T14:15:00Z",
+    created_at: "2025-01-21T14:00:00Z",
+    other_user: demoUsers[4],
+    item: demoItems[4],
+  },
 ];
 
+// Demo borrow records
+export const demoBorrowRecords: BorrowRecord[] = [
+  {
+    id: "1",
+    item_id: "5",
+    item_title: "DJI Mini 2 SE drone for rent",
+    borrower_id: "1",
+    lender_id: "5",
+    borrowed_at: "2025-01-15T10:00:00Z",
+    returned_at: "2025-01-17T15:30:00Z",
+    due_date: "2025-01-18T10:00:00Z",
+    status: "returned",
+    notes: "Used for campus event photography. Returned in excellent condition.",
+  },
+  {
+    id: "2",
+    item_id: "3",
+    item_title: "Foldable table for exchange",
+    borrower_id: "2",
+    lender_id: "3",
+    borrowed_at: "2025-01-20T09:00:00Z",
+    due_date: "2025-01-25T09:00:00Z",
+    status: "active",
+    notes: "Borrowed for study purposes during exam week.",
+  },
+  {
+    id: "3",
+    item_id: "1",
+    item_title: "Practical Physics - Giassudin",
+    borrower_id: "4",
+    lender_id: "1",
+    borrowed_at: "2025-01-10T14:00:00Z",
+    returned_at: "2025-01-20T16:00:00Z",
+    due_date: "2025-01-17T14:00:00Z",
+    status: "returned",
+    notes: "Needed for lab experiments. Returned with some additional notes.",
+  },
+];
 // Current logged in user (demo)
 export const currentUser: User = demoUsers[0];

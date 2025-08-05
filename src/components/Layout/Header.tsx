@@ -46,16 +46,34 @@ export function Header() {
               </Link>
               <Link
                 to="/messages"
-                className="text-gray-700 hover:text-blue-600 p-2 rounded-md transition-colors"
+                className="text-gray-700 hover:text-blue-600 p-2 rounded-md transition-colors relative"
               >
                 <MessageCircle className="h-5 w-5" />
+                {/* Notification badge */}
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  2
+                </span>
               </Link>
-              <Link
-                to="/profile"
-                className="text-gray-700 hover:text-blue-600 p-2 rounded-md transition-colors"
-              >
-                <User className="h-5 w-5" />
-              </Link>
+              <div className="relative">
+                <Link
+                  to="/profile"
+                  className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 p-2 rounded-md transition-colors"
+                >
+                  {user.profile_picture ? (
+                    <img
+                      src={user.profile_picture}
+                      alt={user.username}
+                      className="w-8 h-8 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                      <span className="text-white text-sm font-semibold">
+                        {user.username.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                </Link>
+              </div>
               <button
                 onClick={handleSignOut}
                 className="text-gray-700 hover:text-red-600 p-2 rounded-md transition-colors"

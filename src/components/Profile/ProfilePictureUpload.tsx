@@ -1,0 +1,121 @@
+import React, { useState } from 'react';
+import { Camera, Upload, X } from 'lucide-react';
+
+interface ProfilePictureUploadProps {
+  currentPicture?: string;
+  onPictureChange: (url: string) => void;
+  onClose: () => void;
+}
+
+export function ProfilePictureUpload({ currentPicture, onPictureChange, onClose }: ProfilePictureUploadProps) {
+  const [imageUrl, setImageUrl] = useState(currentPicture || '');
+  const [previewUrl, setPreviewUrl] = useState(currentPicture || '');
+
+  const handleUrlChange = (url: string) => {
+    setImageUrl(url);
+    setPreviewUrl(url);
+  };
+
+  const handleSave = () => {
+    onPictureChange(imageUrl);
+    onClose();
+  };
+
+  const suggestedImages = [
+    "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400",
+    "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400",
+    "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=400",
+    "https://images.pexels.com/photos/1181519/pexels-photo-1181519.jpeg?auto=compress&cs=tinysrgb&w=400",
+    "https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=400",
+    "https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=400",
+    "https://images.pexels.com/photos/1300402/pexels-photo-1300402.jpeg?auto=compress&cs=tinysrgb&w=400",
+    "https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg?auto=compress&cs=tinysrgb&w=400",
+  ];
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-bold text-gray-900">Update Profile Picture</h3>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <X className="h-6 w-6" />
+          </button>
+        </div>
+
+        {/* Current Preview */}
+        <div className="text-center mb-6">
+          <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden bg-gray-200">
+            {previewUrl ? (
+              <img
+                src={previewUrl}
+                alt="Profile preview"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                <Camera className="h-8 w-8 text-white" />
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* URL Input */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Image URL
+          </label>
+          <input
+            type="url"
+            value={imageUrl}
+            onChange={(e) => handleUrlChange(e.target.value)}
+            placeholder="Paste image URL here..."
+            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+
+        {/* Suggested Images */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-3">
+            Or choose from suggestions:
+          </label>
+          <div className="grid grid-cols-4 gap-2">
+            {suggestedImages.map((url, index) => (
+              <button
+                key={index}
+                onClick={() => handleUrlChange(url)}
+                className={`w-full aspect-square rounded-lg overflow-hidden border-2 transition-colors ${
+                  previewUrl === url ? 'border-blue-500' : 'border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                <img
+                  src={url}
+                  alt={`Suggestion ${index + 1}`}
+                  className="w-full h-full object-cover"
+                />
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex space-x-4">
+          <button
+            onClick={onClose}
+            className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSave}
+            className="flex-1 bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+          >
+            Save Picture
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
