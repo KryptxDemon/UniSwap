@@ -1,178 +1,196 @@
-import { User, Item, Message, Conversation } from '../types';
+import { User, Item, Message, Conversation } from "../types";
 
 // Demo users
 export const demoUsers: User[] = [
   {
-    id: '1',
-    email: 'sorowaryuki@student.cuet.ac.bd',
-    username: 'sorowarislam',
-    bio: 'Engineering student passionate about sustainable living and book sharing.',
-    created_at: '2025-01-01T00:00:00Z'
+    id: "1",
+    email: "sorowaryuki@student.cuet.ac.bd",
+    username: "sorowarislam",
+    bio: "Engineering student passionate about clash of clans, cgpa and cricket.",
+    created_at: "2025-01-01T00:00:00Z",
   },
   {
-    id: '2',
-    email: 'fatema_islam_minju@student.cuet.ac.bd',
-    username: 'fatema_minju',
-    bio: 'Love helping fellow students with study materials and stationery.',
-    created_at: '2025-01-01T00:00:00Z'
+    id: "2",
+    email: "fatema_islam_minju@student.cuet.ac.bd",
+    username: "fatema_minju",
+    bio: "Love helping fellow students with study materials and stationery.",
+    created_at: "2025-01-01T00:00:00Z",
   },
   {
-    id: '3',
-    email: 'wahidafridi@stjoseph.bd',
-    username: 'wahid_afridi60',
-    bio: 'Always looking for good furniture exchanges and room essentials.',
-    created_at: '2025-01-01T00:00:00Z'
+    id: "3",
+    email: "wahidafridi@stjoseph.bd",
+    username: "wahid_afridi60",
+    bio: "Always looking for tuitions.",
+    created_at: "2025-01-01T00:00:00Z",
   },
   {
-    id: '4',
-    email: 'shrabo@student.cuet.ac.bd',
-    username: 'shrabonti_sarkar',
-    bio: 'Math and science tutor available for exchange of services.',
-    created_at: '2025-01-01T00:00:00Z'
+    id: "4",
+    email: "shrabo@student.cuet.ac.bd",
+    username: "shrabonti_sarkar",
+    bio: "Math and science tutor available for exchange of services.",
+    created_at: "2025-01-01T00:00:00Z",
   },
   {
-    id: '5',
-    email: 'arnob123@student.cuet.ac.bd',
-    username: 'arnob_mozumder',
-    bio: 'Tech enthusiast with various electronics for rent and exchange.',
-    created_at: '2025-01-01T00:00:00Z'
+    id: "5",
+    email: "arnob123@student.cuet.ac.bd",
+    username: "arnob_mozumder",
+    bio: "Tech enthusiast with various electronics for rent and exchange.",
+    created_at: "2025-01-01T00:00:00Z",
   },
   {
-    id: '6',
-    email: 'asifanwar@student.cuet.ac.bd',
-    username: 'asif_anwar',
-    bio: 'Book lover and literature enthusiast. Always happy to share good reads.',
-    created_at: '2025-01-01T00:00:00Z'
-  }
+    id: "6",
+    email: "asifanwar@student.cuet.ac.bd",
+    username: "asif_anwar",
+    bio: "Book lover and literature enthusiast. Always happy to share good reads.",
+    created_at: "2025-01-01T00:00:00Z",
+  },
 ];
 
 // Demo items
 export const demoItems: Item[] = [
   {
-    id: '1',
-    title: 'Practical Physics - Giassudin',
-    description: 'PHY-142 te kaaje dibe. Used for one semester, excellent condition but a bit dirty. This book covers all the practical experiments and theory needed for the physics lab course. Includes detailed explanations of each experiment with proper diagrams and calculations. Perfect for engineering students.',
-    category: 'Textbooks',
-    condition: 'Like New',
-    type: 'swap',
-    location: 'Pahartali',
-    department: 'Engineering',
-    images: ['https://scontent.fdac181-1.fna.fbcdn.net/v/t1.6435-9/205729626_203743011646517_834630484838151940_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=833d8c&_nc_ohc=gCq_2My2XI8Q7kNvwHjQ-bt&_nc_oc=AdmWHIBXoBGR5qGeXiDNHS-TxQk5x7FnrMdwd7KYYOf_SoC-TVynywy94WWneT5WsFA&_nc_zt=23&_nc_ht=scontent.fdac181-1.fna&_nc_gid=5qtSK-16ZLo7VcoeyjXuow&oh=00_AfS98gqqJJppaOn30Ay3d2JKOaA7wiPltQ7zdczbv-u73w&oe=68B000A0'],
-    user_id: '1',
+    id: "1",
+    title: "Practical Physics - Giassudin",
+    description:
+      "PHY-142 te kaaje dibe. Used for one semester, excellent condition but a bit dirty. This book covers all the practical experiments and theory needed for the physics lab course. Includes detailed explanations of each experiment with proper diagrams and calculations. Perfect for engineering students.",
+    category: "Textbooks",
+    condition: "Like New",
+    type: "swap",
+    location: "Pahartali",
+    department: "Engineering",
+    images: [
+      "https://scontent.fdac181-1.fna.fbcdn.net/v/t1.6435-9/205729626_203743011646517_834630484838151940_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=833d8c&_nc_ohc=gCq_2My2XI8Q7kNvwHjQ-bt&_nc_oc=AdmWHIBXoBGR5qGeXiDNHS-TxQk5x7FnrMdwd7KYYOf_SoC-TVynywy94WWneT5WsFA&_nc_zt=23&_nc_ht=scontent.fdac181-1.fna&_nc_gid=5qtSK-16ZLo7VcoeyjXuow&oh=00_AfS98gqqJJppaOn30Ay3d2JKOaA7wiPltQ7zdczbv-u73w&oe=68B000A0",
+    ],
+    user_id: "1",
     user: demoUsers[0],
-    created_at: '2025-01-15T10:30:00Z',
-    is_exchanged: false
+    created_at: "2025-01-15T10:30:00Z",
+    is_exchanged: false,
   },
   {
-    id: '2',
-    title: 'Used T Scale for donation',
-    description: 'Mecha drawing T-scale ruler in good condition. Free for any engineering student who needs it. This is a professional grade T-scale that I used throughout my mechanical drawing courses. Still has clear markings and the sliding mechanism works perfectly. Would be great for any first or second year engineering student.',
-    category: 'Stationery',
-    condition: 'Good',
-    type: 'free',
-    location: 'Engineering Building',
-    images: ['https://img.drz.lazcdn.com/static/bd/p/62656e0d668e19717ebb3351e0c126ff.jpg_2200x2200q80.jpg_.webp'],
-    user_id: '2',
+    id: "2",
+    title: "Used T Scale for donation",
+    description:
+      "Mecha drawing T-scale ruler in good condition. Free for any engineering student who needs it. This is a professional grade T-scale that I used throughout my mechanical drawing courses. Still has clear markings and the sliding mechanism works perfectly. Would be great for any first or second year engineering student.",
+    category: "Stationery",
+    condition: "Good",
+    type: "free",
+    location: "Engineering Building",
+    images: [
+      "https://img.drz.lazcdn.com/static/bd/p/62656e0d668e19717ebb3351e0c126ff.jpg_2200x2200q80.jpg_.webp",
+    ],
+    user_id: "2",
     user: demoUsers[1],
-    created_at: '2025-01-16T14:20:00Z',
-    is_exchanged: false
+    created_at: "2025-01-16T14:20:00Z",
+    is_exchanged: false,
   },
   {
-    id: '3',
-    title: 'Foldable table for exchange',
-    description: 'Compact foldable study table, perfect for dorm rooms. Looking to exchange for a table lamp. This table has been my study companion for 2 years. It\'s lightweight, easy to fold and store, and has a smooth surface perfect for writing and laptop use. The legs are sturdy and adjustable. Would prefer to exchange for a good reading lamp or desk lamp.',
-    category: 'Furniture',
-    condition: 'Good',
-    type: 'swap',
-    location: 'Kazi Nazrul Islam Hall',
-    images: ['https://img.drz.lazcdn.com/collect/sg/other/roc/8016040af9c48d8ceb9da5d2075e7bb6.jpg_1200x1200q80.jpg_.webp'],
-    user_id: '3',
+    id: "3",
+    title: "Foldable table for exchange",
+    description:
+      "Compact foldable study table, perfect for dorm rooms. Looking to exchange for a table lamp. This table has been my study companion for 2 years. It's lightweight, easy to fold and store, and has a smooth surface perfect for writing and laptop use. The legs are sturdy and adjustable. Would prefer to exchange for a good reading lamp or desk lamp.",
+    category: "Furniture",
+    condition: "Good",
+    type: "swap",
+    location: "Kazi Nazrul Islam Hall",
+    images: [
+      "https://img.drz.lazcdn.com/collect/sg/other/roc/8016040af9c48d8ceb9da5d2075e7bb6.jpg_1200x1200q80.jpg_.webp",
+    ],
+    user_id: "3",
     user: demoUsers[2],
-    created_at: '2025-01-17T09:15:00Z',
-    is_exchanged: false
+    created_at: "2025-01-17T09:15:00Z",
+    is_exchanged: false,
   },
   {
-    id: '4',
-    title: 'Tuition in Halishahar exchange',
-    description: 'Class - 9, Sub - Math, physics and chemistry. Looking for tuition around bahaddarhat or GEC. I\'m offering tutoring services for Class 9 students in Mathematics, Physics, and Chemistry. I have 3 years of experience and have helped many students improve their grades. Looking to exchange this service for tutoring in higher level subjects or other academic help.',
-    category: 'Other',
-    condition: 'New',
-    type: 'swap',
-    location: 'Anywhere in campus',
-    images: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5sB3r2LhWuSTNMr13k7WuCSOBfAWb-i8m1Q&s'],
-    user_id: '4',
+    id: "4",
+    title: "Tuition in Halishahar exchange",
+    description:
+      "Class - 9, Sub - Math, physics and chemistry. Looking for tuition around bahaddarhat or GEC. I'm offering tutoring services for Class 9 students in Mathematics, Physics, and Chemistry. I have 3 years of experience and have helped many students improve their grades. Looking to exchange this service for tutoring in higher level subjects or other academic help.",
+    category: "Other",
+    condition: "New",
+    type: "swap",
+    location: "Anywhere in campus",
+    images: [
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5sB3r2LhWuSTNMr13k7WuCSOBfAWb-i8m1Q&s",
+    ],
+    user_id: "4",
     user: demoUsers[3],
-    created_at: '2025-01-18T16:45:00Z',
-    is_exchanged: false
+    created_at: "2025-01-18T16:45:00Z",
+    is_exchanged: false,
   },
   {
-    id: '5',
-    title: 'DJI Mini 2 SE drone for rent',
-    description: 'DJI Mini 2 SE is available for short-term rental. You can use it for any event at 1000tk/day. This drone is perfect for capturing aerial footage of events, campus activities, or personal projects. It comes with extra batteries, memory card, and carrying case. I\'ll provide a quick tutorial on how to use it safely. Deposit required.',
-    category: 'Electronics',
-    condition: 'Like New',
-    type: 'rent',
-    location: 'Abu Sayeed Hall',
-    images: ['https://www-cdn.djiits.com/dps/0c7373a3a5fb102f9c36461905e4b44b.jpg'],
-    user_id: '5',
+    id: "5",
+    title: "DJI Mini 2 SE drone for rent",
+    description:
+      "DJI Mini 2 SE is available for short-term rental. You can use it for any event at 1000tk/day. This drone is perfect for capturing aerial footage of events, campus activities, or personal projects. It comes with extra batteries, memory card, and carrying case. I'll provide a quick tutorial on how to use it safely. Deposit required.",
+    category: "Electronics",
+    condition: "Like New",
+    type: "rent",
+    location: "Abu Sayeed Hall",
+    images: [
+      "https://www-cdn.djiits.com/dps/0c7373a3a5fb102f9c36461905e4b44b.jpg",
+    ],
+    user_id: "5",
     user: demoUsers[4],
-    created_at: '2025-01-19T11:30:00Z',
-    is_exchanged: false
+    created_at: "2025-01-19T11:30:00Z",
+    is_exchanged: false,
   },
   {
-    id: '6',
-    title: 'Himur Nil Jochona',
-    description: 'হিমুর নীল জোছনা নন্দিত কথাসাহিত্যিক হুমায়ূন আহমেদের সৃষ্ট চরিত্রগুলোর মধ্যে হিমু অন্যতম একটি উপন্যাস। If anyone is a humayun ahmed fan, let me know. Up for opening a community. This is one of the most beloved novels in Bengali literature. The book is in excellent condition with no torn pages. Perfect for literature enthusiasts or anyone wanting to explore Bengali fiction.',
-    category: 'Other',
-    condition: 'Good',
-    type: 'free',
-    location: 'CSE Building',
-    department: 'CSE',
-    images: ['https://sg-test-11.slatic.net/other/roc/8efcfbd7e5763d2899819a690ba30123.jpg'],
-    user_id: '6',
+    id: "6",
+    title: "Himur Nil Jochona",
+    description:
+      "হিমুর নীল জোছনা নন্দিত কথাসাহিত্যিক হুমায়ূন আহমেদের সৃষ্ট চরিত্রগুলোর মধ্যে হিমু অন্যতম একটি উপন্যাস। If anyone is a humayun ahmed fan, let me know. Up for opening a community. This is one of the most beloved novels in Bengali literature. The book is in excellent condition with no torn pages. Perfect for literature enthusiasts or anyone wanting to explore Bengali fiction.",
+    category: "Other",
+    condition: "Good",
+    type: "free",
+    location: "CSE Building",
+    department: "CSE",
+    images: [
+      "https://sg-test-11.slatic.net/other/roc/8efcfbd7e5763d2899819a690ba30123.jpg",
+    ],
+    user_id: "6",
     user: demoUsers[5],
-    created_at: '2025-01-20T08:20:00Z',
-    is_exchanged: false
-  }
+    created_at: "2025-01-20T08:20:00Z",
+    is_exchanged: false,
+  },
 ];
 
 // Demo messages
 export const demoMessages: Message[] = [
   {
-    id: '1',
-    content: 'Hi! Is the physics book still available?',
-    sender_id: '2',
-    receiver_id: '1',
-    item_id: '1',
-    created_at: '2025-01-21T10:00:00Z',
+    id: "1",
+    content: "Hi! Is the physics book still available?",
+    sender_id: "2",
+    receiver_id: "1",
+    item_id: "1",
+    created_at: "2025-01-21T10:00:00Z",
     sender: demoUsers[1],
-    receiver: demoUsers[0]
+    receiver: demoUsers[0],
   },
   {
-    id: '2',
-    content: 'Yes, it is! What would you like to exchange for it?',
-    sender_id: '1',
-    receiver_id: '2',
-    item_id: '1',
-    created_at: '2025-01-21T10:15:00Z',
+    id: "2",
+    content: "Yes, it is! What would you like to exchange for it?",
+    sender_id: "1",
+    receiver_id: "2",
+    item_id: "1",
+    created_at: "2025-01-21T10:15:00Z",
     sender: demoUsers[0],
-    receiver: demoUsers[1]
-  }
+    receiver: demoUsers[1],
+  },
 ];
 
 // Demo conversations
 export const demoConversations: Conversation[] = [
   {
-    id: '1',
-    user1_id: '1',
-    user2_id: '2',
-    item_id: '1',
-    last_message: 'Yes, it is! What would you like to exchange for it?',
-    last_message_at: '2025-01-21T10:15:00Z',
-    created_at: '2025-01-21T10:00:00Z',
+    id: "1",
+    user1_id: "1",
+    user2_id: "2",
+    item_id: "1",
+    last_message: "Yes, it is! What would you like to exchange for it?",
+    last_message_at: "2025-01-21T10:15:00Z",
+    created_at: "2025-01-21T10:00:00Z",
     other_user: demoUsers[1],
-    item: demoItems[0]
-  }
+    item: demoItems[0],
+  },
 ];
 
 // Current logged in user (demo)
