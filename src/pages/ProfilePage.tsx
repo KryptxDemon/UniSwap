@@ -21,6 +21,20 @@ export function ProfilePage() {
     : currentUser;
   const isOwnProfile = !id || id === currentUser.id;
 
+  const [profilePic, setProfilePic] = useState(profileUser.profile_picture);
+
+  const handleProfilePicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setProfilePic(reader.result as string);
+        // Here, you would also update the profile picture in your backend or state
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   if (!profileUser) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -62,12 +76,23 @@ export function ProfilePage() {
         <div className="bg-white rounded-2xl shadow-sm p-8 mb-8">
           <div className="flex flex-col md:flex-row items-start md:items-center space-y-6 md:space-y-0 md:space-x-8">
             {/* Avatar */}
-            <div className="flex-shrink-0">
-              <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                <span className="text-3xl font-bold text-white">
-                  {profileUser.username.charAt(0).toUpperCase()}
-                </span>
-              </div>
+            <div className="flex-shrink-0 relative">
+              <img
+                src={profilePic}
+                alt="Profile"
+                className="w-24 h-24 object-cover rounded-full border-4 border-blue-500"
+              />
+              {isOwnProfile && (
+                <label className="absolute bottom-0 right-0 bg-blue-600 text-white rounded-full p-2 cursor-pointer hover:bg-blue-700 transition">
+                  <Edit3 className="h-4 w-4" />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleProfilePicChange}
+                  />
+                </label>
+              )}
             </div>
 
             {/* Profile Info */}

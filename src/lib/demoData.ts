@@ -1,4 +1,19 @@
-import { User, Item, Message, Conversation, BorrowRecord, SwapRequest, Tuition, Post, BorrowTimeline } from "../types";
+import {
+  User,
+  Item,
+  Message,
+  Conversation,
+  BorrowRecord,
+  SwapRequest,
+  Tuition,
+  Post,
+  BorrowTimeline,
+} from "../types";
+
+import dp1 from "../assets/demodp.png";
+import dp2 from "../assets/demodp2.jpg";
+import dp3 from "../assets/demodp3.jpg";
+import dp4 from "../assets/demodp4.jpg";
 
 // Demo users
 export const demoUsers: User[] = [
@@ -9,7 +24,7 @@ export const demoUsers: User[] = [
     phone: ["+8801712345678", "+8801812345678"],
     student_id: "1904001",
     bio: "Engineering student passionate about clash of clans, cgpa and cricket.",
-    profile_picture: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400",
+    profile_picture: dp1,
     created_at: "2025-01-01T00:00:00Z",
   },
   {
@@ -19,7 +34,8 @@ export const demoUsers: User[] = [
     phone: ["+8801712345679"],
     student_id: "1904002",
     bio: "Love helping fellow students with study materials and stationery.",
-    profile_picture: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400",
+    profile_picture:
+      "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400",
     created_at: "2025-01-01T00:00:00Z",
   },
   {
@@ -29,7 +45,7 @@ export const demoUsers: User[] = [
     phone: ["+8801712345680"],
     student_id: "1904003",
     bio: "Always looking for tuitions.",
-    profile_picture: "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=400",
+    profile_picture: dp3,
     created_at: "2025-01-01T00:00:00Z",
   },
   {
@@ -39,7 +55,7 @@ export const demoUsers: User[] = [
     phone: ["+8801712345681"],
     student_id: "1904004",
     bio: "Math and science tutor available for exchange of services.",
-    profile_picture: "https://images.pexels.com/photos/1181519/pexels-photo-1181519.jpeg?auto=compress&cs=tinysrgb&w=400",
+    profile_picture: dp4,
     created_at: "2025-01-01T00:00:00Z",
   },
   {
@@ -49,7 +65,8 @@ export const demoUsers: User[] = [
     phone: ["+8801712345682"],
     student_id: "1904005",
     bio: "Tech enthusiast with various electronics for rent and exchange.",
-    profile_picture: "https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=400",
+    profile_picture:
+      "https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=400",
     created_at: "2025-01-01T00:00:00Z",
   },
   {
@@ -59,7 +76,7 @@ export const demoUsers: User[] = [
     phone: ["+8801712345683"],
     student_id: "1904006",
     bio: "Book lover and literature enthusiast. Always happy to share good reads.",
-    profile_picture: "https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=400",
+    profile_picture: dp2,
     created_at: "2025-01-01T00:00:00Z",
   },
 ];
@@ -170,244 +187,142 @@ export const demoItems: Item[] = [
     created_at: "2025-01-20T08:20:00Z",
     is_exchanged: false,
   },
-];
-
-// Demo messages
-export const demoMessages: Message[] = [
   {
-    id: "1",
-    content: "Hi! Is the physics book still available?",
-    sender_id: "2",
-    receiver_id: "1",
-    conversation_id: "1",
-    item_id: "1",
-    created_at: "2025-01-21T10:00:00Z",
-    sender: demoUsers[1],
-    receiver: demoUsers[0],
-    read: true,
-    message_type: "text",
+    id: "7",
+    title: "Casio FX-991ES Plus Calculator",
+    description:
+      "Essential for engineering and science students. Used for 2 semesters, works perfectly. Willing to swap for a geometry box or any math-related book.",
+    category: "Electronics",
+    condition: "Good",
+    type: "swap",
+    location: "EEE Building",
+    images: [
+      "https://images.pexels.com/photos/159844/calculator-scientific-calculator-math-mathematics-159844.jpeg?auto=compress&cs=tinysrgb&w=400",
+    ],
+    user_id: "2",
+    user: demoUsers[1],
+    created_at: "2025-01-21T09:00:00Z",
+    is_exchanged: false,
   },
   {
-    id: "2",
-    content: "Yes, it is! What would you like to exchange for it?",
-    sender_id: "1",
-    receiver_id: "2",
-    conversation_id: "1",
-    item_id: "1",
-    created_at: "2025-01-21T10:15:00Z",
-    sender: demoUsers[0],
-    receiver: demoUsers[1],
-    read: true,
-    message_type: "text",
+    id: "8",
+    title: "Drawing Board for Architecture Students",
+    description:
+      "Large drawing board, slightly used. Perfect for architecture or civil students. Free for anyone who needs it.",
+    category: "Stationery",
+    condition: "Good",
+    type: "free",
+    location: "Architecture Dept.",
+    images: [
+      "https://images.pexels.com/photos/256369/pexels-photo-256369.jpeg?auto=compress&cs=tinysrgb&w=400",
+    ],
+    user_id: "3",
+    user: demoUsers[2],
+    created_at: "2025-01-22T10:30:00Z",
+    is_exchanged: false,
   },
   {
-    id: "3",
-    content: "I have a chemistry textbook that might interest you. Would you like to see it?",
-    sender_id: "2",
-    receiver_id: "1",
-    conversation_id: "1",
-    item_id: "1",
-    created_at: "2025-01-21T10:30:00Z",
-    sender: demoUsers[1],
-    receiver: demoUsers[0],
-    read: false,
-    message_type: "text",
+    id: "9",
+    title: "Hall Bedside Lamp",
+    description:
+      "LED lamp with adjustable brightness. Used in Shah Amanat Hall. Available for rent at 50tk/week.",
+    category: "Electronics",
+    condition: "Good",
+    type: "rent",
+    location: "Shah Amanat Hall",
+    images: [
+      "https://images.pexels.com/photos/271816/pexels-photo-271816.jpeg?auto=compress&cs=tinysrgb&w=400",
+    ],
+    user_id: "4",
+    user: demoUsers[3],
+    created_at: "2025-01-22T18:00:00Z",
+    is_exchanged: false,
   },
   {
-    id: "4",
-    content: "That sounds perfect! Can we meet at the library tomorrow?",
-    sender_id: "1",
-    receiver_id: "2",
-    conversation_id: "1",
-    item_id: "1",
-    created_at: "2025-01-21T10:45:00Z",
-    sender: demoUsers[0],
-    receiver: demoUsers[1],
-    read: false,
-    message_type: "text",
+    id: "10",
+    title: "CSE 2nd Year Notes (Printed)",
+    description:
+      "Complete notes for Data Structures and Algorithms. Printed and well organized. Swap for any reference book or pen drive.",
+    category: "Textbooks",
+    condition: "Like New",
+    type: "swap",
+    location: "CSE Building",
+    department: "CSE",
+    images: [
+      "https://images.pexels.com/photos/590493/pexels-photo-590493.jpeg?auto=compress&cs=tinysrgb&w=400",
+    ],
+    user_id: "6",
+    user: demoUsers[5],
+    created_at: "2025-01-23T11:45:00Z",
+    is_exchanged: false,
   },
   {
-    id: "5",
-    content: "Hey! Is the drone still available for rent?",
-    sender_id: "3",
-    receiver_id: "5",
-    conversation_id: "2",
-    item_id: "5",
-    created_at: "2025-01-21T14:00:00Z",
-    sender: demoUsers[2],
-    receiver: demoUsers[4],
-    read: true,
-    message_type: "text",
+    id: "11",
+    title: "Umbrella for Rainy Season",
+    description:
+      "Sturdy umbrella, perfect for Chattogram's sudden rain. Free for anyone who needs it.",
+    category: "Other",
+    condition: "Good",
+    type: "free",
+    location: "Central Mosque",
+    images: [
+      "https://images.pexels.com/photos/208701/pexels-photo-208701.jpeg?auto=compress&cs=tinysrgb&w=400",
+    ],
+    user_id: "1",
+    user: demoUsers[0],
+    created_at: "2025-01-23T13:20:00Z",
+    is_exchanged: false,
   },
   {
-    id: "6",
-    content: "Yes! It's available. When do you need it?",
-    sender_id: "5",
-    receiver_id: "3",
-    conversation_id: "2",
-    item_id: "5",
-    created_at: "2025-01-21T14:15:00Z",
-    sender: demoUsers[4],
-    receiver: demoUsers[2],
-    read: false,
-    message_type: "text",
-  },
-];
-
-// Demo conversations
-export const demoConversations: Conversation[] = [
-  {
-    id: "1",
-    participants: ["1", "2"],
-    item_id: "1",
-    last_message: "That sounds perfect! Can we meet at the library tomorrow?",
-    last_message_at: "2025-01-21T10:45:00Z",
-    created_at: "2025-01-21T10:00:00Z",
-    updated_at: "2025-01-21T10:45:00Z",
-    other_user: demoUsers[1],
-    item: demoItems[0],
-    unread_count: 1,
+    id: "12",
+    title: "Mechanical Pencil Set",
+    description:
+      "Set of 3 mechanical pencils, ideal for drawing and sketching. Used in Civil Engineering classes. Swap for a set of colored pens.",
+    category: "Stationery",
+    condition: "Like New",
+    type: "swap",
+    location: "Civil Building",
+    images: [
+      "https://images.pexels.com/photos/209678/pexels-photo-209678.jpeg?auto=compress&cs=tinysrgb&w=400",
+    ],
+    user_id: "5",
+    user: demoUsers[4],
+    created_at: "2025-01-24T08:10:00Z",
+    is_exchanged: false,
   },
   {
-    id: "2",
-    participants: ["3", "5"],
-    item_id: "5",
-    last_message: "Yes! It's available. When do you need it?",
-    last_message_at: "2025-01-21T14:15:00Z",
-    created_at: "2025-01-21T14:00:00Z",
-    updated_at: "2025-01-21T14:15:00Z",
-    other_user: demoUsers[4],
-    item: demoItems[4],
-    unread_count: 1,
-  },
-];
-
-// Demo borrow records
-export const demoBorrowRecords: BorrowRecord[] = [
-  {
-    id: "1",
-    item_id: "5",
-    item_title: "DJI Mini 2 SE drone for rent",
-    borrower_id: "1",
-    lender_id: "5",
-    borrowed_at: "2025-01-15T10:00:00Z",
-    expected_return_date: "2025-01-18T10:00:00Z",
-    actual_return_date: "2025-01-17T15:30:00Z",
-    status: "returned",
-    notes: "Used for campus event photography. Returned in excellent condition.",
-    timeline: [
-      {
-        id: "t1",
-        borrow_record_id: "1",
-        event_type: "requested",
-        event_date: "2025-01-14T09:00:00Z",
-        notes: "Initial request made"
-      },
-      {
-        id: "t2",
-        borrow_record_id: "1",
-        event_type: "approved",
-        event_date: "2025-01-14T14:00:00Z",
-        notes: "Request approved by lender"
-      },
-      {
-        id: "t3",
-        borrow_record_id: "1",
-        event_type: "borrowed",
-        event_date: "2025-01-15T10:00:00Z",
-        notes: "Item picked up"
-      },
-      {
-        id: "t4",
-        borrow_record_id: "1",
-        event_type: "returned",
-        event_date: "2025-01-17T15:30:00Z",
-        notes: "Item returned in excellent condition"
-      }
-    ]
+    id: "13",
+    title: "Bangla Literature Books Bundle",
+    description:
+      "A bundle of 5 Bangla literature books including works by Humayun Ahmed and Shirshendu Mukhopadhyay. Free for literature lovers.",
+    category: "Textbooks",
+    condition: "Good",
+    type: "free",
+    location: "Library",
+    images: [
+      "https://images.pexels.com/photos/46274/pexels-photo-46274.jpeg?auto=compress&cs=tinysrgb&w=400",
+    ],
+    user_id: "6",
+    user: demoUsers[5],
+    created_at: "2025-01-24T15:00:00Z",
+    is_exchanged: false,
   },
   {
-    id: "2",
-    item_id: "3",
-    item_title: "Foldable table for exchange",
-    borrower_id: "2",
-    lender_id: "3",
-    borrowed_at: "2025-01-20T09:00:00Z",
-    expected_return_date: "2025-01-25T09:00:00Z",
-    status: "active",
-    notes: "Borrowed for study purposes during exam week.",
-    timeline: [
-      {
-        id: "t5",
-        borrow_record_id: "2",
-        event_type: "requested",
-        event_date: "2025-01-19T16:00:00Z",
-        notes: "Request for exam week"
-      },
-      {
-        id: "t6",
-        borrow_record_id: "2",
-        event_type: "approved",
-        event_date: "2025-01-19T18:00:00Z",
-        notes: "Approved for study purposes"
-      },
-      {
-        id: "t7",
-        borrow_record_id: "2",
-        event_type: "borrowed",
-        event_date: "2025-01-20T09:00:00Z",
-        notes: "Table picked up"
-      }
-    ]
-  },
-  {
-    id: "3",
-    item_id: "1",
-    item_title: "Practical Physics - Giassudin",
-    borrower_id: "4",
-    lender_id: "1",
-    borrowed_at: "2025-01-10T14:00:00Z",
-    expected_return_date: "2025-01-17T14:00:00Z",
-    actual_return_date: "2025-01-20T16:00:00Z",
-    status: "returned",
-    notes: "Needed for lab experiments. Returned with some additional notes.",
-    timeline: [
-      {
-        id: "t8",
-        borrow_record_id: "3",
-        event_type: "requested",
-        event_date: "2025-01-09T10:00:00Z",
-        notes: "Needed for lab work"
-      },
-      {
-        id: "t9",
-        borrow_record_id: "3",
-        event_type: "approved",
-        event_date: "2025-01-09T12:00:00Z",
-        notes: "Approved for lab experiments"
-      },
-      {
-        id: "t10",
-        borrow_record_id: "3",
-        event_type: "borrowed",
-        event_date: "2025-01-10T14:00:00Z",
-        notes: "Book borrowed"
-      },
-      {
-        id: "t11",
-        borrow_record_id: "3",
-        event_type: "overdue",
-        event_date: "2025-01-17T14:00:00Z",
-        notes: "Item became overdue"
-      },
-      {
-        id: "t12",
-        borrow_record_id: "3",
-        event_type: "returned",
-        event_date: "2025-01-20T16:00:00Z",
-        notes: "Returned with additional notes"
-      }
-    ]
+    id: "14",
+    title: "Lab Coat for Chemistry Lab",
+    description:
+      "White lab coat, size M. Used for 1 semester, still in great condition. Swap for safety goggles or any lab accessory.",
+    category: "Other",
+    condition: "Good",
+    type: "swap",
+    location: "Chemistry Dept.",
+    images: [
+      "https://images.pexels.com/photos/373576/pexels-photo-373576.jpeg?auto=compress&cs=tinysrgb&w=400",
+    ],
+    user_id: "2",
+    user: demoUsers[1],
+    created_at: "2025-01-25T09:30:00Z",
+    is_exchanged: false,
   },
 ];
 // Current logged in user (demo)
@@ -443,7 +358,8 @@ export const demoTuitions: Tuition[] = [
   {
     id: "1",
     title: "Mathematics Tuition for Class 9-10",
-    description: "Experienced tutor offering comprehensive math lessons for SSC students. Covers algebra, geometry, and trigonometry.",
+    description:
+      "Experienced tutor offering comprehensive math lessons for SSC students. Covers algebra, geometry, and trigonometry.",
     salary: 3000,
     days_per_week: 3,
     class_level: "Class 9-10",
@@ -458,7 +374,8 @@ export const demoTuitions: Tuition[] = [
   {
     id: "2",
     title: "Physics and Chemistry Tuition",
-    description: "Engineering student offering science tuition for HSC students. Strong background in physics and chemistry.",
+    description:
+      "Engineering student offering science tuition for HSC students. Strong background in physics and chemistry.",
     salary: 4000,
     days_per_week: 4,
     class_level: "Class 11-12",
@@ -476,9 +393,10 @@ export const demoTuitions: Tuition[] = [
 export const demoPosts: Post[] = [
   {
     id: "1",
-    content: "Just finished my final exams! Looking forward to sharing some textbooks that I no longer need. Check out my listings! 📚",
+    content:
+      "Just finished my final exams! Looking forward to sharing some textbooks that I no longer need. Check out my listings! 📚",
     images: [
-      "https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg?auto=compress&cs=tinysrgb&w=800"
+      "https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg?auto=compress&cs=tinysrgb&w=800",
     ],
     user_id: "1",
     user: demoUsers[0],
@@ -488,12 +406,120 @@ export const demoPosts: Post[] = [
   },
   {
     id: "2",
-    content: "Great experience using UniSwap! Successfully exchanged my old laptop for a newer model. Thanks to the amazing community! 💻✨",
+    content:
+      "Great experience using UniSwap! Successfully exchanged my old laptop for a newer model. Thanks to the amazing community! 💻✨",
     images: [],
     user_id: "5",
     user: demoUsers[4],
     post_time: "2025-01-20T09:15:00Z",
     likes_count: 8,
     comments_count: 1,
+  },
+];
+
+// Demo conversations
+export const demoConversations: Conversation[] = [
+  {
+    id: "1",
+    participants: [demoUsers[0], demoUsers[1]],
+    other_user: demoUsers[1], // The user you're chatting with
+    item: demoItems.find((item) => item.id === "2"), // The item being discussed
+    item_id: "2",
+    last_message: "Yes! Do you want to pick it up today?",
+    last_message_at: "2025-01-21T10:06:00Z",
+    updated_at: "2025-01-21T10:06:00Z",
+    messages: [
+      {
+        id: "1",
+        sender_id: "1",
+        content: "Hi, is your T-scale still available?",
+        timestamp: "2025-01-21T10:05:00Z",
+      },
+      {
+        id: "2",
+        sender_id: "2",
+        content: "Yes! Do you want to pick it up today?",
+        timestamp: "2025-01-21T10:06:00Z",
+      },
+    ],
+  },
+  {
+    id: "2",
+    participants: [demoUsers[2], demoUsers[3]],
+    other_user: demoUsers[3],
+    item: demoItems.find((item) => item.id === "4"),
+    item_id: "4",
+    last_message: "Sure, let's discuss your schedule.",
+    last_message_at: "2025-01-19T17:05:00Z",
+    updated_at: "2025-01-19T17:05:00Z",
+    messages: [
+      {
+        id: "3",
+        sender_id: "3",
+        content: "Can you tutor me in physics?",
+        timestamp: "2025-01-19T17:00:00Z",
+      },
+      {
+        id: "4",
+        sender_id: "4",
+        content: "Sure, let's discuss your schedule.",
+        timestamp: "2025-01-19T17:05:00Z",
+      },
+    ],
+  },
+];
+
+export const demoMessages: Message[] = [
+  {
+    id: "1",
+    content: "Hi, is your T-scale still available?",
+    sender_id: "1",
+    receiver_id: "2",
+    conversation_id: "1",
+    item_id: "2",
+    created_at: "2025-01-21T10:05:00Z",
+    sender: demoUsers[0],
+    receiver: demoUsers[1],
+    read: true,
+    message_type: "text",
+  },
+  {
+    id: "2",
+    content: "Yes! Do you want to pick it up today?",
+    sender_id: "2",
+    receiver_id: "1",
+    conversation_id: "1",
+    item_id: "2",
+    created_at: "2025-01-21T10:06:00Z",
+    sender: demoUsers[1],
+    receiver: demoUsers[0],
+    read: true,
+    message_type: "text",
+  },
+  {
+    id: "3",
+    content: "Can you tutor me in physics?",
+    sender_id: "3",
+    receiver_id: "4",
+    conversation_id: "2",
+    item_id: "4",
+    created_at: "2025-01-19T17:00:00Z",
+    sender: demoUsers[2],
+    receiver: demoUsers[3],
+    read: true,
+    message_type: "text",
+  },
+  {
+    id: "4",
+    content: "Sure, let's discuss your schedule.",
+    sender_id: "4",
+    receiver_id: "3",
+    conversation_id: "2",
+    item_id: "4",
+    created_at: "2025-01-19T17:05:00Z",
+    sender: demoUsers[3],
+    receiver: demoUsers[2],
+    read: true,
+    message_type: "text",
   },
 ];

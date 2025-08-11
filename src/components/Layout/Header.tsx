@@ -1,7 +1,16 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Search, MessageCircle, User, PlusCircle, LogOut, BookOpen } from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth';
+import React from "react";
+import logoImg from "../../assets/logo.jpg";
+import { Link, useNavigate } from "react-router-dom";
+
+import {
+  Search,
+  MessageCircle,
+  User,
+  PlusCircle,
+  LogOut,
+  BookOpen,
+} from "lucide-react";
+import { useAuth } from "../../hooks/useAuth";
 
 export function Header() {
   const { user, signOut } = useAuth();
@@ -10,9 +19,9 @@ export function Header() {
   const handleSignOut = async () => {
     try {
       await signOut();
-      navigate('/');
+      navigate("/");
     } catch (error) {
-      console.error('Error signing out:', error);
+      console.error("Error signing out:", error);
     }
   };
 
@@ -22,9 +31,12 @@ export function Header() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 group">
-            <div className="bg-blue-600 p-2 rounded-lg group-hover:bg-blue-700 transition-colors">
-              <BookOpen className="h-6 w-6 text-white" />
-            </div>
+            {/* Replace with your logo image URL */}
+            <img
+              src={logoImg}
+              alt="UniSwap Logo"
+              className="h-10 w-10 rounded-lg object-cover"
+            />
             <span className="text-2xl font-bold text-gray-900">UniSwap</span>
           </Link>
 
@@ -43,6 +55,13 @@ export function Header() {
               >
                 <PlusCircle className="h-4 w-4" />
                 <span>Post Item</span>
+              </Link>
+              <Link
+                to="/post-tuition"
+                className="bg-green-600 text-white hover:bg-green-700 px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+              >
+                <PlusCircle className="h-4 w-4" />
+                <span>Post Tuition</span>
               </Link>
               <Link
                 to="/messages"

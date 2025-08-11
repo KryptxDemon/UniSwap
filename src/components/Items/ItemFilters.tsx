@@ -1,5 +1,5 @@
 import React from "react";
-import { Search, Filter, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { Category, Condition } from "../../types";
 
 interface ItemFiltersProps {
@@ -11,6 +11,8 @@ interface ItemFiltersProps {
   onConditionChange: (condition: string) => void;
   selectedType: string;
   onTypeChange: (type: string) => void;
+  locationType: string;
+  onLocationTypeChange: (type: string) => void;
   selectedLocation: string;
   onLocationChange: (location: string) => void;
   onClearFilters: () => void;
@@ -29,7 +31,8 @@ const categories: Category[] = [
 ];
 const conditions: Condition[] = ["New", "Like New", "Good", "Fair", "Poor"];
 const types = ["free", "swap", "rent"];
-const locations = [
+
+const campusLocations = [
   "Tarek Huda Hall",
   "Shah Hall",
   "Abu Sayeed Hall",
@@ -52,6 +55,24 @@ const locations = [
   "West Gate",
 ];
 
+const chittagongAreas = [
+  "Agrabad",
+  "Pahartali",
+  "Chawkbazar",
+  "Nasirabad",
+  "Khulshi",
+  "GEC",
+  "Oxygen",
+  "Muradpur",
+  "Kotwali",
+  "Anderkilla",
+  "Jubilee Road",
+  "Bayezid",
+  "Halishahar",
+  "EPZ",
+  "Patenga",
+];
+
 export function ItemFilters({
   searchTerm,
   onSearchChange,
@@ -61,14 +82,19 @@ export function ItemFilters({
   onConditionChange,
   selectedType,
   onTypeChange,
+  locationType,
+  onLocationTypeChange,
   selectedLocation,
   onLocationChange,
   onClearFilters,
   hasActiveFilters,
 }: ItemFiltersProps) {
+  const locationOptions =
+    locationType === "on-campus" ? campusLocations : chittagongAreas;
+
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm mb-8 space-y-6">
-      {/* Search Bar */}
+      {/* Search */}
       <div className="relative">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
         <input
@@ -80,9 +106,9 @@ export function ItemFilters({
         />
       </div>
 
-      {/* Filter Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        {/* Category Filter */}
+      {/* Filters */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+        {/* Category */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Category
@@ -90,18 +116,18 @@ export function ItemFilters({
           <select
             value={selectedCategory}
             onChange={(e) => onCategoryChange(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
           >
             <option value="">All Categories</option>
-            {categories.map((category) => (
-              <option key={category} value={category}>
-                {category}
+            {categories.map((c) => (
+              <option key={c} value={c}>
+                {c}
               </option>
             ))}
           </select>
         </div>
 
-        {/* Condition Filter */}
+        {/* Condition */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Condition
@@ -109,18 +135,18 @@ export function ItemFilters({
           <select
             value={selectedCondition}
             onChange={(e) => onConditionChange(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
           >
             <option value="">Any Condition</option>
-            {conditions.map((condition) => (
-              <option key={condition} value={condition}>
-                {condition}
+            {conditions.map((cond) => (
+              <option key={cond} value={cond}>
+                {cond}
               </option>
             ))}
           </select>
         </div>
 
-        {/* Type Filter */}
+        {/* Type */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Type
@@ -128,18 +154,34 @@ export function ItemFilters({
           <select
             value={selectedType}
             onChange={(e) => onTypeChange(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
           >
             <option value="">All Types</option>
-            {types.map((type) => (
-              <option key={type} value={type}>
-                {type.charAt(0).toUpperCase() + type.slice(1)}
+            {types.map((t) => (
+              <option key={t} value={t}>
+                {t.charAt(0).toUpperCase() + t.slice(1)}
               </option>
             ))}
           </select>
         </div>
 
-        {/* Location Filter */}
+        {/* Location Type */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Location Type
+          </label>
+          <select
+            value={locationType}
+            onChange={(e) => onLocationTypeChange(e.target.value)}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Select Type</option>
+            <option value="on-campus">On Campus</option>
+            <option value="off-campus">Off Campus</option>
+          </select>
+        </div>
+
+        {/* Location */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Location
@@ -147,18 +189,19 @@ export function ItemFilters({
           <select
             value={selectedLocation}
             onChange={(e) => onLocationChange(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+            disabled={!locationType}
           >
             <option value="">All Locations</option>
-            {locations.map((location) => (
-              <option key={location} value={location}>
-                {location}
+            {locationOptions.map((loc) => (
+              <option key={loc} value={loc}>
+                {loc}
               </option>
             ))}
           </select>
         </div>
 
-        {/* Clear Filters */}
+        {/* Clear */}
         <div className="flex items-end">
           {hasActiveFilters && (
             <button
