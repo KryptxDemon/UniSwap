@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, User, Eye, EyeOff, Phone, CreditCard } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
 export function SignupForm() {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
+    phone: '',
+    student_id: '',
     password: '',
     confirmPassword: '',
   });
@@ -34,8 +36,19 @@ export function SignupForm() {
       return;
     }
 
+    if (!formData.phone) {
+      setError('Phone number is required');
+      setLoading(false);
+      return;
+    }
+
+    if (!formData.student_id) {
+      setError('Student ID is required');
+      setLoading(false);
+      return;
+    }
     try {
-      await signUp(formData.email, formData.password, formData.username);
+      await signUp(formData.email, formData.password, formData.username, formData.phone, formData.student_id);
       navigate('/browse');
     } catch (err: any) {
       setError(err.message || 'Failed to create account');
@@ -75,6 +88,40 @@ export function SignupForm() {
                 onChange={(e) => handleInputChange('username', e.target.value)}
                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Choose a username"
+                required
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Phone Number
+            </label>
+            <div className="relative">
+              <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <input
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => handleInputChange('phone', e.target.value)}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Enter your phone number"
+                required
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Student ID
+            </label>
+            <div className="relative">
+              <CreditCard className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <input
+                type="text"
+                value={formData.student_id}
+                onChange={(e) => handleInputChange('student_id', e.target.value)}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Enter your student ID"
                 required
               />
             </div>

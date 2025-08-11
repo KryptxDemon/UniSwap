@@ -14,10 +14,17 @@ export function useAuth() {
     }, 500);
   }, []);
 
-  const signUp = async (email: string, password: string, username: string) => {
+  const signUp = async (email: string, password: string, username: string, phone: string, student_id: string) => {
     // Demo signup - just set the current user
-    setUser(currentUser);
-    return { user: currentUser };
+    const newUser = {
+      ...currentUser,
+      email,
+      username,
+      phone: [phone],
+      student_id,
+    };
+    setUser(newUser);
+    return { user: newUser };
   };
 
   const signIn = async (email: string, password: string) => {

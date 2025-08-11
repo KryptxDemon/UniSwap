@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, Clock, CheckCircle, AlertCircle, Package } from 'lucide-react';
+import { Calendar, Clock, CheckCircle, AlertCircle, Package, Timeline } from 'lucide-react';
 import { BorrowRecord } from '../../types';
 
 interface BorrowRecordsProps {
@@ -50,6 +50,24 @@ export function BorrowRecords({ records, isOwnProfile }: BorrowRecordsProps) {
     return diffDays;
   };
 
+  const getTimelineIcon = (eventType: string) => {
+    switch (eventType) {
+      case 'requested':
+        return <Clock className="h-4 w-4 text-blue-600" />;
+      case 'approved':
+        return <CheckCircle className="h-4 w-4 text-green-600" />;
+      case 'borrowed':
+        return <Package className="h-4 w-4 text-purple-600" />;
+      case 'returned':
+        return <CheckCircle className="h-4 w-4 text-green-600" />;
+      case 'overdue':
+        return <AlertCircle className="h-4 w-4 text-red-600" />;
+      case 'cancelled':
+        return <AlertCircle className="h-4 w-4 text-gray-600" />;
+      default:
+        return <Clock className="h-4 w-4 text-gray-600" />;
+    }
+  };
   if (records.length === 0) {
     return (
       <div className="text-center py-12">
@@ -77,10 +95,16 @@ export function BorrowRecords({ records, isOwnProfile }: BorrowRecordsProps) {
                   <Calendar className="h-4 w-4" />
                   <span>Borrowed: {formatDate(record.borrowed_at)}</span>
                 </div>
-                {record.due_date && (
+                {record.expected_return_date && (
                   <div className="flex items-center space-x-1">
                     <Clock className="h-4 w-4" />
-                    <span>Due: {formatDate(record.due_date)}</span>
+                    <span>Expected Return: {formatDate(record.expected_return_date)}</span>
+                  </div>
+                )}
+                {record.actual_return_date && (
+                  <div className="flex items-center space-x-1">
+                    <CheckCircle className="h-4 w-4" />
+                    <span>Returned: {formatDate(record.actual_return_date)}</span>
                   </div>
                 )}
               </div>
@@ -93,10 +117,10 @@ export function BorrowRecords({ records, isOwnProfile }: BorrowRecordsProps) {
             </div>
           </div>
 
-          {record.status === 'active' && record.due_date && (
+          {record.status === 'active' && record.expected_return_date && (
             <div className="mb-4">
               {(() => {
-                const daysRemaining = calculateDaysRemaining(record.due_date);
+                const daysRemaining = calculateDaysRemaining(record.expected_return_date);
                 if (daysRemaining < 0) {
                   return (
                     <div className="bg-red-50 border-l-4 border-red-400 p-3 rounded">
@@ -126,16 +150,50 @@ export function BorrowRecords({ records, isOwnProfile }: BorrowRecordsProps) {
             </div>
           )}
 
-          {record.returned_at && (
+          {record.actual_return_date && (
             <div className="mb-4">
               <div className="bg-green-50 border-l-4 border-green-400 p-3 rounded">
                 <div className="text-green-800 font-medium">
-                  Returned on {formatDate(record.returned_at)}
+                  Returned on {formatDate(record.actual_return_date)}
                 </div>
               </div>
             </div>
           )}
 
+          {/* Timeline */}
+          {record.timeline && record.timeline.length > 0 && (
+            <div className="mb-4">
+              <h4 className="font-medium text-gray-900 mb-3 flex items-center space-x-2">
+                <Timeline className="h-4 w-4" />
+                <span>Timeline</span>
+              </h4>
+              <div className="space-y-3">
+                {record.timeline.map((event, index) => (
+                  <div key={event.id} className="flex items-start space-x-3">
+                    <div className="flex-shrink-0 mt-1">
+                      {getTimelineIcon(event.event_type)}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2">
+                        <span className="font-medium text-sm capitalize">
+                          {event.event_type.replace('_', ' ')}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          {formatDate(event.event_date)}
+                        </span>
+                      </div>
+                      {event.notes && (
+                        <p className="text-sm text-gray-600 mt-1">{event.notes}</p>
+                      )}
+                    </div>
+                    {index < record.timeline.length - 1 && (
+                      <div className="absolute left-2 mt-6 w-px h-6 bg-gray-200"></div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
           {record.notes && (
             <div className="bg-gray-50 rounded-lg p-3">
               <p className="text-sm text-gray-700">
