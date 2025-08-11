@@ -92,6 +92,7 @@ export const demoItems: Item[] = [
     condition: "Like New",
     type: "swap",
     location: "Pahartali",
+    location_type: "off-campus",
     department: "Engineering",
     images: [
       "https://scontent.fdac181-1.fna.fbcdn.net/v/t1.6435-9/205729626_203743011646517_834630484838151940_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=833d8c&_nc_ohc=gCq_2My2XI8Q7kNvwHjQ-bt&_nc_oc=AdmWHIBXoBGR5qGeXiDNHS-TxQk5x7FnrMdwd7KYYOf_SoC-TVynywy94WWneT5WsFA&_nc_zt=23&_nc_ht=scontent.fdac181-1.fna&_nc_gid=5qtSK-16ZLo7VcoeyjXuow&oh=00_AfS98gqqJJppaOn30Ay3d2JKOaA7wiPltQ7zdczbv-u73w&oe=68B000A0",
@@ -110,6 +111,7 @@ export const demoItems: Item[] = [
     condition: "Good",
     type: "free",
     location: "Engineering Building",
+    location_type: "on-campus",
     images: [
       "https://img.drz.lazcdn.com/static/bd/p/62656e0d668e19717ebb3351e0c126ff.jpg_2200x2200q80.jpg_.webp",
     ],
@@ -127,6 +129,7 @@ export const demoItems: Item[] = [
     condition: "Good",
     type: "swap",
     location: "Kazi Nazrul Islam Hall",
+    location_type: "on-campus",
     images: [
       "https://img.drz.lazcdn.com/collect/sg/other/roc/8016040af9c48d8ceb9da5d2075e7bb6.jpg_1200x1200q80.jpg_.webp",
     ],
@@ -143,7 +146,8 @@ export const demoItems: Item[] = [
     category: "Other",
     condition: "New",
     type: "swap",
-    location: "Anywhere in campus",
+    location: "Halishahar",
+    location_type: "off-campus",
     images: [
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5sB3r2LhWuSTNMr13k7WuCSOBfAWb-i8m1Q&s",
     ],
@@ -161,6 +165,7 @@ export const demoItems: Item[] = [
     condition: "Like New",
     type: "rent",
     location: "Abu Sayeed Hall",
+    location_type: "on-campus",
     images: [
       "https://www-cdn.djiits.com/dps/0c7373a3a5fb102f9c36461905e4b44b.jpg",
     ],
@@ -178,6 +183,7 @@ export const demoItems: Item[] = [
     condition: "Good",
     type: "free",
     location: "CSE Building",
+    location_type: "on-campus",
     department: "CSE",
     images: [
       "https://sg-test-11.slatic.net/other/roc/8efcfbd7e5763d2899819a690ba30123.jpg",
@@ -196,6 +202,7 @@ export const demoItems: Item[] = [
     condition: "Good",
     type: "swap",
     location: "EEE Building",
+    location_type: "on-campus",
     images: [
       "https://images.pexels.com/photos/159844/calculator-scientific-calculator-math-mathematics-159844.jpeg?auto=compress&cs=tinysrgb&w=400",
     ],
@@ -213,6 +220,7 @@ export const demoItems: Item[] = [
     condition: "Good",
     type: "free",
     location: "Architecture Dept.",
+    location_type: "on-campus",
     images: [
       "https://images.pexels.com/photos/256369/pexels-photo-256369.jpeg?auto=compress&cs=tinysrgb&w=400",
     ],
@@ -229,7 +237,8 @@ export const demoItems: Item[] = [
     category: "Electronics",
     condition: "Good",
     type: "rent",
-    location: "Shah Amanat Hall",
+    location: "Shah Hall",
+    location_type: "on-campus",
     images: [
       "https://images.pexels.com/photos/271816/pexels-photo-271816.jpeg?auto=compress&cs=tinysrgb&w=400",
     ],
@@ -246,8 +255,8 @@ export const demoItems: Item[] = [
     category: "Textbooks",
     condition: "Like New",
     type: "swap",
-    location: "CSE Building",
-    department: "CSE",
+    location: "GEC",
+    location_type: "off-campus",
     images: [
       "https://images.pexels.com/photos/590493/pexels-photo-590493.jpeg?auto=compress&cs=tinysrgb&w=400",
     ],
@@ -264,7 +273,8 @@ export const demoItems: Item[] = [
     category: "Other",
     condition: "Good",
     type: "free",
-    location: "Central Mosque",
+    location: "TSC",
+    location_type: "on-campus",
     images: [
       "https://images.pexels.com/photos/208701/pexels-photo-208701.jpeg?auto=compress&cs=tinysrgb&w=400",
     ],
@@ -282,6 +292,7 @@ export const demoItems: Item[] = [
     condition: "Like New",
     type: "swap",
     location: "Civil Building",
+    location_type: "on-campus",
     images: [
       "https://images.pexels.com/photos/209678/pexels-photo-209678.jpeg?auto=compress&cs=tinysrgb&w=400",
     ],
@@ -299,6 +310,7 @@ export const demoItems: Item[] = [
     condition: "Good",
     type: "free",
     location: "Library",
+    location_type: "on-campus",
     images: [
       "https://images.pexels.com/photos/46274/pexels-photo-46274.jpeg?auto=compress&cs=tinysrgb&w=400",
     ],
@@ -315,7 +327,8 @@ export const demoItems: Item[] = [
     category: "Other",
     condition: "Good",
     type: "swap",
-    location: "Chemistry Dept.",
+    location: "Anderkilla",
+    location_type: "off-campus",
     images: [
       "https://images.pexels.com/photos/373576/pexels-photo-373576.jpeg?auto=compress&cs=tinysrgb&w=400",
     ],

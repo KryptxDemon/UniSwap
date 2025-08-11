@@ -15,8 +15,9 @@ export interface Item {
   description: string;
   category: string;
   condition: string;
-  type: 'free' | 'swap' | 'rent';
+  type: "free" | "swap" | "rent";
   location: string;
+  location_type?: "on-campus" | "off-campus";
   department?: string;
   images: string[];
   user_id: string;
@@ -32,7 +33,7 @@ export interface SwapRequest {
   owner_id: string;
   offered_item_id?: string;
   message?: string;
-  status: 'pending' | 'accepted' | 'rejected' | 'completed' | 'cancelled';
+  status: "pending" | "accepted" | "rejected" | "completed" | "cancelled";
   created_at: string;
   updated_at: string;
 }
@@ -46,7 +47,7 @@ export interface BorrowRecord {
   borrowed_at: string;
   expected_return_date?: string;
   actual_return_date?: string;
-  status: 'active' | 'returned' | 'overdue' | 'cancelled';
+  status: "active" | "returned" | "overdue" | "cancelled";
   notes?: string;
   timeline: BorrowTimeline[];
 }
@@ -54,7 +55,13 @@ export interface BorrowRecord {
 export interface BorrowTimeline {
   id: string;
   borrow_record_id: string;
-  event_type: 'requested' | 'approved' | 'borrowed' | 'returned' | 'overdue' | 'cancelled';
+  event_type:
+    | "requested"
+    | "approved"
+    | "borrowed"
+    | "returned"
+    | "overdue"
+    | "cancelled";
   event_date: string;
   notes?: string;
 }
@@ -68,7 +75,7 @@ export interface Tuition {
   class_level: string;
   subjects: string[];
   location: string;
-  status: 'available' | 'taken' | 'completed';
+  status: "available" | "taken" | "completed";
   tutor_id: string;
   tutor?: User;
   created_at: string;
@@ -97,7 +104,7 @@ export interface Message {
   sender?: User;
   receiver?: User;
   read: boolean;
-  message_type: 'text' | 'image' | 'system';
+  message_type: "text" | "image" | "system";
   reply_to?: string;
 }
 
@@ -114,5 +121,13 @@ export interface Conversation {
   unread_count: number;
 }
 
-export type Category = 'Textbooks' | 'Electronics' | 'Clothing' | 'Furniture' | 'Stationery' | 'Sports' | 'Kitchen' | 'Other';
-export type Condition = 'New' | 'Like New' | 'Good' | 'Fair' | 'Poor';
+export type Category =
+  | "Textbooks"
+  | "Electronics"
+  | "Clothing"
+  | "Furniture"
+  | "Stationery"
+  | "Sports"
+  | "Kitchen"
+  | "Other";
+export type Condition = "New" | "Like New" | "Good" | "Fair" | "Poor";

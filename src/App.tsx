@@ -5,6 +5,7 @@ import {
   Route,
   Navigate,
   useLocation,
+  useParams,
 } from "react-router-dom";
 import { Header } from "./components/Layout/Header";
 import { PostTuitionPage } from "./pages/PostTuitionPage";
@@ -18,6 +19,7 @@ import { MessagesPage } from "./pages/MessagesPage";
 import { LoginForm } from "./components/Auth/LoginForm";
 import { SignupForm } from "./components/Auth/SignupForm";
 import { useAuth } from "./hooks/useAuth";
+import { EditProfilePage } from "./pages/editprofile";
 
 function AppContent() {
   const location = useLocation();
@@ -42,12 +44,16 @@ function AppContent() {
       {shouldShowHeader && <Header />}
       <main className="flex-1">
         <Routes>
-          <Route path="/post-tuition" element={<PostTuitionPage />} />
           <Route path="/" element={<HomePage />} />
+          <Route path="/post-tuition" element={<PostTuitionPage />} />
           <Route path="/browse" element={<BrowseItemsPage />} />
           <Route path="/post-item" element={<PostItemPage />} />
           <Route path="/item/:id" element={<ItemDetailPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route
+            path="/profile/:id/edit"
+            element={<EditProfilePageWrapper />}
+          />
           <Route path="/profile/:id" element={<ProfilePage />} />
           <Route path="/messages" element={<MessagesPage />} />
           <Route path="/login" element={<LoginForm />} />
@@ -58,6 +64,12 @@ function AppContent() {
       <Footer />
     </div>
   );
+}
+
+function EditProfilePageWrapper() {
+  const { id } = useParams();
+  if (!id) return <div>User ID not found</div>;
+  return <EditProfilePage userId={id} />;
 }
 
 function App() {

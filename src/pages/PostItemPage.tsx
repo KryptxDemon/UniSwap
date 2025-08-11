@@ -6,16 +6,58 @@ import { demoItems } from "../lib/demoData";
 import { Category, Condition } from "../types";
 
 const categories: Category[] = [
-  "Textbooks", "Electronics", "Clothing", "Furniture", "Stationery", "Sports", "Kitchen", "Other",
+  "Textbooks",
+  "Electronics",
+  "Clothing",
+  "Furniture",
+  "Stationery",
+  "Sports",
+  "Kitchen",
+  "Other",
 ];
 const conditions: Condition[] = ["New", "Like New", "Good", "Fair", "Poor"];
 const types = ["free", "swap", "rent"];
-const locations = [
-  "Tarek Huda Hall", "Shah Hall", "Abu Sayeed Hall", "Kazi Nazrul Islam Hall",
-  "Library", "TSC", "CE Building", "ME Building", "EEE Building", "Muktijoddha Hall",
-  "Sufia Kamal Hall", "Taposhi Rabeya Hall", "Shamsun Nahar Hall", "CSE Building",
-  "Architecture Building", "PME Building", "Incubator", "Dr. Qudrat-E-Khuda Hall",
-  "Teachers Dorm", "West Gate",
+const locationTypes = ["On Campus", "Off Campus"];
+
+const onCampusLocations = [
+  "Tarek Huda Hall",
+  "Shah Hall",
+  "Abu Sayeed Hall",
+  "Kazi Nazrul Islam Hall",
+  "Library",
+  "TSC",
+  "CE Building",
+  "ME Building",
+  "EEE Building",
+  "Muktijoddha Hall",
+  "Sufia Kamal Hall",
+  "Taposhi Rabeya Hall",
+  "Shamsun Nahar Hall",
+  "CSE Building",
+  "Architecture Building",
+  "PME Building",
+  "Incubator",
+  "Dr. Qudrat-E-Khuda Hall",
+  "Teachers Dorm",
+  "West Gate",
+];
+
+const offCampusLocations = [
+  "Agrabad",
+  "Pahartali",
+  "Chawkbazar",
+  "Nasirabad",
+  "Khulshi",
+  "GEC",
+  "Oxygen",
+  "Muradpur",
+  "Kotwali",
+  "Anderkilla",
+  "Jubilee Road",
+  "Bayezid",
+  "Halishahar",
+  "EPZ",
+  "Patenga",
 ];
 
 export function PostItemPage() {
@@ -31,6 +73,7 @@ export function PostItemPage() {
     category: "",
     condition: "",
     type: "",
+    locationType: "", // new field for location type
     location: "",
     department: "",
     images: [] as string[],
@@ -67,8 +110,24 @@ export function PostItemPage() {
       return;
     }
 
-    const { title, description, category, condition, type, location } = formData;
-    if (!title || !description || !category || !condition || !type || !location) {
+    const {
+      title,
+      description,
+      category,
+      condition,
+      type,
+      locationType,
+      location,
+    } = formData;
+    if (
+      !title ||
+      !description ||
+      !category ||
+      !condition ||
+      !type ||
+      !locationType ||
+      !location
+    ) {
       setError("Please fill in all required fields");
       return;
     }
@@ -103,7 +162,9 @@ export function PostItemPage() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="bg-white p-8 rounded-xl shadow text-center">
           <h2 className="text-2xl font-bold mb-4">Sign In Required</h2>
-          <p className="text-gray-600 mb-6">You need to be signed in to post an item.</p>
+          <p className="text-gray-600 mb-6">
+            You need to be signed in to post an item.
+          </p>
           <button
             onClick={() => navigate("/login")}
             className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
@@ -115,16 +176,33 @@ export function PostItemPage() {
     );
   }
 
+  // locations depend on locationType selection
+  const locationOptions =
+    formData.locationType === "On Campus"
+      ? onCampusLocations
+      : formData.locationType === "Off Campus"
+      ? offCampusLocations
+      : [];
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Post an Item</h1>
-          <p className="text-gray-600">Share an item with your university community</p>
+          <p className="text-gray-600">
+            Share an item with your university community
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow space-y-6">
-          {error && <div className="bg-red-100 text-red-700 p-4 rounded-lg">{error}</div>}
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white p-8 rounded-xl shadow space-y-6"
+        >
+          {error && (
+            <div className="bg-red-100 text-red-700 p-4 rounded-lg">
+              {error}
+            </div>
+          )}
 
           {/* Title */}
           <div>
@@ -152,28 +230,65 @@ export function PostItemPage() {
 
           {/* Select Rows */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <SelectInput label="Category *" value={formData.category} onChange={(val) => handleInputChange("category", val)} options={categories} />
-            <SelectInput label="Condition *" value={formData.condition} onChange={(val) => handleInputChange("condition", val)} options={conditions} />
-            <SelectInput label="Type *" value={formData.type} onChange={(val) => handleInputChange("type", val)} options={types.map(t => t.charAt(0).toUpperCase() + t.slice(1))} rawOptions={types} />
+            <SelectInput
+              label="Category *"
+              value={formData.category}
+              onChange={(val) => handleInputChange("category", val)}
+              options={categories}
+            />
+            <SelectInput
+              label="Condition *"
+              value={formData.condition}
+              onChange={(val) => handleInputChange("condition", val)}
+              options={conditions}
+            />
+            <SelectInput
+              label="Type *"
+              value={formData.type}
+              onChange={(val) => handleInputChange("type", val)}
+              options={types.map((t) => t.charAt(0).toUpperCase() + t.slice(1))}
+              rawOptions={types}
+            />
           </div>
 
-          {/* Location and Department */}
+          {/* Location Type and Location */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <SelectInput label="Location *" value={formData.location} onChange={(val) => handleInputChange("location", val)} options={locations} />
-            <div>
-              <label className="block font-medium mb-2">Department (optional)</label>
-              <input
-                type="text"
-                value={formData.department}
-                onChange={(e) => handleInputChange("department", e.target.value)}
-                className="w-full border px-4 py-3 rounded-lg"
-              />
-            </div>
+            <SelectInput
+              label="Location Type *"
+              value={formData.locationType}
+              onChange={(val) => {
+                handleInputChange("locationType", val);
+                // Reset location when location type changes
+                handleInputChange("location", "");
+              }}
+              options={locationTypes}
+            />
+            <SelectInput
+              label="Location *"
+              value={formData.location}
+              onChange={(val) => handleInputChange("location", val)}
+              options={locationOptions}
+            />
+          </div>
+
+          {/* Department */}
+          <div>
+            <label className="block font-medium mb-2">
+              Department (optional)
+            </label>
+            <input
+              type="text"
+              value={formData.department}
+              onChange={(e) => handleInputChange("department", e.target.value)}
+              className="w-full border px-4 py-3 rounded-lg"
+            />
           </div>
 
           {/* Image URL Input */}
           <div>
-            <label className="block font-medium mb-2">Images (up to 5 URLs)</label>
+            <label className="block font-medium mb-2">
+              Images (up to 5 URLs)
+            </label>
             <div className="flex gap-2 mb-2">
               <input
                 type="url"
@@ -202,7 +317,10 @@ export function PostItemPage() {
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {formData.images.map((url, index) => (
                   <div key={index} className="relative group">
-                    <img src={url} className="w-full h-32 object-cover rounded-lg border" />
+                    <img
+                      src={url}
+                      className="w-full h-32 object-cover rounded-lg border"
+                    />
                     <button
                       type="button"
                       onClick={() => handleImageRemove(index)}

@@ -14,12 +14,12 @@ export function BrowseItemsPage() {
   const [selectedLocation, setSelectedLocation] = useState("");
 
   const hasActiveFilters =
-    searchTerm ||
-    selectedCategory ||
-    selectedCondition ||
-    selectedType ||
-    locationType ||
-    selectedLocation;
+    !!searchTerm ||
+    !!selectedCategory ||
+    !!selectedCondition ||
+    !!selectedType ||
+    !!locationType ||
+    !!selectedLocation;
 
   useEffect(() => {
     let filtered = demoItems;

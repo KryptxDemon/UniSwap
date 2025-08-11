@@ -4,7 +4,9 @@ import { X, ImagePlus } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { demoItems } from "../lib/demoData";
 
-const locations = [
+const locationTypes = ["On Campus", "Off Campus"];
+
+const onCampusLocations = [
   "Tarek Huda Hall",
   "Shah Hall",
   "Abu Sayeed Hall",
@@ -27,6 +29,24 @@ const locations = [
   "West Gate",
 ];
 
+const offCampusLocations = [
+  "Agrabad",
+  "Pahartali",
+  "Chawkbazar",
+  "Nasirabad",
+  "Khulshi",
+  "GEC",
+  "Oxygen",
+  "Muradpur",
+  "Kotwali",
+  "Anderkilla",
+  "Jubilee Road",
+  "Bayezid",
+  "Halishahar",
+  "EPZ",
+  "Patenga",
+];
+
 export function PostTuitionPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -37,6 +57,7 @@ export function PostTuitionPage() {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
+    locationType: "",
     location: "",
     department: "",
     salary: "",
@@ -80,15 +101,18 @@ export function PostTuitionPage() {
     const {
       title,
       description,
+      locationType,
       location,
       salary,
       days_week,
       class: cls,
       subject,
     } = formData;
+
     if (
       !title ||
       !description ||
+      !locationType ||
       !location ||
       !salary ||
       !days_week ||
@@ -143,6 +167,13 @@ export function PostTuitionPage() {
     );
   }
 
+  const locationOptions =
+    formData.locationType === "On Campus"
+      ? onCampusLocations
+      : formData.locationType === "Off Campus"
+      ? offCampusLocations
+      : [];
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -187,11 +218,23 @@ export function PostTuitionPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <SelectInput
+              label="Location Type *"
+              value={formData.locationType}
+              onChange={(val) => {
+                handleInputChange("locationType", val);
+                handleInputChange("location", "");
+              }}
+              options={locationTypes}
+            />
+            <SelectInput
               label="Location *"
               value={formData.location}
               onChange={(val) => handleInputChange("location", val)}
-              options={locations}
+              options={locationOptions}
             />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block font-medium mb-2">
                 Department (optional)
@@ -205,37 +248,36 @@ export function PostTuitionPage() {
                 className="w-full border px-4 py-3 rounded-lg"
               />
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <InputField
               label="Salary (per month) *"
               value={formData.salary}
               field="salary"
               onChange={handleInputChange}
             />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <InputField
               label="Days per Week *"
               value={formData.days_week}
               field="days_week"
               onChange={handleInputChange}
             />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <InputField
               label="Class *"
               value={formData.class}
               field="class"
               onChange={handleInputChange}
             />
-            <InputField
-              label="Subject *"
-              value={formData.subject}
-              field="subject"
-              onChange={handleInputChange}
-            />
           </div>
+
+          <InputField
+            label="Subject *"
+            value={formData.subject}
+            field="subject"
+            onChange={handleInputChange}
+          />
 
           <div>
             <label className="block font-medium mb-2">
