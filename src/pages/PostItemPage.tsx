@@ -34,6 +34,7 @@ export function PostItemPage() {
     location: "",
     department: "",
     images: [] as string[],
+    post_time: new Date().toISOString(),
   });
 
   const handleInputChange = (field: string, value: string) => {
@@ -82,9 +83,9 @@ export function PostItemPage() {
       const newItem = {
         id: String(demoItems.length + 1),
         ...formData,
+        created_at: formData.post_time,
         user_id: user.id,
         user,
-        created_at: new Date().toISOString(),
         is_exchanged: false,
       };
 

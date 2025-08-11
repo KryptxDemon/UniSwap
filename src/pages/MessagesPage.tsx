@@ -19,8 +19,34 @@ export function MessagesPage() {
     
     // In a real app, this would send the message to the backend
     console.log('Sending message:', newMessage);
+    
+    // Create a new message object
+    const newMsg: Message = {
+      id: String(demoMessages.length + 1),
+      content: newMessage,
+      sender_id: currentUser.id,
+      receiver_id: selectedConversation.other_user?.id || '',
+      conversation_id: selectedConversation.id,
+      item_id: selectedConversation.item_id,
+      created_at: new Date().toISOString(),
+      sender: currentUser,
+      receiver: selectedConversation.other_user,
+      read: false,
+      message_type: 'text',
+    };
+    
+    // Add to demo messages
+    demoMessages.push(newMsg);
+    
+    // Update conversation
+    const convIndex = demoConversations.findIndex(c => c.id === selectedConversation.id);
+    if (convIndex !== -1) {
+      demoConversations[convIndex].last_message = newMessage;
+      demoConversations[convIndex].last_message_at = new Date().toISOString();
+      demoConversations[convIndex].updated_at = new Date().toISOString();
+    }
+    
     setNewMessage('');
-    alert('Message sent!');
   };
 
   const handleEmojiSelect = (emoji: string) => {
@@ -212,9 +238,9 @@ export function MessagesPage() {
                   <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50">
                     {demoMessages
                       .filter(msg => 
-                        (msg.sender_id === currentUser.id && msg.receiver_id === selectedConversation.other_user?.id) ||
-                        (msg.sender_id === selectedConversation.other_user?.id && msg.receiver_id === currentUser.id)
+                        msg.conversation_id === selectedConversation.id
                       )
+                      .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
                       .map((message) => (
                         <div
                           key={message.id}
@@ -250,7 +276,7 @@ export function MessagesPage() {
                             }`}>
                               {formatTime(message.created_at)}
                               {message.sender_id === currentUser.id && (
-                                <span className="ml-1">✓</span>
+                                <span className="ml-1">{message.read ? '✓✓' : '✓'}</span>
                               )}
                             </p>
                           </div>
@@ -298,6 +324,7 @@ export function MessagesPage() {
                         className="flex-1 border border-gray-300 rounded-2xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                         onKeyPress={(e) => {
                           if (e.key === 'Enter') {
+                            e.preventDefault();
                             handleSendMessage();
                           }
                         }}
