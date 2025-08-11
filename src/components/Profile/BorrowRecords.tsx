@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, Clock, CheckCircle, AlertCircle, Package, Timeline } from 'lucide-react';
+import { Calendar, Clock, CheckCircle, AlertCircle, Package, Baseline as Timeline } from 'lucide-react';
 import { BorrowRecord } from '../../types';
 
 interface BorrowRecordsProps {
