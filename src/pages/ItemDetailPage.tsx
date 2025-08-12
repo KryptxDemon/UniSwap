@@ -9,6 +9,9 @@ import {
   Heart,
   Share2,
   Flag,
+  Trash2,
+  MoreVertical,
+  AlertTriangle,
 } from "lucide-react";
 import { demoItems, currentUser } from "../lib/demoData";
 import { useAuth } from "../hooks/useAuth";
@@ -20,6 +23,10 @@ export function ItemDetailPage() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showMessageModal, setShowMessageModal] = useState(false);
   const [message, setMessage] = useState("");
+  const [showOptionsMenu, setShowOptionsMenu] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportReason, setReportReason] = useState("");
   const [wishlist, setWishlist] = useState<{ [key: string]: string }>(() => {
     const stored = localStorage.getItem("wishlist");
     return stored ? JSON.parse(stored) : {};
@@ -123,6 +130,29 @@ export function ItemDetailPage() {
 
   const isOwnItem = user?.id === item.user_id;
 
+  const handleDeleteItem = () => {
+    // In a real app, this would delete from backend
+    const itemIndex = demoItems.findIndex(i => i.id === item.id);
+    if (itemIndex !== -1) {
+      demoItems.splice(itemIndex, 1);
+    }
+    navigate("/browse");
+  };
+
+  const handleReportItem = () => {
+    // In a real app, this would send report to backend
+    console.log("Reporting item:", item.id, "Reason:", reportReason);
+    setShowReportModal(false);
+    setReportReason("");
+    alert("Report submitted successfully!");
+  };
+
+  const handleReportUser = () => {
+    // In a real app, this would send user report to backend
+    console.log("Reporting user:", item.user_id);
+    alert("User report submitted successfully!");
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -224,10 +254,16 @@ export function ItemDetailPage() {
             </div>
 
             {/* Item Info */}
-            <div className="bg-gray-50 rounded-xl p-6 space-y-4">
+            <div className="bg-gray-50 rounded-xl p-6 space-y-4 mb-6">
               <div className="flex items-center space-x-3">
                 <MapPin className="h-5 w-5 text-gray-400" />
-                <span className="text-gray-700">{item.location}</span>
+                <div>
+                  <span className="text-gray-700 font-medium">
+                    {item.location_type === "on-campus" ? "On Campus" : "Off Campus"}
+                  </span>
+                  <span className="text-gray-500 mx-2">•</span>
+                  <span className="text-gray-700">{item.location}</span>
+                </div>
               </div>
 
               <div className="flex items-center space-x-3">
@@ -245,6 +281,40 @@ export function ItemDetailPage() {
                 >
                   {item.user?.username}
                 </Link>
+              </div>
+
+              {item.department && (
+                <div className="flex items-center space-x-3">
+                  <div className="h-5 w-5 bg-purple-100 rounded-full flex items-center justify-center">
+                    <div className="h-2 w-2 bg-purple-600 rounded-full"></div>
+                  </div>
+                  <span className="text-gray-700">Department: {item.department}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Additional Details */}
+            <div className="bg-blue-50 rounded-xl p-6 space-y-3 mb-6">
+              <h3 className="font-semibold text-gray-900 mb-3">Item Details</h3>
+              <div className="flex items-center space-x-3">
+                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                <span className="text-gray-700">
+                  <span className="font-medium">Category:</span> {item.category}
+                </span>
+              </div>
+
+              <div className="flex items-center space-x-3">
+                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                <span className="text-gray-700">
+                  <span className="font-medium">Condition:</span> {item.condition}
+                </span>
+              </div>
+
+              <div className="flex items-center space-x-3">
+                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                <span className="text-gray-700">
+                  <span className="font-medium">Type:</span> {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
+                </span>
               </div>
             </div>
 
@@ -281,9 +351,54 @@ export function ItemDetailPage() {
                   <span>Share</span>
                 </button>
 
-                <button className="px-4 bg-gray-100 text-gray-700 py-3 rounded-xl font-medium hover:bg-gray-200 transition-colors">
-                  <Flag className="h-5 w-5" />
-                </button>
+                <div className="relative">
+                  <button 
+                    onClick={() => setShowOptionsMenu(!showOptionsMenu)}
+                    className="px-4 bg-gray-100 text-gray-700 py-3 rounded-xl font-medium hover:bg-gray-200 transition-colors"
+                  >
+                    <MoreVertical className="h-5 w-5" />
+                  </button>
+                  
+                  {showOptionsMenu && (
+                    <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                      {isOwnItem ? (
+                        <button
+                          onClick={() => {
+                            setShowDeleteModal(true);
+                            setShowOptionsMenu(false);
+                          }}
+                          className="w-full px-4 py-3 text-left text-red-600 hover:bg-red-50 flex items-center space-x-2 rounded-t-lg"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                          <span>Delete Post</span>
+                        </button>
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => {
+                              setShowReportModal(true);
+                              setShowOptionsMenu(false);
+                            }}
+                            className="w-full px-4 py-3 text-left text-red-600 hover:bg-red-50 flex items-center space-x-2 rounded-t-lg"
+                          >
+                            <Flag className="h-4 w-4" />
+                            <span>Report Post</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              handleReportUser();
+                              setShowOptionsMenu(false);
+                            }}
+                            className="w-full px-4 py-3 text-left text-red-600 hover:bg-red-50 flex items-center space-x-2 rounded-b-lg border-t border-gray-100"
+                          >
+                            <AlertTriangle className="h-4 w-4" />
+                            <span>Report User</span>
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -334,6 +449,93 @@ export function ItemDetailPage() {
         </div>
       )}
 
+      {/* Delete Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-md">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                <Trash2 className="h-6 w-6 text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">Delete Post</h3>
+                <p className="text-gray-600">This action cannot be undone</p>
+              </div>
+            </div>
+
+            <p className="text-gray-700 mb-6">
+              Are you sure you want to delete "{item.title}"? This will permanently remove the post and all associated data.
+            </p>
+
+            <div className="flex space-x-4">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteItem}
+                className="flex-1 bg-red-600 text-white py-3 rounded-lg font-medium hover:bg-red-700 transition-colors"
+              >
+                Delete Post
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Report Modal */}
+      {showReportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-md">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                <Flag className="h-6 w-6 text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">Report Post</h3>
+                <p className="text-gray-600">Help us keep the community safe</p>
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Reason for reporting
+              </label>
+              <select
+                value={reportReason}
+                onChange={(e) => setReportReason(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-red-500"
+                required
+              >
+                <option value="">Select a reason</option>
+                <option value="inappropriate">Inappropriate content</option>
+                <option value="spam">Spam or misleading</option>
+                <option value="fake">Fake or fraudulent</option>
+                <option value="harassment">Harassment</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div className="flex space-x-4">
+              <button
+                onClick={() => setShowReportModal(false)}
+                className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleReportItem}
+                disabled={!reportReason}
+                className="flex-1 bg-red-600 text-white py-3 rounded-lg font-medium hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Submit Report
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Wishlist Modal */}
       {showWishlistModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">

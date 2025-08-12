@@ -11,7 +11,9 @@ import { Header } from "./components/Layout/Header";
 import { PostTuitionPage } from "./pages/PostTuitionPage";
 import { Footer } from "./components/Layout/Footer";
 import { HomePage } from "./pages/HomePage";
+import { BrowsePage } from "./pages/BrowsePage";
 import { BrowseItemsPage } from "./pages/BrowseItemsPage";
+import { BrowseTuitionsPage } from "./pages/BrowseTuitionsPage";
 import { PostItemPage } from "./pages/PostItemPage";
 import { ItemDetailPage } from "./pages/ItemDetailPage";
 import { ProfilePage } from "./pages/ProfilePage";
@@ -46,7 +48,9 @@ function AppContent() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/post-tuition" element={<PostTuitionPage />} />
-          <Route path="/browse" element={<BrowseItemsPage />} />
+          <Route path="/browse" element={<BrowsePage />} />
+          <Route path="/browse/items" element={<BrowseItemsPage />} />
+          <Route path="/browse/tuitions" element={<BrowseTuitionsPage />} />
           <Route path="/post-item" element={<PostItemPage />} />
           <Route path="/item/:id" element={<ItemDetailPage />} />
           <Route path="/profile" element={<ProfilePage />} />
