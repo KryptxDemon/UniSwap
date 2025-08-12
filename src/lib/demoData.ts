@@ -9,7 +9,7 @@ import {
   Post,
   BorrowTimeline,
 } from "../types";
-
+import calc from "../assets/calculator.jpg";
 import dp1 from "../assets/demodp.png";
 import dp2 from "../assets/demodp2.jpg";
 import dp3 from "../assets/demodp3.jpg";
@@ -203,9 +203,7 @@ export const demoItems: Item[] = [
     type: "swap",
     location: "EEE Building",
     location_type: "on-campus",
-    images: [
-      "https://images.pexels.com/photos/159844/calculator-scientific-calculator-math-mathematics-159844.jpeg?auto=compress&cs=tinysrgb&w=400",
-    ],
+    images: [calc],
     user_id: "2",
     user: demoUsers[1],
     created_at: "2025-01-21T09:00:00Z",

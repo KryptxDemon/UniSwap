@@ -1,9 +1,13 @@
 import React from "react";
 import studentsImg from "../assets/studentsexchange.jpeg";
-import logo from "../assets/logo.jpg"; // Imported the logo
-import d1 from "../assets/demohomepage.jpg"; // Imported the first demo image
-import d2 from "../assets/demohomepage2.jpg"; // Imported the second demo image
-import d3 from "../assets/demohomepage3.png"; // Imported the third demo image
+import d1 from "../assets/demohomepage.jpg";
+import d2 from "../assets/demohomepage2.jpg";
+import d3 from "../assets/demohomepage3.png";
+import d4 from "../assets/discrete.jpg";
+import d5 from "../assets/notes.jpg";
+import d6 from "../assets/lamp.jpg";
+import d7 from "../assets/bedside.jpeg";
+import logoImg from "../assets/logo.png";
 import { Link } from "react-router-dom";
 import {
   ArrowRight,
@@ -15,18 +19,9 @@ import {
   MessageCircle,
   Star,
   Quote,
-  Mail,
-  Phone,
-  MapPin,
 } from "lucide-react";
 
-// Changes:
-// - Removed the footer entirely.
-// - In navbar, replaced the logo img with large text "UniSwap" in bold, large font (text-4xl), well-placed.
-// - Changed "Rate & Repeat" to "Rate & Exchange" and updated description to mention tuition exchange: "Build trust while exchanging tuition materials and more."
-// - In testimonials, added professional avatar images (using placeholder URLs for demonstration; in real app, use actual images). Made them rounded, with shadow for premium feel.
-
-export function HomePage() {
+export default function HomePage() {
   const features = [
     {
       icon: BookOpen,
@@ -119,19 +114,62 @@ export function HomePage() {
     },
     {
       step: 4,
-      title: "Rate & Exchange",
-      description: "Build trust while exchanging tuition materials and more",
+      title: "Exchange",
+      description: "Build trust while exchanging tuition and more",
       icon: Star,
+    },
+  ];
+
+  const sampleItems = [
+    {
+      id: 1,
+      image: d4,
+      title: "Discrete by Rosen Textbook",
+      subtitle: "Used, like new",
+      tags: ["Textbook", "Exchange"],
+      exchange: "Exchange",
+    },
+    {
+      id: 2,
+      image: d6,
+      title: "Compact Desk Lamp",
+      subtitle: "Perfect for late night study sessions",
+      tags: ["Dorm", "Gadget"],
+      exchange: "Swap",
+    },
+    {
+      id: 3,
+      image: d7,
+      title: "Hall Bedside Organizer",
+      subtitle: "Great condition",
+      tags: ["Furniture", "Pickup"],
+      exchange: "Giveaway",
+    },
+    {
+      id: 4,
+      image: d5,
+      title: "Course Notes Bundle",
+      subtitle: "Complete notes for 3 semesters",
+      tags: ["Notes", "Tuition"],
+      exchange: "Exchange",
     },
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      {/* Premium Navbar - Sticky, with large "UniSwap" text in good font */}
       <nav className="sticky top-0 z-50 flex items-center justify-between px-8 py-4 max-w-7xl mx-auto bg-white/80 backdrop-blur-md shadow-md">
         <Link to="/">
-          <div className="text-4xl font-extrabold text-blue-600 tracking-tight">
-            UniSwap
+          <div className="flex items-center gap-4">
+            <div className="p-1 rounded-full bg-gradient-to-r from-yellow-300 via-pink-300 to-red-400 shadow-lg transform hover:scale-105 transition">
+              <img
+                src={logoImg}
+                alt="UniSwap logo"
+                className="w-12 h-12 rounded-full border-2 border-white shadow-sm"
+              />
+            </div>
+            <div className="text-4xl font-extrabold text-blue-600 tracking-tight">
+              UniSwap
+            </div>
           </div>
         </Link>
         <div className="flex items-center gap-8">
@@ -150,9 +188,7 @@ export function HomePage() {
         </div>
       </nav>
 
-      {/* Hero - Enhanced with larger image, better gradients, and animation */}
       <section className="relative overflow-hidden pt-20 pb-28">
-        {/* Enhanced floating gradient blobs with animation */}
         <div className="absolute top-0 left-0 w-96 h-96 bg-blue-300 rounded-full blur-3xl opacity-30 -translate-x-1/2 -translate-y-1/2 animate-pulse"></div>
         <div
           className="absolute bottom-0 right-0 w-96 h-96 bg-indigo-400 rounded-full blur-3xl opacity-30 translate-x-1/3 translate-y-1/3 animate-pulse"
@@ -194,11 +230,17 @@ export function HomePage() {
               className="rounded-3xl shadow-2xl border border-gray-200 transform hover:scale-105 transition duration-500"
             />
             <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-blue-100 rounded-full opacity-50 blur-xl"></div>
+            <div className="absolute -top-6 left-0 p-2 rounded-full bg-gradient-to-r from-yellow-300 via-pink-300 to-red-400 shadow-lg -translate-x-6 animate-pulse">
+              <img
+                src={logoImg}
+                alt="logo badge"
+                className="w-16 h-16 rounded-full border-2 border-white shadow-md"
+              />
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Wave Divider */}
       <div className="wave-divider">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -213,7 +255,6 @@ export function HomePage() {
         </svg>
       </div>
 
-      {/* Stats - Card-like with hover animations */}
       <section className="py-20 bg-white">
         <div className="max-w-6xl mx-auto px-8 grid grid-cols-2 md:grid-cols-4 gap-8">
           {stats.map((stat, i) => (
@@ -230,7 +271,6 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* How It Works - New section for premium feel */}
       <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-8">
           <div className="text-center mb-16">
@@ -256,36 +296,79 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Features - Enhanced cards with gradients */}
-      <section className="py-20">
+      <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-8">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-900">
-              Everything You Need for University Life
+              Sample Exchanges
             </h2>
             <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-              UniSwap makes it easy to find, share, and exchange items with your
-              fellow students.
+              A curated showcase to inspire your next swap. Hover to pause
+              animations and explore each item.
             </p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {features.map((feature, i) => (
+
+          <div className="relative">
+            <div className="absolute -left-16 top-8 w-48 h-48 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full blur-2xl opacity-40 animate-float"></div>
+            <div
+              className="absolute -right-16 bottom-16 w-56 h-56 bg-gradient-to-br from-pink-100 to-red-100 rounded-full blur-2xl opacity-30 animate-float"
+              style={{ animationDelay: "0.6s" }}
+            ></div>
+
+            <div className="overflow-hidden">
               <div
-                key={i}
-                className="p-8 rounded-2xl bg-gradient-to-br from-white to-gray-50 shadow-lg hover:shadow-2xl hover:scale-105 transition duration-300 group"
+                className="marquee flex items-stretch gap-6 py-6"
+                onMouseEnter={() => {}}
               >
-                <div className="w-14 h-14 rounded-xl bg-blue-100 flex items-center justify-center mb-6 group-hover:bg-blue-200 group-hover:scale-110 transition">
-                  <feature.icon className="h-7 w-7 text-blue-600" />
-                </div>
-                <h3 className="text-xl font-semibold">{feature.title}</h3>
-                <p className="mt-3 text-gray-600">{feature.description}</p>
+                {[...sampleItems, ...sampleItems].map((item, idx) => (
+                  <div
+                    key={idx}
+                    className="min-w-[280px] bg-white rounded-2xl shadow-lg overflow-hidden transform transition hover:scale-105 group"
+                  >
+                    <div className="relative h-44 overflow-hidden">
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        className="w-full h-full object-cover transform transition duration-500 group-hover:scale-110"
+                      />
+                      <div className="absolute top-3 left-3 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                        {item.tags[0]}
+                      </div>
+                      <div className="absolute top-3 right-3 bg-white text-gray-800 px-2 py-1 rounded-full text-sm shadow">
+                        {item.exchange}
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <div className="font-semibold text-lg">{item.title}</div>
+                      <div className="text-sm text-gray-500 mt-1">
+                        {item.subtitle}
+                      </div>
+                      <div className="mt-4 flex items-center justify-between">
+                        <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full text-sm font-semibold">
+                          Request
+                        </button>
+                        <div className="text-sm text-gray-500">
+                          {item.tags.join(" ")}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+
+            <div className="mt-6 flex items-center justify-center gap-4">
+              <Link
+                to="/browse"
+                className="px-6 py-3 bg-blue-50 text-blue-700 rounded-full font-semibold"
+              >
+                See more exchanges
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Testimonials - New section for social proof, with avatars */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-8">
           <div className="text-center mb-16">
@@ -333,7 +416,6 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* CTA - Enhanced with email form */}
       <section className="py-24 bg-gradient-to-r from-blue-600 to-indigo-700 text-center text-white">
         <h2 className="text-5xl font-bold mb-6">Ready to Start Exchanging?</h2>
         <p className="text-xl text-blue-100 max-w-xl mx-auto mb-10">
@@ -354,22 +436,18 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Custom styles for animations and wave */}
       <style>{`
-        @keyframes fade-in {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-          animation: fade-in 1s ease-out;
-        }
-        .wave-divider {
-          margin-top: -1px;
-          transform: rotate(180deg);
-        }
-        .wave-divider svg {
-          display: block;
-        }
+        @keyframes fade-in { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fade-in 1s ease-out; }
+        .wave-divider { margin-top: -1px; transform: rotate(180deg); }
+        .wave-divider svg { display: block; }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        .marquee { display: flex; animation: marquee 28s linear infinite; }
+        .marquee:hover { animation-play-state: paused; }
+        @keyframes float { 0% { transform: translateY(0); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0); } }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        @keyframes pulseScale { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+        .pulse-scale { animation: pulseScale 6s ease-in-out infinite; }
       `}</style>
     </div>
   );

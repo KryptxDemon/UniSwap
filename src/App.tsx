@@ -10,7 +10,7 @@ import {
 import { Header } from "./components/Layout/Header";
 import { PostTuitionPage } from "./pages/PostTuitionPage";
 import { Footer } from "./components/Layout/Footer";
-import { HomePage } from "./pages/HomePage";
+import HomePage from "./pages/HomePage";
 import { BrowsePage } from "./pages/BrowsePage";
 import { BrowseItemsPage } from "./pages/BrowseItemsPage";
 import { BrowseTuitionsPage } from "./pages/BrowseTuitionsPage";
