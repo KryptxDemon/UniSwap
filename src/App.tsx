@@ -8,7 +8,6 @@ import {
   useParams,
 } from "react-router-dom";
 import { Header } from "./components/Layout/Header";
-import { PostTuitionPage } from "./pages/PostTuitionPage";
 import { Footer } from "./components/Layout/Footer";
 import HomePage from "./pages/HomePage";
 import { BrowsePage } from "./pages/BrowsePage";
@@ -20,8 +19,9 @@ import { ProfilePage } from "./pages/ProfilePage";
 import { MessagesPage } from "./pages/MessagesPage";
 import { LoginForm } from "./components/Auth/LoginForm";
 import { SignupForm } from "./components/Auth/SignupForm";
-import { useAuth } from "./hooks/useAuth";
+import { PostTuitionPage } from "./pages/PostTuitionPage";
 import { EditProfilePage } from "./pages/editprofile";
+import { useAuth } from "./hooks/useAuth";
 
 function AppContent() {
   const location = useLocation();
@@ -39,49 +39,48 @@ function AppContent() {
   }
 
   const noHeaderRoutes = ["/"];
-  const shouldShowHeader = !noHeaderRoutes.includes(location.pathname);
+  const noFooterRoutes: string[] = [];
+  const hideHeader = noHeaderRoutes.includes(location.pathname);
+  const hideFooter = noFooterRoutes.includes(location.pathname);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {shouldShowHeader && <Header />}
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      {!hideHeader && <Header />}
       <main className="flex-1">
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/post-tuition" element={<PostTuitionPage />} />
           <Route path="/browse" element={<BrowsePage />} />
           <Route path="/browse/items" element={<BrowseItemsPage />} />
           <Route path="/browse/tuitions" element={<BrowseTuitionsPage />} />
           <Route path="/post-item" element={<PostItemPage />} />
+          <Route path="/post-tuition" element={<PostTuitionPage />} />
           <Route path="/item/:id" element={<ItemDetailPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/profile/:id" element={<ProfilePage />} />
           <Route
             path="/profile/:id/edit"
             element={<EditProfilePageWrapper />}
           />
-          <Route path="/profile/:id" element={<ProfilePage />} />
           <Route path="/messages" element={<MessagesPage />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/signup" element={<SignupForm />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
-      <Footer />
+      {!hideFooter && <Footer />}
     </div>
   );
 }
 
 function EditProfilePageWrapper() {
   const { id } = useParams();
-  if (!id) return <div>User ID not found</div>;
-  return <EditProfilePage userId={id} />;
+  return id ? <EditProfilePage userId={id} /> : <Navigate to="/" replace />;
 }
 
-function App() {
+export default function App() {
   return (
     <Router>
       <AppContent />
     </Router>
   );
 }
-
-export default App;
