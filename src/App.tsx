@@ -15,6 +15,7 @@ import { BrowseItemsPage } from "./pages/BrowseItemsPage";
 import { BrowseTuitionsPage } from "./pages/BrowseTuitionsPage";
 import { PostItemPage } from "./pages/PostItemPage";
 import { ItemDetailPage } from "./pages/ItemDetailPage";
+import { TuitionDetailPage } from "./pages/TuitionDetailPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { MessagesPage } from "./pages/MessagesPage";
 import { LoginForm } from "./components/Auth/LoginForm";
@@ -55,6 +56,7 @@ function AppContent() {
           <Route path="/post-item" element={<PostItemPage />} />
           <Route path="/post-tuition" element={<PostTuitionPage />} />
           <Route path="/item/:id" element={<ItemDetailPage />} />
+          <Route path="/tuition/:id" element={<TuitionDetailPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/profile/:id" element={<ProfilePage />} />
           <Route

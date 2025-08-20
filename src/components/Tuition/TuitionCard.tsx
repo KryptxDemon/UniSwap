@@ -83,7 +83,7 @@ export function TuitionCard({ tuition }: TuitionCardProps) {
         <div className="space-y-2 text-sm text-gray-500">
           <div className="flex items-center space-x-2">
             <MapPin className="h-4 w-4" />
-            <span>{tuition.location}</span>
+            <span>{tuition.location.name}</span>
           </div>
           
           <div className="flex items-center justify-between">

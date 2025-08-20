@@ -34,7 +34,7 @@ export function BrowseItemsPage() {
     }
 
     if (selectedCategory) {
-      filtered = filtered.filter((item) => item.category === selectedCategory);
+      filtered = filtered.filter((item) => item.category.id === selectedCategory);
     }
 
     if (selectedCondition) {
@@ -48,11 +48,11 @@ export function BrowseItemsPage() {
     }
 
     if (locationType) {
-      filtered = filtered.filter((item) => item.location_type === locationType);
+      filtered = filtered.filter((item) => item.location.type === locationType);
     }
 
     if (selectedLocation) {
-      filtered = filtered.filter((item) => item.location === selectedLocation);
+      filtered = filtered.filter((item) => item.location.id === selectedLocation);
     }
 
     setFilteredItems(filtered);

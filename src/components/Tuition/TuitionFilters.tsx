@@ -1,5 +1,6 @@
 import React from "react";
 import { Search, X } from "lucide-react";
+import { mockSubjects, mockClassLevels } from "../../lib/mockData";
 
 interface TuitionFiltersProps {
   searchTerm: string;
@@ -13,31 +14,6 @@ interface TuitionFiltersProps {
   onClearFilters: () => void;
   hasActiveFilters: boolean;
 }
-
-const subjects = [
-  "Mathematics",
-  "Physics",
-  "Chemistry",
-  "Biology",
-  "English",
-  "Bangla",
-  "Higher Mathematics",
-  "ICT",
-  "Economics",
-  "Accounting",
-  "Business Studies",
-];
-
-const classLevels = [
-  "Class 6",
-  "Class 7", 
-  "Class 8",
-  "Class 9",
-  "Class 10",
-  "Class 11",
-  "Class 12",
-  "University Level",
-];
 
 const statuses = ["available", "taken", "completed"];
 
@@ -80,7 +56,7 @@ export function TuitionFilters({
             className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"
           >
             <option value="">All Subjects</option>
-            {subjects.map((subject) => (
+            {mockSubjects.map((subject) => (
               <option key={subject} value={subject}>
                 {subject}
               </option>
@@ -99,7 +75,7 @@ export function TuitionFilters({
             className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"
           >
             <option value="">All Levels</option>
-            {classLevels.map((level) => (
+            {mockClassLevels.map((level) => (
               <option key={level} value={level}>
                 {level}
               </option>

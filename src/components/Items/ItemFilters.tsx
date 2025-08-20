@@ -1,6 +1,7 @@
 import React from "react";
 import { Search, X } from "lucide-react";
-import { Category, Condition } from "../../types";
+import { Category, Location, Condition } from "../../types";
+import { mockCategories, mockLocations } from "../../lib/mockData";
 
 interface ItemFiltersProps {
   searchTerm: string;
@@ -19,59 +20,9 @@ interface ItemFiltersProps {
   hasActiveFilters: boolean;
 }
 
-const categories: Category[] = [
-  "Textbooks",
-  "Electronics",
-  "Clothing",
-  "Furniture",
-  "Stationery",
-  "Sports",
-  "Kitchen",
-  "Other",
-];
 const conditions: Condition[] = ["New", "Like New", "Good", "Fair", "Poor"];
 const types = ["free", "swap", "rent"];
 
-const campusLocations = [
-  "Tarek Huda Hall",
-  "Shah Hall",
-  "Abu Sayeed Hall",
-  "Kazi Nazrul Islam Hall",
-  "Library",
-  "TSC",
-  "CE Building",
-  "ME Building",
-  "EEE Building",
-  "Muktijoddha Hall",
-  "Sufia Kamal Hall",
-  "Taposhi Rabeya Hall",
-  "Shamsun Nahar Hall",
-  "CSE Building",
-  "Architecture Building",
-  "PME Building",
-  "Incubator",
-  "Dr. Qudrat-E-Khuda Hall",
-  "Teachers Dorm",
-  "West Gate",
-];
-
-const chittagongAreas = [
-  "Agrabad",
-  "Pahartali",
-  "Chawkbazar",
-  "Nasirabad",
-  "Khulshi",
-  "GEC",
-  "Oxygen",
-  "Muradpur",
-  "Kotwali",
-  "Anderkilla",
-  "Jubilee Road",
-  "Bayezid",
-  "Halishahar",
-  "EPZ",
-  "Patenga",
-];
 
 export function ItemFilters({
   searchTerm,
@@ -89,8 +40,11 @@ export function ItemFilters({
   onClearFilters,
   hasActiveFilters,
 }: ItemFiltersProps) {
-  const locationOptions =
-    locationType === "on-campus" ? campusLocations : chittagongAreas;
+  const locationOptions = mockLocations.filter(location => {
+    if (locationType === "on-campus") return location.type === "on-campus";
+    if (locationType === "off-campus") return location.type === "off-campus";
+    return true;
+  });
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm mb-8 space-y-6">
@@ -119,9 +73,9 @@ export function ItemFilters({
             className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
           >
             <option value="">All Categories</option>
-            {categories.map((c) => (
-              <option key={c} value={c}>
-                {c}
+            {mockCategories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
               </option>
             ))}
           </select>
@@ -194,8 +148,8 @@ export function ItemFilters({
           >
             <option value="">All Locations</option>
             {locationOptions.map((loc) => (
-              <option key={loc} value={loc}>
-                {loc}
+              <option key={loc.id} value={loc.id}>
+                {loc.name}
               </option>
             ))}
           </select>

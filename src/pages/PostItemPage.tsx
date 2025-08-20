@@ -3,62 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { X, ImagePlus } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { demoItems } from "../lib/demoData";
-import { Category, Condition } from "../types";
+import { Condition } from "../types";
+import { mockCategories, mockLocations } from "../lib/mockData";
 
-const categories: Category[] = [
-  "Textbooks",
-  "Electronics",
-  "Clothing",
-  "Furniture",
-  "Stationery",
-  "Sports",
-  "Kitchen",
-  "Other",
-];
 const conditions: Condition[] = ["New", "Like New", "Good", "Fair", "Poor"];
 const types = ["free", "swap", "rent"];
 const locationTypes = ["On Campus", "Off Campus"];
 
-const onCampusLocations = [
-  "Tarek Huda Hall",
-  "Shah Hall",
-  "Abu Sayeed Hall",
-  "Kazi Nazrul Islam Hall",
-  "Library",
-  "TSC",
-  "CE Building",
-  "ME Building",
-  "EEE Building",
-  "Muktijoddha Hall",
-  "Sufia Kamal Hall",
-  "Taposhi Rabeya Hall",
-  "Shamsun Nahar Hall",
-  "CSE Building",
-  "Architecture Building",
-  "PME Building",
-  "Incubator",
-  "Dr. Qudrat-E-Khuda Hall",
-  "Teachers Dorm",
-  "West Gate",
-];
-
-const offCampusLocations = [
-  "Agrabad",
-  "Pahartali",
-  "Chawkbazar",
-  "Nasirabad",
-  "Khulshi",
-  "GEC",
-  "Oxygen",
-  "Muradpur",
-  "Kotwali",
-  "Anderkilla",
-  "Jubilee Road",
-  "Bayezid",
-  "Halishahar",
-  "EPZ",
-  "Patenga",
-];
 
 export function PostItemPage() {
   const { user } = useAuth();
@@ -70,11 +21,10 @@ export function PostItemPage() {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    category: "",
+    category_id: "",
     condition: "",
     type: "",
-    locationType: "", // new field for location type
-    location: "",
+    location_id: "",
     department: "",
     images: [] as string[],
     post_time: new Date().toISOString(),
@@ -113,20 +63,18 @@ export function PostItemPage() {
     const {
       title,
       description,
-      category,
+      category_id,
       condition,
       type,
-      locationType,
-      location,
+      location_id,
     } = formData;
     if (
       !title ||
       !description ||
-      !category ||
+      !category_id ||
       !condition ||
       !type ||
-      !locationType ||
-      !location
+      !location_id
     ) {
       setError("Please fill in all required fields");
       return;
@@ -141,7 +89,14 @@ export function PostItemPage() {
 
       const newItem = {
         id: String(demoItems.length + 1),
-        ...formData,
+        title,
+        description,
+        category: mockCategories.find(c => c.id === category_id)!,
+        condition,
+        type,
+        location: mockLocations.find(l => l.id === location_id)!,
+        department: formData.department,
+        images: formData.images,
         created_at: formData.post_time,
         user_id: user.id,
         user,
@@ -176,13 +131,13 @@ export function PostItemPage() {
     );
   }
 
-  // locations depend on locationType selection
-  const locationOptions =
-    formData.locationType === "On Campus"
-      ? onCampusLocations
-      : formData.locationType === "Off Campus"
-      ? offCampusLocations
-      : [];
+  const [selectedLocationType, setSelectedLocationType] = useState("");
+  
+  const locationOptions = mockLocations.filter(location => {
+    if (selectedLocationType === "on-campus") return location.type === "on-campus";
+    if (selectedLocationType === "off-campus") return location.type === "off-campus";
+    return false;
+  });
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -232,9 +187,10 @@ export function PostItemPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <SelectInput
               label="Category *"
-              value={formData.category}
-              onChange={(val) => handleInputChange("category", val)}
-              options={categories}
+              value={formData.category_id}
+              onChange={(val) => handleInputChange("category_id", val)}
+              options={mockCategories.map(c => c.name)}
+              rawOptions={mockCategories.map(c => c.id)}
             />
             <SelectInput
               label="Condition *"
@@ -251,24 +207,38 @@ export function PostItemPage() {
             />
           </div>
 
-          {/* Location Type and Location */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <SelectInput
-              label="Location Type *"
-              value={formData.locationType}
-              onChange={(val) => {
-                handleInputChange("locationType", val);
-                // Reset location when location type changes
-                handleInputChange("location", "");
+          {/* Location */}
+          <div>
+            <label className="block font-medium mb-2">Location Type *</label>
+            <select
+              value={selectedLocationType}
+              onChange={(e) => {
+                setSelectedLocationType(e.target.value);
+                handleInputChange("location_id", "");
               }}
-              options={locationTypes}
-            />
-            <SelectInput
-              label="Location *"
-              value={formData.location}
-              onChange={(val) => handleInputChange("location", val)}
-              options={locationOptions}
-            />
+              className="w-full border px-4 py-3 rounded-lg mb-4"
+              required
+            >
+              <option value="">Select Location Type</option>
+              <option value="on-campus">On Campus</option>
+              <option value="off-campus">Off Campus</option>
+            </select>
+            
+            <label className="block font-medium mb-2">Location *</label>
+            <select
+              value={formData.location_id}
+              onChange={(e) => handleInputChange("location_id", e.target.value)}
+              className="w-full border px-4 py-3 rounded-lg"
+              required
+              disabled={!selectedLocationType}
+            >
+              <option value="">Select Location</option>
+              {locationOptions.map((loc) => (
+                <option key={loc.id} value={loc.id}>
+                  {loc.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Department */}

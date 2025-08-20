@@ -1,3 +1,14 @@
+export interface Category {
+  id: string;
+  name: string;
+}
+
+export interface Location {
+  id: string;
+  name: string;
+  type: "on-campus" | "off-campus";
+}
+
 export interface User {
   id: string;
   email: string;
@@ -13,11 +24,10 @@ export interface Item {
   id: string;
   title: string;
   description: string;
-  category: string;
+  category: Category;
   condition: string;
   type: "free" | "swap" | "rent";
-  location: string;
-  location_type?: "on-campus" | "off-campus";
+  location: Location;
   department?: string;
   images: string[];
   user_id: string;
@@ -74,7 +84,7 @@ export interface Tuition {
   days_per_week: number;
   class_level: string;
   subjects: string[];
-  location: string;
+  location: Location;
   status: "available" | "taken" | "completed";
   tutor_id: string;
   tutor?: User;
@@ -121,13 +131,4 @@ export interface Conversation {
   unread_count: number;
 }
 
-export type Category =
-  | "Textbooks"
-  | "Electronics"
-  | "Clothing"
-  | "Furniture"
-  | "Stationery"
-  | "Sports"
-  | "Kitchen"
-  | "Other";
 export type Condition = "New" | "Like New" | "Good" | "Fair" | "Poor";

@@ -77,7 +77,7 @@ export function ItemCard({ item }: ItemCardProps) {
         
         <div className="flex flex-wrap gap-2 mb-4">
           <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded-md text-xs">
-            {item.category}
+            {item.category.name}
           </span>
           <span className={`px-2 py-1 rounded-md text-xs font-medium ${getConditionColor(item.condition)}`}>
             {item.condition}
@@ -87,7 +87,7 @@ export function ItemCard({ item }: ItemCardProps) {
         <div className="space-y-2 text-sm text-gray-500">
           <div className="flex items-center space-x-2">
             <MapPin className="h-4 w-4" />
-            <span>{item.location}</span>
+            <span>{item.location.name}</span>
           </div>
           
           <div className="flex items-center justify-between">
