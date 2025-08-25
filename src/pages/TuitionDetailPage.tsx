@@ -107,7 +107,13 @@ export function TuitionDetailPage() {
   };
 
   const handleSaveWishlist = () => {
-    const updated = { ...wishlist, [tuition.id]: wishlistNote };
+    const updated = { 
+      ...wishlist, 
+      [tuition.id]: {
+        note: wishlistNote,
+        createdAt: new Date().toISOString()
+      }
+    };
     setWishlist(updated);
     localStorage.setItem("tuitionWishlist", JSON.stringify(updated));
     setShowWishlistModal(false);

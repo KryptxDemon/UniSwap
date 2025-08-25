@@ -68,22 +68,20 @@ export function BrowseTuitionsPage() {
           <p className="text-gray-600">Find tutoring opportunities from fellow students</p>
         </div>
 
-        {/* Sticky Filter Bar */}
-        <div className="sticky top-16 z-20 bg-green-50 pb-2">
-          <div className="bg-white rounded-xl shadow-sm px-4 py-3 border border-gray-200">
-            <TuitionFilters
-              searchTerm={searchTerm}
-              onSearchChange={setSearchTerm}
-              selectedSubject={selectedSubject}
-              onSubjectChange={setSelectedSubject}
-              selectedClassLevel={selectedClassLevel}
-              onClassLevelChange={setSelectedClassLevel}
-              selectedStatus={selectedStatus}
-              onStatusChange={setSelectedStatus}
-              onClearFilters={handleClearFilters}
-              hasActiveFilters={hasActiveFilters}
-            />
-          </div>
+        {/* Filter Bar */}
+        <div className="mb-6">
+          <TuitionFilters
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            selectedSubject={selectedSubject}
+            onSubjectChange={setSelectedSubject}
+            selectedClassLevel={selectedClassLevel}
+            onClassLevelChange={setSelectedClassLevel}
+            selectedStatus={selectedStatus}
+            onStatusChange={setSelectedStatus}
+            onClearFilters={handleClearFilters}
+            hasActiveFilters={hasActiveFilters}
+          />
         </div>
 
         <div className="mb-4 flex items-center justify-between px-2">

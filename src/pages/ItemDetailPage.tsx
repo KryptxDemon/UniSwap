@@ -122,7 +122,13 @@ export function ItemDetailPage() {
   };
 
   const handleSaveWishlist = () => {
-    const updated = { ...wishlist, [item.id]: wishlistNote };
+    const updated = { 
+      ...wishlist, 
+      [item.id]: {
+        note: wishlistNote,
+        createdAt: new Date().toISOString()
+      }
+    };
     setWishlist(updated);
     localStorage.setItem("wishlist", JSON.stringify(updated));
     setShowWishlistModal(false);

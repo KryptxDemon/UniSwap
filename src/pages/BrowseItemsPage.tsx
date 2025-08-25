@@ -77,26 +77,24 @@ export function BrowseItemsPage() {
   return (
     <div className="min-h-screen bg-sky-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Sticky Filter Bar */}
-        <div className="sticky top-16 z-20 bg-sky-100 pt-6 pb-2">
-          <div className="bg-white rounded-xl shadow-sm px-4 py-3 border border-gray-200">
-            <ItemFilters
-              searchTerm={searchTerm}
-              onSearchChange={setSearchTerm}
-              selectedCategory={selectedCategory}
-              onCategoryChange={setSelectedCategory}
-              selectedCondition={selectedCondition}
-              onConditionChange={setSelectedCondition}
-              selectedType={selectedType}
-              onTypeChange={setSelectedType}
-              locationType={locationType}
-              onLocationTypeChange={setLocationType}
-              selectedLocation={selectedLocation}
-              onLocationChange={setSelectedLocation}
-              onClearFilters={handleClearFilters}
-              hasActiveFilters={hasActiveFilters}
-            />
-          </div>
+        {/* Filter Bar */}
+        <div className="pt-6 pb-6">
+          <ItemFilters
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+            selectedCondition={selectedCondition}
+            onConditionChange={setSelectedCondition}
+            selectedType={selectedType}
+            onTypeChange={setSelectedType}
+            locationType={locationType}
+            onLocationTypeChange={setLocationType}
+            selectedLocation={selectedLocation}
+            onLocationChange={setSelectedLocation}
+            onClearFilters={handleClearFilters}
+            hasActiveFilters={hasActiveFilters}
+          />
         </div>
 
         <div className="mb-4 flex items-center justify-between px-2">
