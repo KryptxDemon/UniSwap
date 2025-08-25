@@ -61,15 +61,15 @@ export function BrowseTuitionsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-green-50 py-6">
+    <div className="min-h-screen bg-green-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
+        <div className="mb-8 pt-6">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Browse Tuitions</h1>
           <p className="text-gray-600">Find tutoring opportunities from fellow students</p>
         </div>
 
         {/* Sticky Filter Bar */}
-        <div className="sticky top-0 z-20 bg-green-50 pt-6 pb-2">
+        <div className="sticky top-16 z-20 bg-green-50 pb-2">
           <div className="bg-white rounded-xl shadow-sm px-4 py-3 border border-gray-200">
             <TuitionFilters
               searchTerm={searchTerm}
@@ -86,7 +86,7 @@ export function BrowseTuitionsPage() {
           </div>
         </div>
 
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-4 flex items-center justify-between px-2">
           <p className="text-gray-600 text-sm">
             Showing {filteredTuitions.length}{" "}
             {filteredTuitions.length === 1 ? "tuition" : "tuitions"}
@@ -94,13 +94,13 @@ export function BrowseTuitionsPage() {
         </div>
 
         {filteredTuitions.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-6">
             {filteredTuitions.map((tuition) => (
               <TuitionCard key={tuition.id} tuition={tuition} />
             ))}
           </div>
         ) : (
-          <div className="text-center py-12">
+          <div className="text-center py-12 pb-6">
             <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-3" />
             <h3 className="text-base font-medium text-gray-800">
               No tuitions found

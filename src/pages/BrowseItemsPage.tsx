@@ -75,10 +75,10 @@ export function BrowseItemsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-sky-100 py-6">
+    <div className="min-h-screen bg-sky-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Sticky Filter Bar */}
-        <div className="sticky top-0 z-20 bg-sky-100 pt-6 pb-2">
+        <div className="sticky top-16 z-20 bg-sky-100 pt-6 pb-2">
           <div className="bg-white rounded-xl shadow-sm px-4 py-3 border border-gray-200">
             <ItemFilters
               searchTerm={searchTerm}
@@ -99,7 +99,7 @@ export function BrowseItemsPage() {
           </div>
         </div>
 
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-4 flex items-center justify-between px-2">
           <p className="text-gray-600 text-sm">
             Showing {filteredItems.length}{" "}
             {filteredItems.length === 1 ? "item" : "items"}
@@ -107,13 +107,13 @@ export function BrowseItemsPage() {
         </div>
 
         {filteredItems.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-6">
             {filteredItems.map((item) => (
               <ItemCard key={item.id} item={item} />
             ))}
           </div>
         ) : (
-          <div className="text-center py-12">
+          <div className="text-center py-12 pb-6">
             <Package className="h-12 w-12 text-gray-400 mx-auto mb-3" />
             <h3 className="text-base font-medium text-gray-800">
               No items found

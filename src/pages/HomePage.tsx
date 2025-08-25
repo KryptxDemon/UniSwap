@@ -180,6 +180,12 @@ export default function HomePage() {
             Browse
           </Link>
           <Link
+            to="/login"
+            className="text-gray-700 hover:text-blue-600 font-medium transition"
+          >
+            Log in
+          </Link>
+          <Link
             to="/signup"
             className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-full font-semibold shadow-md transition transform hover:scale-105"
           >
@@ -420,6 +426,9 @@ export default function HomePage() {
         <h2 className="text-5xl font-bold mb-6">Ready to Start Exchanging?</h2>
         <p className="text-xl text-blue-100 max-w-xl mx-auto mb-10">
           Join thousands of students already saving money and reducing waste.
+        </p>
+        <p className="text-lg text-blue-100 mb-6">
+          Already have an account? <Link to="/login" className="text-white underline hover:text-blue-200 transition">Log in</Link>
         </p>
         <div className="max-w-md mx-auto flex gap-4">
           <input

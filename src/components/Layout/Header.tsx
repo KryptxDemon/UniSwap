@@ -95,9 +95,10 @@ export function Header() {
               </div>
               <button
                 onClick={handleSignOut}
-                className="text-gray-700 hover:text-red-600 p-2 rounded-md transition-colors"
+                className="text-gray-700 hover:text-red-600 px-3 py-2 rounded-md transition-colors flex items-center space-x-2"
               >
                 <LogOut className="h-5 w-5" />
+                <span className="text-sm font-medium">Log out</span>
               </button>
             </div>
           ) : (
