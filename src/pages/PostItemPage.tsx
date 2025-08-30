@@ -216,7 +216,7 @@ export function PostItemPage() {
                 setSelectedLocationType(e.target.value);
                 handleInputChange("location_id", "");
               }}
-              className="w-full border px-4 py-3 rounded-lg mb-4"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-pine-green mb-4"
               required
             >
               <option value="">Select Location Type</option>
@@ -228,7 +228,7 @@ export function PostItemPage() {
             <select
               value={formData.location_id}
               onChange={(e) => handleInputChange("location_id", e.target.value)}
-              className="w-full border px-4 py-3 rounded-lg"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-pine-green"
               required
               disabled={!selectedLocationType}
             >
@@ -264,19 +264,20 @@ export function PostItemPage() {
                 type="url"
                 ref={imageInputRef}
                 placeholder="Paste image URL here..."
-                className="flex-1 border px-4 py-3 rounded-lg"
+                className="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-pine-green"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
                     handleImageAdd();
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pine-green focus:border-transparent"
                   }
-                }}
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-pine-green"
               />
               <button
                 type="button"
                 onClick={handleImageAdd}
                 disabled={formData.images.length >= 5}
-                className="bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+                className="bg-pine-green text-white px-4 py-3 rounded-lg hover:bg-dark-teal flex items-center gap-2"
               >
                 <ImagePlus className="h-5 w-5" />
                 Add
@@ -316,7 +317,7 @@ export function PostItemPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              className="flex-1 bg-pine-green text-white py-3 rounded-lg hover:bg-dark-teal disabled:opacity-50"
             >
               {loading ? "Posting..." : "Post Item"}
             </button>

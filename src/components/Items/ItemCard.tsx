@@ -10,20 +10,20 @@ interface ItemCardProps {
 export function ItemCard({ item }: ItemCardProps) {
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'free': return 'bg-green-100 text-green-800';
-      case 'swap': return 'bg-blue-100 text-blue-800';
-      case 'rent': return 'bg-orange-100 text-orange-800';
+      case 'free': return 'bg-powder-blue text-pine-green';
+      case 'swap': return 'bg-bright-cyan/20 text-dark-teal';
+      case 'rent': return 'bg-burnt-sienna/20 text-burnt-sienna';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getConditionColor = (condition: string) => {
     switch (condition) {
-      case 'New': return 'bg-emerald-100 text-emerald-800';
-      case 'Like New': return 'bg-blue-100 text-blue-800';
-      case 'Good': return 'bg-yellow-100 text-yellow-800';
-      case 'Fair': return 'bg-orange-100 text-orange-800';
-      case 'Poor': return 'bg-red-100 text-red-800';
+      case 'New': return 'bg-powder-blue text-pine-green';
+      case 'Like New': return 'bg-bright-cyan/20 text-dark-teal';
+      case 'Good': return 'bg-powder-blue/50 text-pine-green';
+      case 'Fair': return 'bg-burnt-sienna/20 text-burnt-sienna';
+      case 'Poor': return 'bg-burnt-sienna/30 text-burnt-sienna';
       default: return 'bg-gray-100 text-gray-800';
     }
   };

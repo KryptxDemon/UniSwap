@@ -112,10 +112,10 @@ export function ProfilePage() {
             <img
               src={profilePic}
               alt="Profile"
-              className="w-28 h-28 rounded-full border-8 border-blue-600 object-cover shadow-md"
+              className="w-28 h-28 rounded-full border-8 border-pine-green object-cover shadow-md"
             />
             {isOwnProfile && (
-              <label className="absolute bottom-1 right-1 bg-blue-600 text-white rounded-full p-3 cursor-pointer hover:bg-blue-700 transition shadow-lg">
+              <label className="absolute bottom-1 right-1 bg-pine-green text-white rounded-full p-3 cursor-pointer hover:bg-dark-teal transition shadow-lg">
                 <Edit3 className="h-5 w-5" />
                 <input
                   type="file"
@@ -143,13 +143,13 @@ export function ProfilePage() {
                 {isOwnProfile ? (
                   <button
                     onClick={() => navigate(`/profile/${profileUser.id}/edit`)}
-                    className="bg-blue-600 text-white px-8 py-3 rounded-xl hover:bg-blue-700 transition flex items-center space-x-3 shadow-md"
+                    className="bg-pine-green text-white px-8 py-3 rounded-xl hover:bg-dark-teal transition flex items-center space-x-3 shadow-md"
                   >
                     <Edit3 className="h-5 w-5" />
                     <span className="text-lg font-semibold">Edit Profile</span>
                   </button>
                 ) : (
-                  <button className="bg-blue-600 text-white px-8 py-3 rounded-xl hover:bg-blue-700 transition flex items-center space-x-3 shadow-md">
+                  <button className="bg-pine-green text-white px-8 py-3 rounded-xl hover:bg-dark-teal transition flex items-center space-x-3 shadow-md">
                     <MessageCircle className="h-5 w-5" />
                     <span className="text-lg font-semibold">Send Message</span>
                   </button>
@@ -170,7 +170,7 @@ export function ProfilePage() {
                   key={i}
                   className="bg-gray-100 rounded-2xl p-6 shadow-inner"
                 >
-                  <div className="text-3xl font-extrabold text-blue-600 mb-1">
+                  <div className="text-3xl font-extrabold text-pine-green mb-1">
                     {stat.value}
                   </div>
                   <div className="text-sm font-medium text-gray-600 tracking-wide">
@@ -196,7 +196,7 @@ export function ProfilePage() {
                 onClick={() => setActiveTab("active")}
                 className={`px-6 py-3 rounded-xl text-lg font-semibold transition-colors ${
                   activeTab === "active"
-                    ? "bg-white text-blue-600 shadow-lg"
+                    ? "bg-white text-pine-green shadow-lg"
                     : "text-gray-600 hover:text-gray-900"
                 }`}
               >
@@ -206,7 +206,7 @@ export function ProfilePage() {
                 onClick={() => setActiveTab("exchanged")}
                 className={`px-6 py-3 rounded-xl text-lg font-semibold transition-colors ${
                   activeTab === "exchanged"
-                    ? "bg-white text-blue-600 shadow-lg"
+                    ? "bg-white text-pine-green shadow-lg"
                     : "text-gray-600 hover:text-gray-900"
                 }`}
               >
@@ -217,7 +217,7 @@ export function ProfilePage() {
                   onClick={() => setActiveTab("wishlist")}
                   className={`px-6 py-3 rounded-xl text-lg font-semibold transition-colors ${
                     activeTab === "wishlist"
-                      ? "bg-white text-blue-600 shadow-lg"
+                      ? "bg-white text-pine-green shadow-lg"
                       : "text-gray-600 hover:text-gray-900"
                   }`}
                 >
@@ -240,7 +240,7 @@ export function ProfilePage() {
                   </p>
                   <Link
                     to="/browse"
-                    className="bg-blue-600 text-white px-8 py-4 rounded-xl hover:bg-blue-700 transition inline-flex items-center space-x-3 shadow-md"
+                    className="bg-pine-green text-white px-8 py-4 rounded-xl hover:bg-dark-teal transition inline-flex items-center space-x-3 shadow-md"
                   >
                     <Package className="h-6 w-6" />
                     <span className="text-lg font-semibold">Browse Items</span>
@@ -276,7 +276,7 @@ export function ProfilePage() {
                                 <div>
                                   <Link
                                     to={`/item/${item.id}`}
-                                    className="text-lg font-semibold text-gray-900 hover:text-blue-600 transition-colors"
+                                    className="text-lg font-semibold text-gray-900 hover:text-pine-green transition-colors"
                                   >
                                     {item.title}
                                   </Link>
@@ -288,7 +288,7 @@ export function ProfilePage() {
                                   </div>
                                   {wishlist[item.id]?.note && (
                                     <div className="mt-3 bg-blue-50 border-l-4 border-blue-400 p-3 rounded">
-                                      <p className="text-blue-900 text-sm">
+                                      <p className="text-pine-green text-sm">
                                         <span className="font-medium">Note:</span> {wishlist[item.id].note}
                                       </p>
                                     </div>
@@ -296,7 +296,7 @@ export function ProfilePage() {
                                 </div>
                                 <button
                                   onClick={() => removeFromWishlist(item.id, 'item')}
-                                  className="text-red-600 hover:text-red-700 p-2 rounded-full hover:bg-red-50 transition-colors"
+                                  className="text-burnt-sienna hover:text-burnt-sienna/80 p-2 rounded-full hover:bg-burnt-sienna/10 transition-colors"
                                 >
                                   <Trash2 className="h-5 w-5" />
                                 </button>
@@ -324,8 +324,8 @@ export function ProfilePage() {
                                 <span>Saved on {formatWishlistDate(tuitionWishlist[tuitionId]?.createdAt || new Date().toISOString())}</span>
                               </div>
                               {tuitionWishlist[tuitionId]?.note && (
-                                <div className="mt-3 bg-green-50 border-l-4 border-green-400 p-3 rounded">
-                                  <p className="text-green-900 text-sm">
+                                <div className="mt-3 bg-powder-blue border-l-4 border-bright-cyan p-3 rounded">
+                                  <p className="text-pine-green text-sm">
                                     <span className="font-medium">Note:</span> {tuitionWishlist[tuitionId].note}
                                   </p>
                                 </div>
@@ -333,7 +333,7 @@ export function ProfilePage() {
                             </div>
                             <button
                               onClick={() => removeFromWishlist(tuitionId, 'tuition')}
-                              className="text-red-600 hover:text-red-700 p-2 rounded-full hover:bg-red-50 transition-colors"
+                              className="text-burnt-sienna hover:text-burnt-sienna/80 p-2 rounded-full hover:bg-burnt-sienna/10 transition-colors"
                             >
                               <Trash2 className="h-5 w-5" />
                             </button>

@@ -83,6 +83,7 @@ export function MessagesPage() {
             <div className={`w-full md:w-1/3 border-r border-gray-200 flex flex-col ${selectedConversation ? 'hidden md:flex' : ''}`}>
               {/* Header */}
               <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+              <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-powder-blue to-bright-cyan/20">
                 <h1 className="text-2xl font-bold text-gray-900 mb-4">Messages</h1>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -91,7 +92,7 @@ export function MessagesPage() {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder="Search conversations..."
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pine-green focus:border-transparent"
                   />
                 </div>
               </div>
@@ -105,7 +106,7 @@ export function MessagesPage() {
                         key={conversation.id}
                         onClick={() => setSelectedConversation(conversation)}
                         className={`w-full p-4 text-left hover:bg-gray-50 transition-colors ${
-                          selectedConversation?.id === conversation.id ? 'bg-blue-50 border-r-2 border-blue-500' : ''
+                          selectedConversation?.id === conversation.id ? 'bg-powder-blue/30 border-r-2 border-pine-green' : ''
                         }`}
                       >
                         <div className="flex items-start space-x-3">
@@ -117,7 +118,7 @@ export function MessagesPage() {
                                 className="w-full h-full object-cover rounded-full"
                               />
                             ) : (
-                              <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                              <div className="w-full h-full bg-gradient-to-br from-pine-green to-bright-cyan rounded-full flex items-center justify-center">
                                 <span className="text-white font-semibold">
                                   {conversation.other_user?.username.charAt(0).toUpperCase()}
                                 </span>
@@ -136,7 +137,7 @@ export function MessagesPage() {
                               </span>
                             </div>
                             {conversation.item && (
-                              <p className="text-sm text-blue-600 mb-1 truncate">
+                              <p className="text-sm text-pine-green mb-1 truncate">
                                 Re: {conversation.item.title}
                               </p>
                             )}
@@ -145,7 +146,7 @@ export function MessagesPage() {
                                 {conversation.last_message || 'No messages yet'}
                               </p>
                               {/* Unread indicator */}
-                              <div className="w-2 h-2 bg-blue-500 rounded-full ml-2"></div>
+                              <div className="w-2 h-2 bg-pine-green rounded-full ml-2"></div>
                             </div>
                           </div>
                         </div>
@@ -186,7 +187,7 @@ export function MessagesPage() {
                             className="w-full h-full object-cover rounded-full"
                           />
                         ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                          <div className="w-full h-full bg-gradient-to-br from-pine-green to-bright-cyan rounded-full flex items-center justify-center">
                             <span className="text-white font-semibold">
                               {selectedConversation.other_user?.username.charAt(0).toUpperCase()}
                             </span>
@@ -305,14 +306,14 @@ export function MessagesPage() {
                       <div className="flex space-x-1">
                         <button
                           onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                          className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                          className="p-2 text-gray-600 hover:text-pine-green hover:bg-powder-blue rounded-full transition-colors"
                         >
                           <Smile className="h-5 w-5" />
                         </button>
-                        <button className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors">
+                        <button className="p-2 text-gray-600 hover:text-pine-green hover:bg-powder-blue rounded-full transition-colors">
                           <Paperclip className="h-5 w-5" />
                         </button>
-                        <button className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors">
+                        <button className="p-2 text-gray-600 hover:text-pine-green hover:bg-powder-blue rounded-full transition-colors">
                           <Image className="h-5 w-5" />
                         </button>
                       </div>
@@ -321,7 +322,7 @@ export function MessagesPage() {
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
                         placeholder="Type your message..."
-                        className="flex-1 border border-gray-300 rounded-2xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                        className="flex-1 border border-gray-300 rounded-2xl px-4 py-3 focus:ring-2 focus:ring-pine-green focus:border-transparent resize-none"
                         onKeyPress={(e) => {
                           if (e.key === 'Enter') {
                             e.preventDefault();
@@ -332,7 +333,7 @@ export function MessagesPage() {
                       <button
                         onClick={handleSendMessage}
                         disabled={!newMessage.trim()}
-                        className="bg-blue-600 text-white p-3 rounded-full hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+                        className="bg-pine-green text-white p-3 rounded-full hover:bg-dark-teal disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
                       >
                         <Send className="h-5 w-5" />
                       </button>
@@ -340,10 +341,10 @@ export function MessagesPage() {
                   </div>
                 </>
               ) : (
-                <div className="flex-1 flex items-center justify-center p-8 bg-gradient-to-br from-gray-50 to-blue-50">
+                <div className="flex-1 flex items-center justify-center p-8 bg-gradient-to-br from-gray-50 to-powder-blue/20">
                   <div className="text-center">
-                    <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                      <MessageCircle className="h-12 w-12 text-blue-600" />
+                    <div className="w-24 h-24 bg-powder-blue rounded-full flex items-center justify-center mx-auto mb-6">
+                      <MessageCircle className="h-12 w-12 text-pine-green" />
                     </div>
                     <h3 className="text-xl font-semibold text-gray-900 mb-2">Select a conversation</h3>
                     <p className="text-gray-600 max-w-sm">Choose a conversation from the list to start messaging with your fellow students</p>

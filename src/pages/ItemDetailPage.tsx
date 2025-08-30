@@ -329,7 +329,7 @@ export function ItemDetailPage() {
               {!isOwnItem && (
                 <button
                   onClick={() => setShowMessageModal(true)}
-                  className="w-full bg-blue-600 text-white py-4 rounded-xl font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
+                  className="w-full bg-pine-green text-white py-4 rounded-xl font-semibold hover:bg-dark-teal transition-colors flex items-center justify-center space-x-2"
                 >
                   <MessageCircle className="h-5 w-5" />
                   <span>Contact {item.user?.username}</span>

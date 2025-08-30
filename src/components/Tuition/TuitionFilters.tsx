@@ -39,7 +39,7 @@ export function TuitionFilters({
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search tuitions by title, description, or tutor..."
-          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bright-cyan focus:border-transparent"
         />
       </div>
 
@@ -53,7 +53,7 @@ export function TuitionFilters({
           <select
             value={selectedSubject}
             onChange={(e) => onSubjectChange(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-bright-cyan"
           >
             <option value="">All Subjects</option>
             {mockSubjects.map((subject) => (
@@ -72,7 +72,7 @@ export function TuitionFilters({
           <select
             value={selectedClassLevel}
             onChange={(e) => onClassLevelChange(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-bright-cyan"
           >
             <option value="">All Levels</option>
             {mockClassLevels.map((level) => (
@@ -91,7 +91,7 @@ export function TuitionFilters({
           <select
             value={selectedStatus}
             onChange={(e) => onStatusChange(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-bright-cyan"
           >
             <option value="">All Status</option>
             {statuses.map((status) => (

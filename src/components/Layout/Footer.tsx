@@ -3,12 +3,12 @@ import { BookOpen, Heart } from 'lucide-react';
 
 export function Footer() {
   return (
-    <footer className="bg-gray-900 text-white mt-20">
+    <footer className="bg-dark-teal text-white mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid md:grid-cols-4 gap-8">
           <div className="col-span-2">
             <div className="flex items-center space-x-2 mb-4">
-              <div className="bg-blue-600 p-2 rounded-lg">
+              <div className="bg-pine-green p-2 rounded-lg">
                 <BookOpen className="h-6 w-6 text-white" />
               </div>
               <span className="text-2xl font-bold">UniSwap</span>
@@ -42,7 +42,7 @@ export function Footer() {
           <p className="text-gray-400">© 2025 UniSwap. All rights reserved.</p>
           <div className="flex items-center space-x-1 text-gray-400">
             <span>Made with</span>
-            <Heart className="h-4 w-4 text-red-500 fill-current" />
+            <Heart className="h-4 w-4 text-burnt-sienna fill-current" />
             <span>for students</span>
           </div>
         </div>

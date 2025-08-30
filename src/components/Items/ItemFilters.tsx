@@ -56,7 +56,7 @@ export function ItemFilters({
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search items by title, description, or username..."
-          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pine-green focus:border-transparent"
         />
       </div>
 
@@ -70,7 +70,7 @@ export function ItemFilters({
           <select
             value={selectedCategory}
             onChange={(e) => onCategoryChange(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-pine-green"
           >
             <option value="">All Categories</option>
             {mockCategories.map((c) => (
@@ -89,7 +89,7 @@ export function ItemFilters({
           <select
             value={selectedCondition}
             onChange={(e) => onConditionChange(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-pine-green"
           >
             <option value="">Any Condition</option>
             {conditions.map((cond) => (
@@ -108,7 +108,7 @@ export function ItemFilters({
           <select
             value={selectedType}
             onChange={(e) => onTypeChange(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-pine-green"
           >
             <option value="">All Types</option>
             {types.map((t) => (
@@ -127,7 +127,7 @@ export function ItemFilters({
           <select
             value={locationType}
             onChange={(e) => onLocationTypeChange(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-pine-green"
           >
             <option value="">Select Type</option>
             <option value="on-campus">On Campus</option>
@@ -143,7 +143,7 @@ export function ItemFilters({
           <select
             value={selectedLocation}
             onChange={(e) => onLocationChange(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-pine-green"
             disabled={!locationType}
           >
             <option value="">All Locations</option>

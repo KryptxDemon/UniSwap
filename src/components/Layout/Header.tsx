@@ -45,38 +45,38 @@ export function Header() {
             <div className="flex items-center space-x-4">
               <Link
                 to="/browse"
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                className="text-gray-700 hover:text-pine-green px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 Browse
               </Link>
               <Link
                 to="/post-item"
-                className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+                className="bg-pine-green text-white hover:bg-dark-teal px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
               >
                 <PlusCircle className="h-4 w-4" />
                 <span>Post Item</span>
               </Link>
               <Link
                 to="/post-tuition"
-                className="bg-green-600 text-white hover:bg-green-700 px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+                className="bg-bright-cyan text-white hover:bg-pine-green px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
               >
                 <PlusCircle className="h-4 w-4" />
                 <span>Post Tuition</span>
               </Link>
               <Link
                 to="/messages"
-                className="text-gray-700 hover:text-blue-600 p-2 rounded-md transition-colors relative"
+                className="text-gray-700 hover:text-pine-green p-2 rounded-md transition-colors relative"
               >
                 <MessageCircle className="h-5 w-5" />
                 {/* Notification badge */}
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-burnt-sienna text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                   2
                 </span>
               </Link>
               <div className="relative">
                 <Link
                   to="/profile"
-                  className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 p-2 rounded-md transition-colors"
+                  className="flex items-center space-x-2 text-gray-700 hover:text-pine-green p-2 rounded-md transition-colors"
                 >
                   {user.profile_picture ? (
                     <img
@@ -85,7 +85,7 @@ export function Header() {
                       className="w-8 h-8 rounded-full object-cover"
                     />
                   ) : (
-                    <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                    <div className="w-8 h-8 bg-gradient-to-br from-pine-green to-bright-cyan rounded-full flex items-center justify-center">
                       <span className="text-white text-sm font-semibold">
                         {user.username.charAt(0).toUpperCase()}
                       </span>
@@ -95,7 +95,7 @@ export function Header() {
               </div>
               <button
                 onClick={handleSignOut}
-                className="text-gray-700 hover:text-red-600 px-3 py-2 rounded-md transition-colors flex items-center space-x-2"
+                className="text-gray-700 hover:text-burnt-sienna px-3 py-2 rounded-md transition-colors flex items-center space-x-2"
               >
                 <LogOut className="h-5 w-5" />
                 <span className="text-sm font-medium">Log out</span>
@@ -105,19 +105,19 @@ export function Header() {
             <div className="flex items-center space-x-4">
               <Link
                 to="/browse"
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                className="text-gray-700 hover:text-pine-green px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 Browse
               </Link>
               <Link
                 to="/login"
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                className="text-gray-700 hover:text-pine-green px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 Login
               </Link>
               <Link
                 to="/signup"
-                className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                className="bg-pine-green text-white hover:bg-dark-teal px-4 py-2 rounded-lg text-sm font-medium transition-colors"
               >
                 Sign Up
               </Link>

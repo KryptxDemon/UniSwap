@@ -47,9 +47,9 @@ export function EditProfilePage({ userId }: EditProfilePageProps) {
               <img
                 src={profilePic}
                 alt="Profile"
-                className="w-32 h-32 rounded-full object-cover border-8 border-blue-600 shadow-md"
+                className="w-32 h-32 rounded-full object-cover border-8 border-pine-green shadow-md"
               />
-              <label className="absolute bottom-2 right-2 bg-blue-600 text-white rounded-full p-3 cursor-pointer hover:bg-blue-700 transition shadow-lg">
+              <label className="absolute bottom-2 right-2 bg-pine-green text-white rounded-full p-3 cursor-pointer hover:bg-dark-teal transition shadow-lg">
                 <Edit3 className="h-5 w-5" />
                 <input
                   type="file"
@@ -74,7 +74,7 @@ export function EditProfilePage({ userId }: EditProfilePageProps) {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pine-green transition"
               maxLength={30}
             />
           </div>
@@ -92,7 +92,7 @@ export function EditProfilePage({ userId }: EditProfilePageProps) {
               onChange={(e) => setBio(e.target.value)}
               rows={4}
               placeholder="Tell us something about yourself..."
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition resize-none"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pine-green transition resize-none"
               maxLength={250}
             />
           </div>
@@ -108,7 +108,7 @@ export function EditProfilePage({ userId }: EditProfilePageProps) {
             </button>
             <button
               type="submit"
-              className="px-6 py-3 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition font-semibold"
+              className="px-6 py-3 rounded-xl bg-pine-green text-white hover:bg-dark-teal transition font-semibold"
             >
               Save Changes
             </button>

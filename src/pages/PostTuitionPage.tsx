@@ -190,7 +190,7 @@ export function PostTuitionPage() {
                 setSelectedLocationType(e.target.value);
                 handleInputChange("location_id", "");
               }}
-              className="w-full border px-4 py-3 rounded-lg mb-4"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-bright-cyan mb-4"
               required
             >
               <option value="">Select Location Type</option>
@@ -202,7 +202,7 @@ export function PostTuitionPage() {
             <select
               value={formData.location_id}
               onChange={(e) => handleInputChange("location_id", e.target.value)}
-              className="w-full border px-4 py-3 rounded-lg"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-bright-cyan"
               required
               disabled={!selectedLocationType}
             >
@@ -226,7 +226,7 @@ export function PostTuitionPage() {
                 onChange={(e) =>
                   handleInputChange("department", e.target.value)
                 }
-                className="w-full border px-4 py-3 rounded-lg"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-bright-cyan"
               />
             </div>
 
@@ -269,7 +269,7 @@ export function PostTuitionPage() {
                 type="url"
                 ref={imageInputRef}
                 placeholder="Paste image URL here..."
-                className="flex-1 border px-4 py-3 rounded-lg"
+                className="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-bright-cyan"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
@@ -281,7 +281,7 @@ export function PostTuitionPage() {
                 type="button"
                 onClick={handleImageAdd}
                 disabled={formData.images.length >= 5}
-                className="bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+                className="bg-bright-cyan text-white px-4 py-3 rounded-lg hover:bg-pine-green flex items-center gap-2"
               >
                 <ImagePlus className="h-5 w-5" />
                 Add
@@ -320,7 +320,7 @@ export function PostTuitionPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              className="flex-1 bg-bright-cyan text-white py-3 rounded-lg hover:bg-pine-green disabled:opacity-50"
             >
               {loading ? "Posting..." : "Post Tuition"}
             </button>

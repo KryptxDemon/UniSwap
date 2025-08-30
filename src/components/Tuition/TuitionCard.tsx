@@ -10,8 +10,8 @@ interface TuitionCardProps {
 export function TuitionCard({ tuition }: TuitionCardProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'available': return 'bg-green-100 text-green-800';
-      case 'taken': return 'bg-orange-100 text-orange-800';
+      case 'available': return 'bg-powder-blue text-pine-green';
+      case 'taken': return 'bg-burnt-sienna/20 text-burnt-sienna';
       case 'completed': return 'bg-gray-100 text-gray-800';
       default: return 'bg-gray-100 text-gray-800';
     }
@@ -69,7 +69,7 @@ export function TuitionCard({ tuition }: TuitionCardProps) {
         
         <div className="flex flex-wrap gap-1 mb-4">
           {tuition.subjects.slice(0, 3).map((subject, index) => (
-            <span key={index} className="px-2 py-1 bg-blue-100 text-blue-700 rounded-md text-xs">
+            <span key={index} className="px-2 py-1 bg-bright-cyan/20 text-pine-green rounded-md text-xs">
               {subject}
             </span>
           ))}

@@ -75,7 +75,7 @@ export function BrowseItemsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-sky-100">
+    <div className="min-h-screen bg-powder-blue/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Filter Bar */}
         <div className="pt-6 pb-6">

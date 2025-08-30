@@ -195,17 +195,16 @@ export default function HomePage() {
       </nav>
 
       <section className="relative overflow-hidden pt-20 pb-28">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-blue-300 rounded-full blur-3xl opacity-30 -translate-x-1/2 -translate-y-1/2 animate-pulse"></div>
+        <div className="absolute top-0 left-0 w-96 h-96 bg-powder-blue rounded-full blur-3xl opacity-30 -translate-x-1/2 -translate-y-1/2"></div>
         <div
-          className="absolute bottom-0 right-0 w-96 h-96 bg-indigo-400 rounded-full blur-3xl opacity-30 translate-x-1/3 translate-y-1/3 animate-pulse"
-          style={{ animationDelay: "1s" }}
+          className="absolute bottom-0 right-0 w-96 h-96 bg-bright-cyan rounded-full blur-3xl opacity-30 translate-x-1/3 translate-y-1/3"
         ></div>
 
         <div className="max-w-7xl mx-auto px-8 grid md:grid-cols-2 items-center gap-12 relative z-10">
           <div className="space-y-8">
             <h1 className="text-5xl md:text-7xl font-extrabold leading-tight text-gray-900 animate-fade-in">
               Exchange, Share,{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-pine-green to-bright-cyan">
                 Save
               </span>
             </h1>
@@ -217,13 +216,13 @@ export default function HomePage() {
             <div className="flex gap-6">
               <Link
                 to="/browse"
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 rounded-full font-semibold text-lg shadow-xl transition transform hover:scale-105"
+                className="bg-gradient-to-r from-pine-green to-bright-cyan hover:from-dark-teal hover:to-pine-green text-white px-8 py-4 rounded-full font-semibold text-lg shadow-xl transition transform hover:scale-105"
               >
                 Start Browsing
               </Link>
               <Link
                 to="/signup"
-                className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 px-8 py-4 rounded-full font-semibold text-lg transition transform hover:scale-105"
+                className="border-2 border-pine-green text-pine-green hover:bg-powder-blue px-8 py-4 rounded-full font-semibold text-lg transition transform hover:scale-105"
               >
                 Join Now
               </Link>
@@ -236,7 +235,7 @@ export default function HomePage() {
               className="rounded-3xl shadow-2xl border border-gray-200 transform hover:scale-105 transition duration-500"
             />
             <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-blue-100 rounded-full opacity-50 blur-xl"></div>
-            <div className="absolute -top-6 left-0 p-2 rounded-full bg-gradient-to-r from-yellow-300 via-pink-300 to-red-400 shadow-lg -translate-x-6 animate-pulse">
+            <div className="absolute -top-6 left-0 p-2 rounded-full bg-gradient-to-r from-bright-cyan to-powder-blue shadow-lg -translate-x-6">
               <img
                 src={logoImg}
                 alt="logo badge"
@@ -266,9 +265,9 @@ export default function HomePage() {
           {stats.map((stat, i) => (
             <div
               key={i}
-              className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-lg p-8 text-center hover:shadow-2xl hover:scale-105 transition duration-300"
+              className="bg-gradient-to-br from-white to-powder-blue/20 rounded-2xl shadow-lg p-8 text-center hover:shadow-2xl hover:scale-105 transition duration-300"
             >
-              <div className="text-4xl font-bold text-blue-600">
+              <div className="text-4xl font-bold text-pine-green">
                 {stat.number}
               </div>
               <div className="text-gray-600 font-medium">{stat.label}</div>
@@ -288,10 +287,10 @@ export default function HomePage() {
           <div className="grid md:grid-cols-4 gap-8">
             {howItWorks.map((step, i) => (
               <div key={i} className="text-center group">
-                <div className="w-20 h-20 mx-auto rounded-full bg-blue-100 flex items-center justify-center mb-6 group-hover:bg-blue-200 transition">
-                  <step.icon className="h-10 w-10 text-blue-600" />
+                <div className="w-20 h-20 mx-auto rounded-full bg-powder-blue flex items-center justify-center mb-6 group-hover:bg-bright-cyan/30 transition">
+                  <step.icon className="h-10 w-10 text-pine-green" />
                 </div>
-                <div className="text-2xl font-bold text-blue-600 mb-2">
+                <div className="text-2xl font-bold text-pine-green mb-2">
                   {step.step}
                 </div>
                 <h3 className="text-xl font-semibold mb-2">{step.title}</h3>
@@ -337,7 +336,7 @@ export default function HomePage() {
                         alt={item.title}
                         className="w-full h-full object-cover transform transition duration-500 group-hover:scale-110"
                       />
-                      <div className="absolute top-3 left-3 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                      <div className="absolute top-3 left-3 bg-pine-green text-white px-3 py-1 rounded-full text-sm font-semibold">
                         {item.tags[0]}
                       </div>
                       <div className="absolute top-3 right-3 bg-white text-gray-800 px-2 py-1 rounded-full text-sm shadow">
@@ -350,7 +349,7 @@ export default function HomePage() {
                         {item.subtitle}
                       </div>
                       <div className="mt-4 flex items-center justify-between">
-                        <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full text-sm font-semibold">
+                        <button className="px-4 py-2 bg-gradient-to-r from-pine-green to-bright-cyan text-white rounded-full text-sm font-semibold">
                           Request
                         </button>
                         <div className="text-sm text-gray-500">
@@ -366,7 +365,7 @@ export default function HomePage() {
             <div className="mt-6 flex items-center justify-center gap-4">
               <Link
                 to="/browse"
-                className="px-6 py-3 bg-blue-50 text-blue-700 rounded-full font-semibold"
+                className="px-6 py-3 bg-powder-blue text-pine-green rounded-full font-semibold"
               >
                 See more exchanges
               </Link>
@@ -406,7 +405,7 @@ export default function HomePage() {
                   {[...Array(testimonial.rating)].map((_, j) => (
                     <Star
                       key={j}
-                      className="h-5 w-5 text-yellow-400 fill-current"
+                      className="h-5 w-5 text-burnt-sienna fill-current"
                     />
                   ))}
                 </div>
@@ -422,13 +421,13 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-24 bg-gradient-to-r from-blue-600 to-indigo-700 text-center text-white">
+      <section className="py-24 bg-gradient-to-r from-dark-teal to-pine-green text-center text-white">
         <h2 className="text-5xl font-bold mb-6">Ready to Start Exchanging?</h2>
-        <p className="text-xl text-blue-100 max-w-xl mx-auto mb-10">
+        <p className="text-xl text-powder-blue max-w-xl mx-auto mb-10">
           Join thousands of students already saving money and reducing waste.
         </p>
-        <p className="text-lg text-blue-100 mb-6">
-          Already have an account? <Link to="/login" className="text-white underline hover:text-blue-200 transition">Log in</Link>
+        <p className="text-lg text-powder-blue mb-6">
+          Already have an account? <Link to="/login" className="text-white underline hover:text-powder-blue transition">Log in</Link>
         </p>
         <div className="max-w-md mx-auto flex gap-4">
           <input
@@ -438,7 +437,7 @@ export default function HomePage() {
           />
           <Link
             to="/signup"
-            className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-4 rounded-full font-semibold text-lg shadow-lg transition transform hover:scale-105"
+            className="bg-white text-pine-green hover:bg-powder-blue px-8 py-4 rounded-full font-semibold text-lg shadow-lg transition transform hover:scale-105"
           >
             Get Started
           </Link>

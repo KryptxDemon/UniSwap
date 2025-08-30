@@ -142,7 +142,7 @@ export function TuitionDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-green-50">
+    <div className="min-h-screen bg-bright-cyan/10">
       {/* Header */}
       <div className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -199,51 +199,55 @@ export function TuitionDetailPage() {
               {/* Tuition Details Grid */}
               <div className="grid md:grid-cols-2 gap-6 mb-6">
                 <div className="bg-green-50 rounded-xl p-6">
+                <div className="bg-powder-blue rounded-xl p-6">
                   <div className="flex items-center space-x-3 mb-4">
-                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                      <DollarSign className="h-5 w-5 text-green-600" />
+                    <div className="w-10 h-10 bg-bright-cyan/20 rounded-full flex items-center justify-center">
+                      <DollarSign className="h-5 w-5 text-pine-green" />
                     </div>
                     <div>
                       <h4 className="font-semibold text-gray-900">Salary</h4>
-                      <p className="text-2xl font-bold text-green-600">৳{tuition.salary}</p>
+                      <p className="text-2xl font-bold text-pine-green">৳{tuition.salary}</p>
                       <p className="text-sm text-gray-600">per month</p>
                     </div>
                   </div>
                 </div>
 
                 <div className="bg-blue-50 rounded-xl p-6">
+                <div className="bg-bright-cyan/20 rounded-xl p-6">
                   <div className="flex items-center space-x-3 mb-4">
-                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                      <Calendar className="h-5 w-5 text-blue-600" />
+                    <div className="w-10 h-10 bg-bright-cyan/30 rounded-full flex items-center justify-center">
+                      <Calendar className="h-5 w-5 text-pine-green" />
                     </div>
                     <div>
                       <h4 className="font-semibold text-gray-900">Schedule</h4>
-                      <p className="text-2xl font-bold text-blue-600">{tuition.days_per_week}</p>
+                      <p className="text-2xl font-bold text-pine-green">{tuition.days_per_week}</p>
                       <p className="text-sm text-gray-600">days per week</p>
                     </div>
                   </div>
                 </div>
 
                 <div className="bg-purple-50 rounded-xl p-6">
+                <div className="bg-powder-blue/50 rounded-xl p-6">
                   <div className="flex items-center space-x-3 mb-4">
-                    <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                      <GraduationCap className="h-5 w-5 text-purple-600" />
+                    <div className="w-10 h-10 bg-powder-blue rounded-full flex items-center justify-center">
+                      <GraduationCap className="h-5 w-5 text-pine-green" />
                     </div>
                     <div>
                       <h4 className="font-semibold text-gray-900">Class Level</h4>
-                      <p className="text-lg font-bold text-purple-600">{tuition.class_level}</p>
+                      <p className="text-lg font-bold text-pine-green">{tuition.class_level}</p>
                     </div>
                   </div>
                 </div>
 
                 <div className="bg-orange-50 rounded-xl p-6">
+                <div className="bg-burnt-sienna/20 rounded-xl p-6">
                   <div className="flex items-center space-x-3 mb-4">
-                    <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
-                      <MapPin className="h-5 w-5 text-orange-600" />
+                    <div className="w-10 h-10 bg-burnt-sienna/30 rounded-full flex items-center justify-center">
+                      <MapPin className="h-5 w-5 text-burnt-sienna" />
                     </div>
                     <div>
                       <h4 className="font-semibold text-gray-900">Location</h4>
-                      <p className="text-lg font-bold text-orange-600">{tuition.location.name}</p>
+                      <p className="text-lg font-bold text-burnt-sienna">{tuition.location.name}</p>
                       <p className="text-sm text-gray-600 capitalize">{tuition.location.type.replace('-', ' ')}</p>
                     </div>
                   </div>
@@ -281,7 +285,7 @@ export function TuitionDetailPage() {
                 <div>
                   <Link
                     to={`/profile/${tuition.tutor_id}`}
-                    className="font-semibold text-gray-900 hover:text-green-600 transition-colors"
+                    className="font-semibold text-gray-900 hover:text-pine-green transition-colors"
                   >
                     {tuition.tutor?.username}
                   </Link>
@@ -299,7 +303,7 @@ export function TuitionDetailPage() {
               {!isOwnTuition && (
                 <button
                   onClick={() => setShowMessageModal(true)}
-                  className="w-full bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 transition-colors flex items-center justify-center space-x-2"
+                  className="w-full bg-bright-cyan text-white py-3 rounded-xl font-semibold hover:bg-pine-green transition-colors flex items-center justify-center space-x-2"
                 >
                   <MessageCircle className="h-5 w-5" />
                   <span>Contact Tutor</span>
@@ -310,7 +314,7 @@ export function TuitionDetailPage() {
                 <button
                   className={`flex-1 ${
                     isWishlisted
-                      ? "bg-green-100 text-green-700"
+                      ? "bg-powder-blue text-pine-green"
                       : "bg-gray-100 text-gray-700"
                   } py-3 rounded-xl font-medium hover:bg-gray-200 transition-colors flex items-center justify-center space-x-2`}
                   onClick={handleWishlist}
@@ -378,11 +382,11 @@ export function TuitionDetailPage() {
               </div>
 
               {isWishlisted && wishlist[tuition.id] && (
-                <div className="bg-green-50 border-l-4 border-green-400 p-4 rounded">
-                  <div className="text-green-800 font-semibold mb-1">
+                <div className="bg-powder-blue border-l-4 border-bright-cyan p-4 rounded">
+                  <div className="text-pine-green font-semibold mb-1">
                     Your Note:
                   </div>
-                  <div className="text-green-900">{wishlist[tuition.id]}</div>
+                  <div className="text-dark-teal">{wishlist[tuition.id]}</div>
                 </div>
               )}
             </div>
@@ -402,7 +406,7 @@ export function TuitionDetailPage() {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Hi! I'm interested in your tuition offer..."
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-bright-cyan focus:border-transparent resize-none"
               rows={4}
             />
 
@@ -416,7 +420,7 @@ export function TuitionDetailPage() {
               <button
                 onClick={handleSendMessage}
                 disabled={!message.trim()}
-                className="flex-1 bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="flex-1 bg-bright-cyan text-white py-3 rounded-lg font-medium hover:bg-pine-green disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Send Message
               </button>
@@ -524,7 +528,7 @@ export function TuitionDetailPage() {
               value={wishlistNote}
               onChange={(e) => setWishlistNote(e.target.value)}
               placeholder="Add a note about this tuition..."
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-bright-cyan focus:border-transparent resize-none"
               rows={4}
             />
             <div className="flex space-x-4 mt-6">
@@ -536,7 +540,7 @@ export function TuitionDetailPage() {
               </button>
               <button
                 onClick={handleSaveWishlist}
-                className="flex-1 bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 transition-colors"
+                className="flex-1 bg-bright-cyan text-white py-3 rounded-lg font-medium hover:bg-pine-green transition-colors"
               >
                 Save
               </button>
