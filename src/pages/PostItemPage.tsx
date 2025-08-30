@@ -8,8 +8,6 @@ import { mockCategories, mockLocations } from "../lib/mockData";
 
 const conditions: Condition[] = ["New", "Like New", "Good", "Fair", "Poor"];
 const types = ["free", "swap", "rent"];
-const locationTypes = ["On Campus", "Off Campus"];
-
 
 export function PostItemPage() {
   const { user } = useAuth();
@@ -29,6 +27,8 @@ export function PostItemPage() {
     images: [] as string[],
     post_time: new Date().toISOString(),
   });
+
+  const [selectedLocationType, setSelectedLocationType] = useState("");
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -60,14 +60,8 @@ export function PostItemPage() {
       return;
     }
 
-    const {
-      title,
-      description,
-      category_id,
-      condition,
-      type,
-      location_id,
-    } = formData;
+    const { title, description, category_id, condition, type, location_id } =
+      formData;
     if (
       !title ||
       !description ||
@@ -91,10 +85,10 @@ export function PostItemPage() {
         id: String(demoItems.length + 1),
         title,
         description,
-        category: mockCategories.find(c => c.id === category_id)!,
+        category: mockCategories.find((c) => c.id === category_id)!,
         condition,
         type,
-        location: mockLocations.find(l => l.id === location_id)!,
+        location: mockLocations.find((l) => l.id === location_id)!,
         department: formData.department,
         images: formData.images,
         created_at: formData.post_time,
@@ -131,11 +125,11 @@ export function PostItemPage() {
     );
   }
 
-  const [selectedLocationType, setSelectedLocationType] = useState("");
-  
-  const locationOptions = mockLocations.filter(location => {
-    if (selectedLocationType === "on-campus") return location.type === "on-campus";
-    if (selectedLocationType === "off-campus") return location.type === "off-campus";
+  const locationOptions = mockLocations.filter((location) => {
+    if (selectedLocationType === "on-campus")
+      return location.type.toLowerCase() === "on campus";
+    if (selectedLocationType === "off-campus")
+      return location.type.toLowerCase() === "off campus";
     return false;
   });
 
@@ -189,8 +183,8 @@ export function PostItemPage() {
               label="Category *"
               value={formData.category_id}
               onChange={(val) => handleInputChange("category_id", val)}
-              options={mockCategories.map(c => c.name)}
-              rawOptions={mockCategories.map(c => c.id)}
+              options={mockCategories.map((c) => c.name)}
+              rawOptions={mockCategories.map((c) => c.id)}
             />
             <SelectInput
               label="Condition *"
@@ -223,7 +217,7 @@ export function PostItemPage() {
               <option value="on-campus">On Campus</option>
               <option value="off-campus">Off Campus</option>
             </select>
-            
+
             <label className="block font-medium mb-2">Location *</label>
             <select
               value={formData.location_id}
@@ -269,9 +263,8 @@ export function PostItemPage() {
                   if (e.key === "Enter") {
                     e.preventDefault();
                     handleImageAdd();
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pine-green focus:border-transparent"
                   }
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-pine-green"
+                }}
               />
               <button
                 type="button"
@@ -354,7 +347,7 @@ function SelectInput({
         <option value="">Select</option>
         {actualOptions.map((opt, i) => (
           <option key={opt} value={rawOptions ? rawOptions[i] : opt}>
-            {opt}
+            {options[i]}
           </option>
         ))}
       </select>
