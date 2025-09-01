@@ -24,7 +24,7 @@ export function ProfilePage() {
     : currentUser;
   const isOwnProfile = !id || id === currentUser.id;
 
-  const [profilePic, setProfilePic] = useState(profileUser.profile_picture);
+  const [profilePic, setProfilePic] = useState(profileUser?.profile_picture || '/default-avatar.png');
 
   // Get wishlist data from localStorage
   const [wishlist, setWishlist] = useState<{ [key: string]: { note: string; createdAt: string } }>(() => {

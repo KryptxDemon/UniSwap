@@ -66,7 +66,8 @@ export default function HomePage() {
       content:
         "UniSwap saved me hundreds on textbooks. The community is amazing!",
       rating: 5,
-      avatar: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150&h=150",
+      avatar:
+        "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150&h=150",
     },
     {
       name: "Shrabonti Sarkar",
@@ -74,14 +75,16 @@ export default function HomePage() {
       content:
         "Found the perfect hall setup without breaking the bank. Highly recommend!",
       rating: 5,
-      avatar: "https://images.pexels.com/photos/1181519/pexels-photo-1181519.jpeg?auto=compress&cs=tinysrgb&w=150&h=150",
+      avatar:
+        "https://images.pexels.com/photos/1181519/pexels-photo-1181519.jpeg?auto=compress&cs=tinysrgb&w=150&h=150",
     },
     {
       name: "Sarowar Islam",
       role: "Assistant Professor, ME",
       content: "Easy to use and great for sustainability.",
       rating: 4,
-      avatar: "https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=150&h=150",
+      avatar:
+        "https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=150&h=150",
     },
   ];
 
@@ -115,7 +118,8 @@ export default function HomePage() {
   const sampleItems = [
     {
       id: 1,
-      image: "https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
+      image:
+        "https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
       title: "Discrete by Rosen Textbook",
       subtitle: "Used, like new",
       tags: ["Textbook", "Exchange"],
@@ -123,7 +127,8 @@ export default function HomePage() {
     },
     {
       id: 2,
-      image: "https://images.pexels.com/photos/271816/pexels-photo-271816.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
+      image:
+        "https://images.pexels.com/photos/271816/pexels-photo-271816.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
       title: "Compact Desk Lamp",
       subtitle: "Perfect for late night study sessions",
       tags: ["Dorm", "Gadget"],
@@ -131,7 +136,8 @@ export default function HomePage() {
     },
     {
       id: 3,
-      image: "https://images.pexels.com/photos/1350789/pexels-photo-1350789.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
+      image:
+        "https://images.pexels.com/photos/1350789/pexels-photo-1350789.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
       title: "Hall Bedside Organizer",
       subtitle: "Great condition",
       tags: ["Furniture", "Pickup"],
@@ -139,7 +145,8 @@ export default function HomePage() {
     },
     {
       id: 4,
-      image: "https://images.pexels.com/photos/590493/pexels-photo-590493.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
+      image:
+        "https://images.pexels.com/photos/590493/pexels-photo-590493.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
       title: "Course Notes Bundle",
       subtitle: "Complete notes for 3 semesters",
       tags: ["Notes", "Tuition"],
@@ -188,9 +195,7 @@ export default function HomePage() {
 
       <section className="relative overflow-hidden pt-20 pb-28">
         <div className="absolute top-0 left-0 w-96 h-96 bg-pine-green/20 rounded-full blur-3xl opacity-30 -translate-x-1/2 -translate-y-1/2"></div>
-        <div
-          className="absolute bottom-0 right-0 w-96 h-96 bg-dark-teal/20 rounded-full blur-3xl opacity-30 translate-x-1/3 translate-y-1/3"
-        ></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-dark-teal/20 rounded-full blur-3xl opacity-30 translate-x-1/3 translate-y-1/3"></div>
 
         <div className="max-w-7xl mx-auto px-8 grid md:grid-cols-2 items-center gap-12 relative z-10">
           <div className="space-y-8">
@@ -422,7 +427,13 @@ export default function HomePage() {
           Join thousands of students already saving money and reducing waste.
         </p>
         <p className="text-lg text-powder-blue mb-6">
-          Already have an account? <Link to="/login" className="text-white underline hover:text-powder-blue transition">Log in</Link>
+          Already have an account?{" "}
+          <Link
+            to="/login"
+            className="text-white underline hover:text-powder-blue transition"
+          >
+            Log in
+          </Link>
         </p>
         <div className="max-w-md mx-auto flex gap-4">
           <input

@@ -5,12 +5,12 @@ import { useAuth } from "../hooks/useAuth";
 import { demoItems } from "../lib/demoData";
 import { mockLocations } from "../lib/mockData";
 
-
 export function PostTuitionPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [selectedLocationType, setSelectedLocationType] = useState("");
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
@@ -90,7 +90,10 @@ export function PostTuitionPage() {
         id: String(demoItems.length + 1),
         title,
         description,
-        location: mockLocations.find(l => l.id === location_id)!,
+        category: { id: "tuition", name: "Tuition" },
+        condition: "New",
+        type: "rent" as const,
+        location: mockLocations.find((l) => l.id === location_id)!,
         department: formData.department,
         salary: parseInt(formData.salary),
         days_per_week: parseInt(formData.days_week),
@@ -100,7 +103,8 @@ export function PostTuitionPage() {
         created_at: formData.post_time,
         user_id: user.id,
         user,
-        type: "tuition",
+        images: formData.images,
+        is_exchanged: false,
       };
 
       demoItems.push(newItem);
@@ -131,13 +135,9 @@ export function PostTuitionPage() {
     );
   }
 
-  const [selectedLocationType, setSelectedLocationType] = useState("");
-  
-  const locationOptions = mockLocations.filter(location => {
-    if (selectedLocationType === "on-campus") return location.type === "on-campus";
-    if (selectedLocationType === "off-campus") return location.type === "off-campus";
-    return false;
-  });
+  const locationOptions = selectedLocationType
+    ? mockLocations.filter((location) => location.type === selectedLocationType)
+    : [];
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -190,19 +190,19 @@ export function PostTuitionPage() {
                 setSelectedLocationType(e.target.value);
                 handleInputChange("location_id", "");
               }}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-bright-cyan mb-4"
+              className="w-full border px-4 py-3 rounded-lg mb-4"
               required
             >
               <option value="">Select Location Type</option>
               <option value="on-campus">On Campus</option>
               <option value="off-campus">Off Campus</option>
             </select>
-            
+
             <label className="block font-medium mb-2">Location *</label>
             <select
               value={formData.location_id}
               onChange={(e) => handleInputChange("location_id", e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-bright-cyan"
+              className="w-full border px-4 py-3 rounded-lg"
               required
               disabled={!selectedLocationType}
             >
@@ -226,7 +226,7 @@ export function PostTuitionPage() {
                 onChange={(e) =>
                   handleInputChange("department", e.target.value)
                 }
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-bright-cyan"
+                className="w-full border px-4 py-3 rounded-lg"
               />
             </div>
 
@@ -269,7 +269,7 @@ export function PostTuitionPage() {
                 type="url"
                 ref={imageInputRef}
                 placeholder="Paste image URL here..."
-                className="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-bright-cyan"
+                className="flex-1 border px-4 py-3 rounded-lg"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
@@ -281,7 +281,7 @@ export function PostTuitionPage() {
                 type="button"
                 onClick={handleImageAdd}
                 disabled={formData.images.length >= 5}
-                className="bg-bright-cyan text-white px-4 py-3 rounded-lg hover:bg-pine-green flex items-center gap-2"
+                className="bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 flex items-center gap-2"
               >
                 <ImagePlus className="h-5 w-5" />
                 Add
@@ -320,44 +320,13 @@ export function PostTuitionPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 bg-bright-cyan text-white py-3 rounded-lg hover:bg-pine-green disabled:opacity-50"
+              className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50"
             >
               {loading ? "Posting..." : "Post Tuition"}
             </button>
           </div>
         </form>
       </div>
-    </div>
-  );
-}
-
-function SelectInput({
-  label,
-  value,
-  onChange,
-  options,
-}: {
-  label: string;
-  value: string;
-  onChange: (val: string) => void;
-  options: string[];
-}) {
-  return (
-    <div>
-      <label className="block font-medium mb-2">{label}</label>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full border px-4 py-3 rounded-lg"
-        required
-      >
-        <option value="">Select</option>
-        {options.map((opt) => (
-          <option key={opt} value={opt}>
-            {opt}
-          </option>
-        ))}
-      </select>
     </div>
   );
 }
