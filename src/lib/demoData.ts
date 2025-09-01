@@ -12,11 +12,6 @@ import {
   Location,
 } from "../types";
 import { mockCategories, mockLocations } from "./mockData";
-import calc from "../assets/calculator.jpg";
-import dp1 from "../assets/demodp.png";
-import dp2 from "../assets/demodp2.jpg";
-import dp3 from "../assets/demodp3.jpg";
-import dp4 from "../assets/demodp4.jpg";
 
 // Demo users
 export const demoUsers: User[] = [
@@ -27,7 +22,7 @@ export const demoUsers: User[] = [
     phone: ["+8801712345678", "+8801812345678"],
     student_id: "1904001",
     bio: "Engineering student passionate about clash of clans, cgpa and cricket.",
-    profile_picture: dp1,
+    profile_picture: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=200&h=200",
     created_at: "2025-01-01T00:00:00Z",
   },
   {
@@ -37,8 +32,7 @@ export const demoUsers: User[] = [
     phone: ["+8801712345679"],
     student_id: "1904002",
     bio: "Love helping fellow students with study materials and stationery.",
-    profile_picture:
-      "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400",
+    profile_picture: "https://images.pexels.com/photos/1181519/pexels-photo-1181519.jpeg?auto=compress&cs=tinysrgb&w=200&h=200",
     created_at: "2025-01-01T00:00:00Z",
   },
   {
@@ -48,7 +42,7 @@ export const demoUsers: User[] = [
     phone: ["+8801712345680"],
     student_id: "1904003",
     bio: "Always looking for tuitions.",
-    profile_picture: dp3,
+    profile_picture: "https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=200&h=200",
     created_at: "2025-01-01T00:00:00Z",
   },
   {
@@ -58,7 +52,7 @@ export const demoUsers: User[] = [
     phone: ["+8801712345681"],
     student_id: "1904004",
     bio: "Math and science tutor available for exchange of services.",
-    profile_picture: dp4,
+    profile_picture: "https://images.pexels.com/photos/1300402/pexels-photo-1300402.jpeg?auto=compress&cs=tinysrgb&w=200&h=200",
     created_at: "2025-01-01T00:00:00Z",
   },
   {
@@ -68,8 +62,7 @@ export const demoUsers: User[] = [
     phone: ["+8801712345682"],
     student_id: "1904005",
     bio: "Tech enthusiast with various electronics for rent and exchange.",
-    profile_picture:
-      "https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=400",
+    profile_picture: "https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg?auto=compress&cs=tinysrgb&w=200&h=200",
     created_at: "2025-01-01T00:00:00Z",
   },
   {
@@ -79,7 +72,7 @@ export const demoUsers: User[] = [
     phone: ["+8801712345683"],
     student_id: "1904006",
     bio: "Book lover and literature enthusiast. Always happy to share good reads.",
-    profile_picture: dp2,
+    profile_picture: "https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=200&h=200",
     created_at: "2025-01-01T00:00:00Z",
   },
 ];
@@ -97,7 +90,7 @@ export const demoItems: Item[] = [
     location: mockLocations.find(l => l.id === "pahartali")!,
     department: "Engineering",
     images: [
-      "https://scontent.fdac181-1.fna.fbcdn.net/v/t1.6435-9/205729626_203743011646517_834630484838151940_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=833d8c&_nc_ohc=gCq_2My2XI8Q7kNvwHjQ-bt&_nc_oc=AdmWHIBXoBGR5qGeXiDNHS-TxQk5x7FnrMdwd7KYYOf_SoC-TVynywy94WWneT5WsFA&_nc_zt=23&_nc_ht=scontent.fdac181-1.fna&_nc_gid=5qtSK-16ZLo7VcoeyjXuow&oh=00_AfS98gqqJJppaOn30Ay3d2JKOaA7wiPltQ7zdczbv-u73w&oe=68B000A0",
+      "https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",
     ],
     user_id: "1",
     user: demoUsers[0],
@@ -114,7 +107,7 @@ export const demoItems: Item[] = [
     type: "free",
     location: mockLocations.find(l => l.id === "me-building")!,
     images: [
-      "https://img.drz.lazcdn.com/static/bd/p/62656e0d668e19717ebb3351e0c126ff.jpg_2200x2200q80.jpg_.webp",
+      "https://images.pexels.com/photos/209678/pexels-photo-209678.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",
     ],
     user_id: "2",
     user: demoUsers[1],
@@ -131,7 +124,7 @@ export const demoItems: Item[] = [
     type: "swap",
     location: mockLocations.find(l => l.id === "kazi-nazrul-islam-hall")!,
     images: [
-      "https://img.drz.lazcdn.com/collect/sg/other/roc/8016040af9c48d8ceb9da5d2075e7bb6.jpg_1200x1200q80.jpg_.webp",
+      "https://images.pexels.com/photos/1350789/pexels-photo-1350789.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",
     ],
     user_id: "3",
     user: demoUsers[2],
@@ -148,7 +141,7 @@ export const demoItems: Item[] = [
     type: "swap",
     location: mockLocations.find(l => l.id === "halishahar")!,
     images: [
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5sB3r2LhWuSTNMr13k7WuCSOBfAWb-i8m1Q&s",
+      "https://images.pexels.com/photos/256455/pexels-photo-256455.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",
     ],
     user_id: "4",
     user: demoUsers[3],
@@ -165,7 +158,7 @@ export const demoItems: Item[] = [
     type: "rent",
     location: mockLocations.find(l => l.id === "abu-sayeed-hall")!,
     images: [
-      "https://www-cdn.djiits.com/dps/0c7373a3a5fb102f9c36461905e4b44b.jpg",
+      "https://images.pexels.com/photos/442150/pexels-photo-442150.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",
     ],
     user_id: "5",
     user: demoUsers[4],
@@ -183,7 +176,7 @@ export const demoItems: Item[] = [
     location: mockLocations.find(l => l.id === "cse-building")!,
     department: "CSE",
     images: [
-      "https://sg-test-11.slatic.net/other/roc/8efcfbd7e5763d2899819a690ba30123.jpg",
+      "https://images.pexels.com/photos/46274/pexels-photo-46274.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",
     ],
     user_id: "6",
     user: demoUsers[5],
@@ -199,7 +192,7 @@ export const demoItems: Item[] = [
     condition: "Good",
     type: "swap",
     location: mockLocations.find(l => l.id === "eee-building")!,
-    images: [calc],
+    images: ["https://images.pexels.com/photos/6238297/pexels-photo-6238297.jpeg?auto=compress&cs=tinysrgb&w=600&h=400"],
     user_id: "2",
     user: demoUsers[1],
     created_at: "2025-01-21T09:00:00Z",
@@ -214,8 +207,8 @@ export const demoItems: Item[] = [
     condition: "Good",
     type: "free",
     location: mockLocations.find(l => l.id === "architecture-building")!,
-    images: [
-      "https://images.pexels.com/photos/256369/pexels-photo-256369.jpeg?auto=compress&cs=tinysrgb&w=400",
+      "https://images.pexels.com/photos/256369/pexels-photo-256369.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
+      "https://images.pexels.com/photos/256369/pexels-photo-256369.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",
     ],
     user_id: "3",
     user: demoUsers[2],
@@ -231,8 +224,8 @@ export const demoItems: Item[] = [
     condition: "Good",
     type: "rent",
     location: mockLocations.find(l => l.id === "shah-hall")!,
-    images: [
-      "https://images.pexels.com/photos/271816/pexels-photo-271816.jpeg?auto=compress&cs=tinysrgb&w=400",
+      "https://images.pexels.com/photos/271816/pexels-photo-271816.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
+      "https://images.pexels.com/photos/271816/pexels-photo-271816.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",
     ],
     user_id: "4",
     user: demoUsers[3],
@@ -248,8 +241,8 @@ export const demoItems: Item[] = [
     condition: "Like New",
     type: "swap",
     location: mockLocations.find(l => l.id === "gec")!,
-    images: [
-      "https://images.pexels.com/photos/590493/pexels-photo-590493.jpeg?auto=compress&cs=tinysrgb&w=400",
+      "https://images.pexels.com/photos/590493/pexels-photo-590493.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
+      "https://images.pexels.com/photos/590493/pexels-photo-590493.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",
     ],
     user_id: "6",
     user: demoUsers[5],
@@ -265,8 +258,8 @@ export const demoItems: Item[] = [
     condition: "Good",
     type: "free",
     location: mockLocations.find(l => l.id === "tsc")!,
-    images: [
-      "https://images.pexels.com/photos/208701/pexels-photo-208701.jpeg?auto=compress&cs=tinysrgb&w=400",
+      "https://images.pexels.com/photos/208701/pexels-photo-208701.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
+      "https://images.pexels.com/photos/208701/pexels-photo-208701.jpeg?auto=compress&cs=tinysrgb&w=600&h=400",
     ],
     user_id: "1",
     user: demoUsers[0],
@@ -282,14 +275,13 @@ export const demoItems: Item[] = [
     condition: "Like New",
     type: "swap",
     location: mockLocations.find(l => l.id === "ce-building")!,
-    images: [
-      "https://images.pexels.com/photos/209678/pexels-photo-209678.jpeg?auto=compress&cs=tinysrgb&w=400",
+      "https://images.pexels.com/photos/209678/pexels-photo-209678.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
     ],
     user_id: "5",
     user: demoUsers[4],
     created_at: "2025-01-24T08:10:00Z",
     is_exchanged: false,
-  },
+      "https://images.pexels.com/photos/256541/pexels-photo-256541.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
   {
     id: "13",
     title: "Bangla Literature Books Bundle",
@@ -300,7 +292,7 @@ export const demoItems: Item[] = [
     type: "free",
     location: mockLocations.find(l => l.id === "library")!,
     images: [
-      "https://images.pexels.com/photos/46274/pexels-photo-46274.jpeg?auto=compress&cs=tinysrgb&w=400",
+      "https://images.pexels.com/photos/46274/pexels-photo-46274.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
     ],
     user_id: "6",
     user: demoUsers[5],
@@ -317,7 +309,7 @@ export const demoItems: Item[] = [
     type: "swap",
     location: mockLocations.find(l => l.id === "anderkilla")!,
     images: [
-      "https://images.pexels.com/photos/373576/pexels-photo-373576.jpeg?auto=compress&cs=tinysrgb&w=400",
+      "https://images.pexels.com/photos/373576/pexels-photo-373576.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
     ],
     user_id: "2",
     user: demoUsers[1],
@@ -407,7 +399,7 @@ export const demoPosts: Post[] = [
   {
     id: "2",
     content:
-      "Great experience using UniSwap! Successfully exchanged my old laptop for a newer model. Thanks to the amazing community! 💻✨",
+      "https://images.pexels.com/photos/442587/pexels-photo-442587.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
     images: [],
     user_id: "5",
     user: demoUsers[4],
@@ -425,7 +417,7 @@ export const demoConversations: Conversation[] = [
     other_user: demoUsers[1], // The user you're chatting with
     item: demoItems.find((item) => item.id === "2"), // The item being discussed
     item_id: "2",
-    last_message: "Yes! Do you want to pick it up today?",
+      "https://images.pexels.com/photos/46274/pexels-photo-46274.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
     last_message_at: "2025-01-21T10:06:00Z",
     updated_at: "2025-01-21T10:06:00Z",
     messages: [

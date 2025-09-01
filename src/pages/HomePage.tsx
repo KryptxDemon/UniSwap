@@ -152,7 +152,7 @@ export default function HomePage() {
       <nav className="sticky top-0 z-50 flex items-center justify-between px-8 py-4 max-w-7xl mx-auto bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100">
         <Link to="/">
           <div className="flex items-center gap-4">
-            <div className="p-1 rounded-full bg-gradient-to-r from-pine-green to-bright-cyan shadow-lg transform hover:scale-105 transition">
+            <div className="p-1 rounded-full bg-gradient-to-r from-pine-green to-dark-teal shadow-lg transform hover:scale-105 transition">
               <img
                 src={logoImg}
                 alt="UniSwap logo"
@@ -179,7 +179,7 @@ export default function HomePage() {
           </Link>
           <Link
             to="/signup"
-            className="bg-gradient-to-r from-pine-green to-bright-cyan hover:from-dark-teal hover:to-pine-green text-white px-6 py-3 rounded-full font-semibold shadow-md transition transform hover:scale-105"
+            className="bg-gradient-to-r from-pine-green to-dark-teal hover:from-dark-teal hover:to-pine-green text-white px-6 py-3 rounded-full font-semibold shadow-md transition transform hover:scale-105"
           >
             Join Now
           </Link>
@@ -187,16 +187,16 @@ export default function HomePage() {
       </nav>
 
       <section className="relative overflow-hidden pt-20 pb-28">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-powder-blue rounded-full blur-3xl opacity-30 -translate-x-1/2 -translate-y-1/2"></div>
+        <div className="absolute top-0 left-0 w-96 h-96 bg-pine-green/20 rounded-full blur-3xl opacity-30 -translate-x-1/2 -translate-y-1/2"></div>
         <div
-          className="absolute bottom-0 right-0 w-96 h-96 bg-bright-cyan rounded-full blur-3xl opacity-30 translate-x-1/3 translate-y-1/3"
+          className="absolute bottom-0 right-0 w-96 h-96 bg-dark-teal/20 rounded-full blur-3xl opacity-30 translate-x-1/3 translate-y-1/3"
         ></div>
 
         <div className="max-w-7xl mx-auto px-8 grid md:grid-cols-2 items-center gap-12 relative z-10">
           <div className="space-y-8">
             <h1 className="text-5xl md:text-7xl font-extrabold leading-tight text-gray-900 animate-fade-in">
               Exchange, Share,{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-pine-green to-bright-cyan">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-pine-green to-dark-teal">
                 Save
               </span>
             </h1>
@@ -208,13 +208,13 @@ export default function HomePage() {
             <div className="flex gap-6">
               <Link
                 to="/browse"
-                className="bg-gradient-to-r from-pine-green to-bright-cyan hover:from-dark-teal hover:to-pine-green text-white px-8 py-4 rounded-full font-semibold text-lg shadow-xl transition transform hover:scale-105"
+                className="bg-gradient-to-r from-pine-green to-dark-teal hover:from-dark-teal hover:to-pine-green text-white px-8 py-4 rounded-full font-semibold text-lg shadow-xl transition transform hover:scale-105"
               >
                 Start Browsing
               </Link>
               <Link
                 to="/signup"
-                className="border-2 border-pine-green text-pine-green hover:bg-powder-blue px-8 py-4 rounded-full font-semibold text-lg transition transform hover:scale-105"
+                className="border-2 border-pine-green text-pine-green hover:bg-pine-green hover:text-white px-8 py-4 rounded-full font-semibold text-lg transition transform hover:scale-105"
               >
                 Join Now
               </Link>
@@ -222,11 +222,12 @@ export default function HomePage() {
           </div>
           <div className="relative">
             <img
-              src="https://images.pexels.com/photos/1438072/pexels-photo-1438072.jpeg?auto=compress&cs=tinysrgb&w=800&h=600"
+              src="https://images.pexels.com/photos/1438072/pexels-photo-1438072.jpeg?auto=compress&cs=tinysrgb&w=600&h=450"
               alt="Students exchanging items"
               className="rounded-3xl shadow-2xl border border-gray-200 transform hover:scale-105 transition duration-500"
+              loading="lazy"
             />
-            <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-powder-blue rounded-full opacity-50 blur-xl"></div>
+            <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-pine-green/30 rounded-full opacity-50 blur-xl"></div>
             <div className="absolute -top-6 left-0 p-2 rounded-full bg-gradient-to-r from-pine-green to-bright-cyan shadow-lg -translate-x-6">
               <img
                 src={logoImg}
@@ -257,7 +258,7 @@ export default function HomePage() {
           {stats.map((stat, i) => (
             <div
               key={i}
-              className="bg-gradient-to-br from-white to-powder-blue/20 rounded-2xl shadow-lg p-8 text-center hover:shadow-2xl hover:scale-105 transition duration-300"
+              className="bg-gradient-to-br from-white to-pine-green/10 rounded-2xl shadow-lg p-8 text-center hover:shadow-2xl hover:scale-105 transition duration-300"
             >
               <div className="text-4xl font-bold text-pine-green">
                 {stat.number}
@@ -306,9 +307,9 @@ export default function HomePage() {
           </div>
 
           <div className="relative">
-            <div className="absolute -left-16 top-8 w-48 h-48 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full blur-2xl opacity-40 animate-float"></div>
+            <div className="absolute -left-16 top-8 w-48 h-48 bg-gradient-to-br from-pine-green/20 to-dark-teal/20 rounded-full blur-2xl opacity-40 animate-float"></div>
             <div
-              className="absolute -right-16 bottom-16 w-56 h-56 bg-gradient-to-br from-powder-blue to-bright-cyan/30 rounded-full blur-2xl opacity-30 animate-float"
+              className="absolute -right-16 bottom-16 w-56 h-56 bg-gradient-to-br from-powder-blue to-pine-green/30 rounded-full blur-2xl opacity-30 animate-float"
               style={{ animationDelay: "0.6s" }}
             ></div>
 
@@ -342,7 +343,7 @@ export default function HomePage() {
                         {item.subtitle}
                       </div>
                       <div className="mt-4 flex items-center justify-between">
-                        <button className="px-4 py-2 bg-gradient-to-r from-pine-green to-bright-cyan text-white rounded-full text-sm font-semibold">
+                        <button className="px-4 py-2 bg-gradient-to-r from-pine-green to-dark-teal text-white rounded-full text-sm font-semibold">
                           Request
                         </button>
                         <div className="text-sm text-gray-500">
@@ -358,7 +359,7 @@ export default function HomePage() {
             <div className="mt-6 flex items-center justify-center gap-4">
               <Link
                 to="/browse"
-                className="px-6 py-3 bg-powder-blue text-pine-green rounded-full font-semibold"
+                className="px-6 py-3 bg-pine-green text-white hover:bg-dark-teal rounded-full font-semibold transition"
               >
                 See more exchanges
               </Link>
@@ -391,7 +392,7 @@ export default function HomePage() {
                     loading="lazy"
                   />
                 </div>
-                <Quote className="h-8 w-8 text-blue-600 mb-4 opacity-50 mx-auto" />
+                <Quote className="h-8 w-8 text-pine-green mb-4 opacity-50 mx-auto" />
                 <p className="text-gray-600 mb-6 text-center">
                   {testimonial.content}
                 </p>
@@ -431,7 +432,7 @@ export default function HomePage() {
           />
           <Link
             to="/signup"
-            className="bg-white text-pine-green hover:bg-powder-blue px-8 py-4 rounded-full font-semibold text-lg shadow-lg transition transform hover:scale-105"
+            className="bg-white text-pine-green hover:bg-powder-blue hover:text-dark-teal px-8 py-4 rounded-full font-semibold text-lg shadow-lg transition transform hover:scale-105"
           >
             Get Started
           </Link>

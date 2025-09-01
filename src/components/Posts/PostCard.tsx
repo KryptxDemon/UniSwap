@@ -83,6 +83,7 @@ export function PostCard({ post }: PostCardProps) {
               src={post.images[0]}
               alt="Post image"
               className="w-full h-64 object-cover rounded-lg"
+              loading="lazy"
             />
           ) : (
             <div className="grid grid-cols-2 gap-2">
@@ -92,6 +93,7 @@ export function PostCard({ post }: PostCardProps) {
                     src={image}
                     alt={`Post image ${index + 1}`}
                     className="w-full h-32 object-cover rounded-lg"
+                    loading="lazy"
                   />
                   {index === 3 && post.images.length > 4 && (
                     <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">

@@ -53,6 +53,7 @@ export function ItemCard({ item }: ItemCardProps) {
             src={item.images[0]}
             alt={item.title}
             className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-200"
+            loading="lazy"
           />
         ) : (
           <div className="w-full h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
