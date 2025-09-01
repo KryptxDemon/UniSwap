@@ -1,12 +1,4 @@
 import React from "react";
-import studentsImg from "../assets/studentsexchange.jpeg";
-import d1 from "../assets/demohomepage.jpg";
-import d2 from "../assets/demohomepage2.jpg";
-import d3 from "../assets/demohomepage3.png";
-import d4 from "../assets/discrete.jpg";
-import d5 from "../assets/notes.jpg";
-import d6 from "../assets/lamp.jpg";
-import d7 from "../assets/bedside.jpeg";
 import logoImg from "../assets/logo.png";
 import { Link } from "react-router-dom";
 import {
@@ -74,7 +66,7 @@ export default function HomePage() {
       content:
         "UniSwap saved me hundreds on textbooks. The community is amazing!",
       rating: 5,
-      avatar: d2,
+      avatar: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=150&h=150",
     },
     {
       name: "Shrabonti Sarkar",
@@ -82,14 +74,14 @@ export default function HomePage() {
       content:
         "Found the perfect hall setup without breaking the bank. Highly recommend!",
       rating: 5,
-      avatar: d1,
+      avatar: "https://images.pexels.com/photos/1181519/pexels-photo-1181519.jpeg?auto=compress&cs=tinysrgb&w=150&h=150",
     },
     {
       name: "Sarowar Islam",
       role: "Assistant Professor, ME",
       content: "Easy to use and great for sustainability.",
       rating: 4,
-      avatar: d3,
+      avatar: "https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=150&h=150",
     },
   ];
 
@@ -123,7 +115,7 @@ export default function HomePage() {
   const sampleItems = [
     {
       id: 1,
-      image: d4,
+      image: "https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
       title: "Discrete by Rosen Textbook",
       subtitle: "Used, like new",
       tags: ["Textbook", "Exchange"],
@@ -131,7 +123,7 @@ export default function HomePage() {
     },
     {
       id: 2,
-      image: d6,
+      image: "https://images.pexels.com/photos/271816/pexels-photo-271816.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
       title: "Compact Desk Lamp",
       subtitle: "Perfect for late night study sessions",
       tags: ["Dorm", "Gadget"],
@@ -139,7 +131,7 @@ export default function HomePage() {
     },
     {
       id: 3,
-      image: d7,
+      image: "https://images.pexels.com/photos/1350789/pexels-photo-1350789.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
       title: "Hall Bedside Organizer",
       subtitle: "Great condition",
       tags: ["Furniture", "Pickup"],
@@ -147,7 +139,7 @@ export default function HomePage() {
     },
     {
       id: 4,
-      image: d5,
+      image: "https://images.pexels.com/photos/590493/pexels-photo-590493.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
       title: "Course Notes Bundle",
       subtitle: "Complete notes for 3 semesters",
       tags: ["Notes", "Tuition"],
@@ -157,17 +149,17 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <nav className="sticky top-0 z-50 flex items-center justify-between px-8 py-4 max-w-7xl mx-auto bg-white/80 backdrop-blur-md shadow-md">
+      <nav className="sticky top-0 z-50 flex items-center justify-between px-8 py-4 max-w-7xl mx-auto bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100">
         <Link to="/">
           <div className="flex items-center gap-4">
-            <div className="p-1 rounded-full bg-gradient-to-r from-yellow-300 via-pink-300 to-red-400 shadow-lg transform hover:scale-105 transition">
+            <div className="p-1 rounded-full bg-gradient-to-r from-pine-green to-bright-cyan shadow-lg transform hover:scale-105 transition">
               <img
                 src={logoImg}
                 alt="UniSwap logo"
                 className="w-12 h-12 rounded-full border-2 border-white shadow-sm"
               />
             </div>
-            <div className="text-4xl font-extrabold text-blue-600 tracking-tight">
+            <div className="text-4xl font-extrabold text-pine-green tracking-tight">
               UniSwap
             </div>
           </div>
@@ -175,19 +167,19 @@ export default function HomePage() {
         <div className="flex items-center gap-8">
           <Link
             to="/browse"
-            className="text-gray-700 hover:text-blue-600 font-medium transition"
+            className="text-gray-700 hover:text-pine-green font-medium transition"
           >
             Browse
           </Link>
           <Link
             to="/login"
-            className="text-gray-700 hover:text-blue-600 font-medium transition"
+            className="text-gray-700 hover:text-pine-green font-medium transition"
           >
             Log in
           </Link>
           <Link
             to="/signup"
-            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-full font-semibold shadow-md transition transform hover:scale-105"
+            className="bg-gradient-to-r from-pine-green to-bright-cyan hover:from-dark-teal hover:to-pine-green text-white px-6 py-3 rounded-full font-semibold shadow-md transition transform hover:scale-105"
           >
             Join Now
           </Link>
@@ -230,12 +222,12 @@ export default function HomePage() {
           </div>
           <div className="relative">
             <img
-              src={studentsImg}
+              src="https://images.pexels.com/photos/1438072/pexels-photo-1438072.jpeg?auto=compress&cs=tinysrgb&w=800&h=600"
               alt="Students exchanging items"
               className="rounded-3xl shadow-2xl border border-gray-200 transform hover:scale-105 transition duration-500"
             />
-            <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-blue-100 rounded-full opacity-50 blur-xl"></div>
-            <div className="absolute -top-6 left-0 p-2 rounded-full bg-gradient-to-r from-bright-cyan to-powder-blue shadow-lg -translate-x-6">
+            <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-powder-blue rounded-full opacity-50 blur-xl"></div>
+            <div className="absolute -top-6 left-0 p-2 rounded-full bg-gradient-to-r from-pine-green to-bright-cyan shadow-lg -translate-x-6">
               <img
                 src={logoImg}
                 alt="logo badge"
@@ -316,7 +308,7 @@ export default function HomePage() {
           <div className="relative">
             <div className="absolute -left-16 top-8 w-48 h-48 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full blur-2xl opacity-40 animate-float"></div>
             <div
-              className="absolute -right-16 bottom-16 w-56 h-56 bg-gradient-to-br from-pink-100 to-red-100 rounded-full blur-2xl opacity-30 animate-float"
+              className="absolute -right-16 bottom-16 w-56 h-56 bg-gradient-to-br from-powder-blue to-bright-cyan/30 rounded-full blur-2xl opacity-30 animate-float"
               style={{ animationDelay: "0.6s" }}
             ></div>
 
@@ -335,6 +327,7 @@ export default function HomePage() {
                         src={item.image}
                         alt={item.title}
                         className="w-full h-full object-cover transform transition duration-500 group-hover:scale-110"
+                        loading="lazy"
                       />
                       <div className="absolute top-3 left-3 bg-pine-green text-white px-3 py-1 rounded-full text-sm font-semibold">
                         {item.tags[0]}
@@ -395,6 +388,7 @@ export default function HomePage() {
                     src={testimonial.avatar}
                     alt={testimonial.name}
                     className="w-16 h-16 rounded-full shadow-md object-cover"
+                    loading="lazy"
                   />
                 </div>
                 <Quote className="h-8 w-8 text-blue-600 mb-4 opacity-50 mx-auto" />
@@ -405,7 +399,7 @@ export default function HomePage() {
                   {[...Array(testimonial.rating)].map((_, j) => (
                     <Star
                       key={j}
-                      className="h-5 w-5 text-burnt-sienna fill-current"
+                      className="h-5 w-5 text-pine-green fill-current"
                     />
                   ))}
                 </div>
