@@ -87,7 +87,7 @@ export function PostItemPage() {
         description,
         category: mockCategories.find((c) => c.id === category_id)!,
         condition,
-        type,
+        type: formData.type as "free" | "swap" | "rent",
         location: mockLocations.find((l) => l.id === location_id)!,
         department: formData.department,
         images: formData.images,
@@ -127,9 +127,9 @@ export function PostItemPage() {
 
   const locationOptions = mockLocations.filter((location) => {
     if (selectedLocationType === "on-campus")
-      return location.type.toLowerCase() === "on campus";
+      return location.type === "on-campus";
     if (selectedLocationType === "off-campus")
-      return location.type.toLowerCase() === "off campus";
+      return location.type === "off-campus";
     return false;
   });
 
