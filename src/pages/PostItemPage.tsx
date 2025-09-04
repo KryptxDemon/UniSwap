@@ -52,9 +52,23 @@ export function PostItemPage() {
     const file = e.target.files?.[0];
     if (!file) return;
     if (formData.images.length >= 1) return;
+    
+    // Check file size (limit to 500KB to prevent localStorage quota issues)
+    if (file.size > 500 * 1024) {
+      alert("Image file size must be less than 500KB. Please compress your image and try again.");
+      return;
+    }
+    
     const reader = new FileReader();
     reader.onload = () => {
       const dataUrl = reader.result as string;
+      
+      // Additional check for base64 size
+      if (dataUrl.length > 700000) { // ~500KB in base64
+        alert("Image is too large after processing. Please use a smaller image.");
+        return;
+      }
+      
       setFormData((prev) => ({ ...prev, images: [dataUrl] }));
     };
     reader.readAsDataURL(file);
@@ -116,10 +130,34 @@ export function PostItemPage() {
         is_exchanged: false,
       };
 
-      const stored = localStorage.getItem("items");
-      const arr = stored ? JSON.parse(stored) : [];
-      arr.push(newItem);
-      localStorage.setItem("items", JSON.stringify(arr));
+      try {
+        const stored = localStorage.getItem("items");
+        const arr = stored ? JSON.parse(stored) : [];
+        arr.push(newItem);
+        
+        // Check if we can store the data
+        const dataToStore = JSON.stringify(arr);
+        if (dataToStore.length > 4.5 * 1024 * 1024) { // 4.5MB limit
+          throw new Error("Storage quota exceeded");
+        }
+        
+        localStorage.setItem("items", dataToStore);
+      } catch (storageError: any) {
+        if (storageError.name === 'QuotaExceededError' || storageError.message.includes('quota') || storageError.message.includes('Storage')) {
+          // Clean up old items to make space
+          const stored = localStorage.getItem("items");
+          const arr = stored ? JSON.parse(stored) : [];
+          
+          // Keep only the 50 most recent items
+          const recentItems = arr.slice(-49); // Keep 49 + 1 new = 50 total
+          recentItems.push(newItem);
+          
+          localStorage.setItem("items", JSON.stringify(recentItems));
+          alert("Storage was full. Older items have been removed to make space for your new item.");
+        } else {
+          throw storageError;
+        }
+      }
 
       const goEdit = window.confirm(
         "Item has been listed. Press OK to edit or Cancel to continue."
@@ -307,6 +345,9 @@ export function PostItemPage() {
           {/* Image URL Input */}
           <div>
             <label className="block font-medium mb-2">Image (one only)</label>
+            <p className="text-sm text-gray-600 mb-3">
+              For uploaded files: Maximum size 500KB to prevent storage issues. Use image compression tools if needed.
+            </p>
             <div className="flex gap-2 mb-2">
               <input
                 type="url"
@@ -342,7 +383,7 @@ export function PostItemPage() {
                 disabled={formData.images.length >= 1}
                 className="bg-gray-100 px-4 py-3 rounded-lg hover:bg-gray-200"
               >
-                Upload from PC
+                Upload from PC (≤500KB)
               </button>
             </div>
 
