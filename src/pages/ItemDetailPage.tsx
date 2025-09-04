@@ -13,7 +13,7 @@ import {
   MoreVertical,
   AlertTriangle,
 } from "lucide-react";
-import { demoItems } from "../lib/demoData";
+// Using only localStorage items
 import { Conversation, Message } from "../types";
 import { useAuth } from "../hooks/useAuth";
 
@@ -45,7 +45,7 @@ export function ItemDetailPage() {
       return [];
     }
   })();
-  const item = [...demoItems, ...lsItems].find((item) => item.id === id);
+  const item = lsItems.find((it: any) => it.id === id);
 
   if (!item) {
     return (
@@ -207,10 +207,13 @@ export function ItemDetailPage() {
 
   const handleDeleteItem = () => {
     // In a real app, this would delete from backend
-    const itemIndex = demoItems.findIndex((i) => i.id === item.id);
-    if (itemIndex !== -1) {
-      demoItems.splice(itemIndex, 1);
-    }
+    // remove from localStorage
+    try {
+      const ls = localStorage.getItem("items");
+      const arr = ls ? (JSON.parse(ls) as any[]) : [];
+      const next = arr.filter((i) => i.id !== item.id);
+      localStorage.setItem("items", JSON.stringify(next));
+    } catch {}
     // Remove from wishlist if present
     const stored = localStorage.getItem("wishlist");
     if (stored) {

@@ -1,5 +1,3 @@
-// src/pages/BrowsePage.tsx
-import React from "react";
 import { Link } from "react-router-dom";
 import tuition from "../assets/hometutor.png";
 import station from "../assets/stationery.png";

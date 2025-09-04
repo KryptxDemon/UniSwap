@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   MessageCircle,
   Search,
@@ -8,10 +8,8 @@ import {
   Video,
   MoreVertical,
   Smile,
-  Paperclip,
   Image,
 } from "lucide-react";
-import { demoConversations, demoMessages } from "../lib/demoData";
 import { useAuth } from "../hooks/useAuth";
 import { Conversation, Message } from "../types";
 
@@ -22,7 +20,7 @@ export function MessagesPage() {
   const [newMessage, setNewMessage] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  // merge persisted with demo
+  // load conversations from storage
   const persistedConvs = (() => {
     try {
       const ls = localStorage.getItem("conversations");
@@ -31,10 +29,7 @@ export function MessagesPage() {
       return [] as Conversation[];
     }
   })();
-  const mergedConvsMap = new Map(
-    [...demoConversations, ...persistedConvs].map((c) => [c.id, c])
-  );
-  const mergedConversations = Array.from(mergedConvsMap.values());
+  const mergedConversations = persistedConvs;
 
   const filteredConversations = mergedConversations.filter(
     (conv) =>
@@ -44,13 +39,17 @@ export function MessagesPage() {
       conv.item?.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const isSendingRef = useRef(false);
+
   const handleSendMessage = () => {
     if (!newMessage.trim() || !selectedConversation) return;
+    if (isSendingRef.current) return;
+    isSendingRef.current = true;
 
     console.log("Sending message:", newMessage);
 
     const newMsg: Message = {
-      id: String(demoMessages.length + 1),
+      id: `msg-${Date.now()}`,
       content: newMessage,
       sender_id: user?.id || "",
       receiver_id: selectedConversation.other_user?.id || "",
@@ -62,23 +61,75 @@ export function MessagesPage() {
       read: false,
       message_type: "text",
     };
-
-    demoMessages.push(newMsg);
     const lsMsgs = localStorage.getItem("messages");
     const persistedMsgs = lsMsgs ? (JSON.parse(lsMsgs) as Message[]) : [];
     persistedMsgs.push(newMsg);
     localStorage.setItem("messages", JSON.stringify(persistedMsgs));
 
-    const convIndex = demoConversations.findIndex(
-      (c) => c.id === selectedConversation.id
-    );
-    if (convIndex !== -1) {
-      demoConversations[convIndex].last_message = newMessage;
-      demoConversations[convIndex].last_message_at = new Date().toISOString();
-      demoConversations[convIndex].updated_at = new Date().toISOString();
-    }
+    // update conversation preview in storage
+    try {
+      const convsRaw = localStorage.getItem("conversations");
+      const conversations: Conversation[] = convsRaw
+        ? JSON.parse(convsRaw)
+        : [];
+      const idx = conversations.findIndex(
+        (c) => c.id === selectedConversation.id
+      );
+      if (idx !== -1) {
+        conversations[idx].last_message = newMessage;
+        conversations[idx].last_message_at = new Date().toISOString();
+        conversations[idx].updated_at = new Date().toISOString();
+        localStorage.setItem("conversations", JSON.stringify(conversations));
+      }
+    } catch {}
 
     setNewMessage("");
+    isSendingRef.current = false;
+  };
+
+  const imageInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleSendImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !selectedConversation) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const newMsg: Message = {
+        id: `msg-${Date.now()}`,
+        content: String(reader.result || ""),
+        sender_id: user?.id || "",
+        receiver_id: selectedConversation.other_user?.id || "",
+        conversation_id: selectedConversation.id,
+        item_id: selectedConversation.item_id,
+        created_at: new Date().toISOString(),
+        sender: user || undefined,
+        receiver: selectedConversation.other_user,
+        read: false,
+        message_type: "image" as any,
+      };
+      try {
+        const lsMsgs = localStorage.getItem("messages");
+        const persistedMsgs = lsMsgs ? (JSON.parse(lsMsgs) as Message[]) : [];
+        persistedMsgs.push(newMsg);
+        localStorage.setItem("messages", JSON.stringify(persistedMsgs));
+
+        const convsRaw = localStorage.getItem("conversations");
+        const conversations: Conversation[] = convsRaw
+          ? JSON.parse(convsRaw)
+          : [];
+        const idx = conversations.findIndex(
+          (c) => c.id === selectedConversation.id
+        );
+        if (idx !== -1) {
+          conversations[idx].last_message = "[Image]";
+          conversations[idx].last_message_at = new Date().toISOString();
+          conversations[idx].updated_at = new Date().toISOString();
+          localStorage.setItem("conversations", JSON.stringify(conversations));
+        }
+      } catch {}
+      if (imageInputRef.current) imageInputRef.current.value = "";
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleEmojiSelect = (emoji: string) => {
@@ -318,17 +369,14 @@ export function MessagesPage() {
 
                   {/* Messages */}
                   <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-gray-50 to-white">
-                    {[
-                      ...demoMessages,
-                      ...(() => {
-                        try {
-                          const ls = localStorage.getItem("messages");
-                          return ls ? (JSON.parse(ls) as Message[]) : [];
-                        } catch {
-                          return [] as Message[];
-                        }
-                      })(),
-                    ]
+                    {(() => {
+                      try {
+                        const ls = localStorage.getItem("messages");
+                        return ls ? (JSON.parse(ls) as Message[]) : [];
+                      } catch {
+                        return [] as Message[];
+                      }
+                    })()
                       .filter(
                         (msg) => msg.conversation_id === selectedConversation.id
                       )
@@ -372,7 +420,17 @@ export function MessagesPage() {
                                 : "bg-white text-gray-900 rounded-bl-md border border-gray-200"
                             }`}
                           >
-                            <p className="leading-relaxed">{message.content}</p>
+                            {message.message_type === ("image" as any) ? (
+                              <img
+                                src={message.content}
+                                alt="sent"
+                                className="rounded-lg max-w-full h-auto"
+                              />
+                            ) : (
+                              <p className="leading-relaxed">
+                                {message.content}
+                              </p>
+                            )}
                             <p
                               className={`text-xs mt-2 ${
                                 message.sender_id === (user?.id || "")
@@ -440,12 +498,19 @@ export function MessagesPage() {
                         >
                           <Smile className="h-5 w-5" />
                         </button>
-                        <button className="p-2 text-gray-600 hover:text-pine-green hover:bg-powder-blue/30 rounded-full transition-colors">
-                          <Paperclip className="h-5 w-5" />
-                        </button>
-                        <button className="p-2 text-gray-600 hover:text-pine-green hover:bg-powder-blue/30 rounded-full transition-colors">
+                        <button
+                          onClick={() => imageInputRef.current?.click()}
+                          className="p-2 text-gray-600 hover:text-pine-green hover:bg-powder-blue/30 rounded-full transition-colors"
+                        >
                           <Image className="h-5 w-5" />
                         </button>
+                        <input
+                          ref={imageInputRef}
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={handleSendImage}
+                        />
                       </div>
                       <input
                         type="text"

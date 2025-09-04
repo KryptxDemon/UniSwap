@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { TuitionCard } from "../components/Tuition/TuitionCard";
 import { TuitionFilters } from "../components/Tuition/TuitionFilters";
-import { demoTuitions } from "../lib/demoData";
 import { BookOpen } from "lucide-react";
 
 export function BrowseTuitionsPage() {
-  const [filteredTuitions, setFilteredTuitions] = useState(demoTuitions);
+  const [filteredTuitions, setFilteredTuitions] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSubject, setSelectedSubject] = useState("");
   const [selectedClassLevel, setSelectedClassLevel] = useState("");
@@ -21,7 +20,7 @@ export function BrowseTuitionsPage() {
     const ls = localStorage.getItem("tuitions");
     const localTuitions = ls ? JSON.parse(ls) : [];
     // ensure only tuitions
-    const base = [...demoTuitions, ...localTuitions];
+    const base = [...localTuitions];
     // de-duplicate by id
     const map = new Map(base.map((t) => [t.id, t]));
     let filtered = Array.from(map.values());

@@ -16,7 +16,7 @@ import {
   Clock,
   GraduationCap,
 } from "lucide-react";
-import { demoTuitions } from "../lib/demoData";
+// Using only localStorage tuitions
 import { useAuth } from "../hooks/useAuth";
 
 export function TuitionDetailPage() {
@@ -44,7 +44,7 @@ export function TuitionDetailPage() {
       return [];
     }
   })();
-  const tuition = [...demoTuitions, ...lsTuitions].find((t) => t.id === id);
+  const tuition = lsTuitions.find((t: any) => t.id === id);
 
   if (!tuition) {
     return (
@@ -123,10 +123,12 @@ export function TuitionDetailPage() {
   const isOwnTuition = user?.id === tuition.tutor_id;
 
   const handleDeleteTuition = () => {
-    const tuitionIndex = demoTuitions.findIndex((t) => t.id === tuition.id);
-    if (tuitionIndex !== -1) {
-      demoTuitions.splice(tuitionIndex, 1);
-    }
+    try {
+      const ls = localStorage.getItem("tuitions");
+      const arr = ls ? (JSON.parse(ls) as any[]) : [];
+      const next = arr.filter((t) => t.id !== tuition.id);
+      localStorage.setItem("tuitions", JSON.stringify(next));
+    } catch {}
     // Remove from tuition wishlist if present
     const stored = localStorage.getItem("tuitionWishlist");
     if (stored) {
@@ -279,9 +281,7 @@ export function TuitionDetailPage() {
 
           <div className="space-y-6">
             <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="font-semibold text-gray-900 mb-4">
-                Tutor Information
-              </h3>
+              <h3 className="font-semibold text-gray-900 mb-4">Posted by</h3>
 
               <div className="flex items-center space-x-4 mb-4">
                 {tuition.tutor?.profile_picture ? (
@@ -304,7 +304,7 @@ export function TuitionDetailPage() {
                   >
                     {tuition.tutor?.username}
                   </Link>
-                  <p className="text-sm text-gray-600">Tutor</p>
+                  <p className="text-sm text-gray-600">Posted this tuition</p>
                 </div>
               </div>
 

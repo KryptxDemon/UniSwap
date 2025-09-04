@@ -39,6 +39,7 @@ interface AuthContextValue {
   ) => Promise<{ user: User }>;
   signIn: (email: string, password: string) => Promise<{ user: User }>;
   signOut: () => Promise<void>;
+  updateProfile: (updates: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -102,8 +103,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
   };
 
+  const updateProfile: AuthContextValue["updateProfile"] = (updates) => {
+    setUser((prev) => {
+      if (!prev) return prev;
+      const next = { ...prev, ...updates } as User;
+      try {
+        localStorage.setItem(AUTH_USER_KEY, JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+  };
+
   const value = useMemo<AuthContextValue>(
-    () => ({ user, loading, signUp, signIn, signOut }),
+    () => ({ user, loading, signUp, signIn, signOut, updateProfile }),
     [user, loading]
   );
 

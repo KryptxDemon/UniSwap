@@ -11,7 +11,6 @@ import {
   BookOpen,
   Trash2,
 } from "lucide-react";
-import { demoItems } from "../lib/demoData";
 import { useAuth } from "../hooks/useAuth";
 import { ItemCard } from "../components/Items/ItemCard";
 
@@ -21,7 +20,7 @@ export function ProfilePage() {
   const [activeTab, setActiveTab] = useState<
     "active" | "exchanged" | "wishlist"
   >("active");
-  const { user: authUser } = useAuth();
+  const { user: authUser, updateProfile } = useAuth();
 
   const profileUser = !id
     ? authUser
@@ -67,7 +66,9 @@ export function ProfilePage() {
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        setProfilePic(reader.result as string);
+        const url = reader.result as string;
+        setProfilePic(url);
+        updateProfile({ profile_picture: url });
       };
       reader.readAsDataURL(file);
     }
@@ -88,12 +89,28 @@ export function ProfilePage() {
     );
   }
 
-  const userItems = demoItems.filter((item) => item.user_id === profileUser.id);
+  const userItems = (() => {
+    try {
+      const ls = localStorage.getItem("items");
+      const arr = ls ? JSON.parse(ls) : [];
+      return arr.filter((item: any) => item.user_id === profileUser.id);
+    } catch {
+      return [] as any[];
+    }
+  })();
   const activeItems = userItems.filter((item) => !item.is_exchanged);
   const exchangedItems = userItems.filter((item) => item.is_exchanged);
 
   // Get wishlisted items
-  const wishlistedItems = demoItems.filter((item) => wishlist[item.id]);
+  const wishlistedItems = (() => {
+    try {
+      const ls = localStorage.getItem("items");
+      const arr = ls ? JSON.parse(ls) : [];
+      return arr.filter((item: any) => wishlist[item.id]);
+    } catch {
+      return [] as any[];
+    }
+  })();
   const wishlistedTuitions = []; // Add tuition data when available
 
   const formatDate = (dateString: string) =>

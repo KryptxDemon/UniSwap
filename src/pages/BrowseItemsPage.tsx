@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { ItemCard } from "../components/Items/ItemCard";
 import { ItemFilters } from "../components/Items/ItemFilters";
-import { demoItems } from "../lib/demoData";
 import { Package } from "lucide-react";
 
 export function BrowseItemsPage() {
-  const [filteredItems, setFilteredItems] = useState(demoItems);
+  const [filteredItems, setFilteredItems] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedCondition, setSelectedCondition] = useState("");
@@ -25,7 +24,7 @@ export function BrowseItemsPage() {
     const ls = localStorage.getItem("items");
     const localItems = ls ? JSON.parse(ls) : [];
     // ensure only real items, exclude tuitions marked by category.id === 'tuition'
-    const base = [...demoItems, ...localItems].filter(
+    const base = [...localItems].filter(
       (it) => !(it.category && it.category.id === "tuition")
     );
     // de-duplicate by id
