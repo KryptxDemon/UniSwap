@@ -36,7 +36,15 @@ export function TuitionDetailPage() {
   const [showWishlistModal, setShowWishlistModal] = useState(false);
   const [wishlistNote, setWishlistNote] = useState("");
 
-  const tuition = demoTuitions.find((tuition) => tuition.id === id);
+  const lsTuitions = (() => {
+    try {
+      const ls = localStorage.getItem("tuitions");
+      return ls ? JSON.parse(ls) : [];
+    } catch {
+      return [];
+    }
+  })();
+  const tuition = [...demoTuitions, ...lsTuitions].find((t) => t.id === id);
 
   if (!tuition) {
     return (
@@ -118,6 +126,15 @@ export function TuitionDetailPage() {
     const tuitionIndex = demoTuitions.findIndex((t) => t.id === tuition.id);
     if (tuitionIndex !== -1) {
       demoTuitions.splice(tuitionIndex, 1);
+    }
+    // Remove from tuition wishlist if present
+    const stored = localStorage.getItem("tuitionWishlist");
+    if (stored) {
+      const data = JSON.parse(stored);
+      if (data[tuition.id]) {
+        delete data[tuition.id];
+        localStorage.setItem("tuitionWishlist", JSON.stringify(data));
+      }
     }
     navigate("/browse/tuitions");
   };
@@ -325,7 +342,16 @@ export function TuitionDetailPage() {
                   <span>{isWishlisted ? "Saved" : "Save"}</span>
                 </button>
 
-                <button className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-xl font-medium hover:bg-gray-200 transition-colors flex items-center justify-center space-x-2">
+                <button
+                  onClick={() => {
+                    const link = window.location.href;
+                    navigator.clipboard
+                      .writeText(link)
+                      .then(() => alert("Link Copied"))
+                      .catch(() => alert("Failed to copy link"));
+                  }}
+                  className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-xl font-medium hover:bg-gray-200 transition-colors flex items-center justify-center space-x-2"
+                >
                   <Share2 className="h-5 w-5" />
                   <span>Share</span>
                 </button>

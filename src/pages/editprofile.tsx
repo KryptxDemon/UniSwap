@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Edit3, X } from "lucide-react";
-import { demoUsers, currentUser } from "../lib/demoData";
+import { useAuth } from "../hooks/useAuth";
 
 interface EditProfilePageProps {
   userId: string;
@@ -9,7 +9,10 @@ interface EditProfilePageProps {
 
 export function EditProfilePage({ userId }: EditProfilePageProps) {
   const navigate = useNavigate();
-  const user = demoUsers.find((u) => u.id === userId) || currentUser;
+  const { user: authUser } = useAuth();
+  const user =
+    authUser ||
+    ({ id: userId, username: "", bio: "", profile_picture: "" } as any);
 
   const [username, setUsername] = useState(user.username);
   const [bio, setBio] = useState(user.bio || "");

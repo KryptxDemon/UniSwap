@@ -22,7 +22,15 @@ export function BrowseItemsPage() {
     !!selectedLocation;
 
   useEffect(() => {
-    let filtered = demoItems;
+    const ls = localStorage.getItem("items");
+    const localItems = ls ? JSON.parse(ls) : [];
+    // ensure only real items, exclude tuitions marked by category.id === 'tuition'
+    const base = [...demoItems, ...localItems].filter(
+      (it) => !(it.category && it.category.id === "tuition")
+    );
+    // de-duplicate by id
+    const map = new Map(base.map((it) => [it.id, it]));
+    let filtered = Array.from(map.values());
 
     if (searchTerm) {
       filtered = filtered.filter(
@@ -34,7 +42,9 @@ export function BrowseItemsPage() {
     }
 
     if (selectedCategory) {
-      filtered = filtered.filter((item) => item.category.id === selectedCategory);
+      filtered = filtered.filter(
+        (item) => item.category.id === selectedCategory
+      );
     }
 
     if (selectedCondition) {
@@ -52,7 +62,9 @@ export function BrowseItemsPage() {
     }
 
     if (selectedLocation) {
-      filtered = filtered.filter((item) => item.location.id === selectedLocation);
+      filtered = filtered.filter(
+        (item) => item.location.id === selectedLocation
+      );
     }
 
     setFilteredItems(filtered);

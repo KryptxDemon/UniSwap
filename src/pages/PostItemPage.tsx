@@ -15,6 +15,7 @@ export function PostItemPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -22,6 +23,7 @@ export function PostItemPage() {
     category_id: "",
     condition: "",
     type: "",
+    swap_with: "",
     location_id: "",
     department: "",
     images: [] as string[],
@@ -36,13 +38,26 @@ export function PostItemPage() {
 
   const handleImageAdd = () => {
     const input = imageInputRef.current;
-    if (input && input.value.trim() && formData.images.length < 5) {
+    if (input && input.value.trim() && formData.images.length < 1) {
       setFormData((prev) => ({
         ...prev,
         images: [...prev.images, input.value.trim()],
       }));
       input.value = "";
     }
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (formData.images.length >= 1) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      setFormData((prev) => ({ ...prev, images: [dataUrl] }));
+    };
+    reader.readAsDataURL(file);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const handleImageRemove = (index: number) => {
@@ -82,7 +97,7 @@ export function PostItemPage() {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const newItem = {
-        id: String(demoItems.length + 1),
+        id: `item-${Date.now()}`,
         title,
         description,
         category: mockCategories.find((c) => c.id === category_id)!,
@@ -91,14 +106,26 @@ export function PostItemPage() {
         location: mockLocations.find((l) => l.id === location_id)!,
         department: formData.department,
         images: formData.images,
+        swap_with: formData.type === "swap" ? formData.swap_with : undefined,
         created_at: formData.post_time,
         user_id: user.id,
         user,
         is_exchanged: false,
       };
 
-      demoItems.push(newItem);
-      navigate("/browse");
+      const stored = localStorage.getItem("items");
+      const arr = stored ? JSON.parse(stored) : [];
+      arr.push(newItem);
+      localStorage.setItem("items", JSON.stringify(arr));
+
+      const goEdit = window.confirm(
+        "Item has been listed. Press OK to edit or Cancel to continue."
+      );
+      if (goEdit) {
+        navigate(`/item/${newItem.id}`);
+      } else {
+        navigate("/browse");
+      }
     } catch (err: any) {
       setError(err.message || "Failed to post item");
     } finally {
@@ -201,6 +228,20 @@ export function PostItemPage() {
             />
           </div>
 
+          {formData.type === "swap" && (
+            <div>
+              <label className="block font-medium mb-2">Swap With *</label>
+              <input
+                type="text"
+                value={formData.swap_with}
+                onChange={(e) => handleInputChange("swap_with", e.target.value)}
+                className="w-full border px-4 py-3 rounded-lg"
+                placeholder="e.g., a table lamp"
+                required
+              />
+            </div>
+          )}
+
           {/* Location */}
           <div>
             <label className="block font-medium mb-2">Location Type *</label>
@@ -250,14 +291,12 @@ export function PostItemPage() {
 
           {/* Image URL Input */}
           <div>
-            <label className="block font-medium mb-2">
-              Images (up to 5 URLs)
-            </label>
+            <label className="block font-medium mb-2">Image (one only)</label>
             <div className="flex gap-2 mb-2">
               <input
                 type="url"
                 ref={imageInputRef}
-                placeholder="Paste image URL here..."
+                placeholder="Paste Google Drive or image URL here..."
                 className="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-pine-green"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
@@ -269,11 +308,26 @@ export function PostItemPage() {
               <button
                 type="button"
                 onClick={handleImageAdd}
-                disabled={formData.images.length >= 5}
+                disabled={formData.images.length >= 1}
                 className="bg-pine-green text-white px-4 py-3 rounded-lg hover:bg-dark-teal flex items-center gap-2"
               >
                 <ImagePlus className="h-5 w-5" />
                 Add
+              </button>
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                onChange={handleFileSelect}
+                className="hidden"
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={formData.images.length >= 1}
+                className="bg-gray-100 px-4 py-3 rounded-lg hover:bg-gray-200"
+              >
+                Upload from PC
               </button>
             </div>
 

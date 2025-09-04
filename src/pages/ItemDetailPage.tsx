@@ -13,7 +13,8 @@ import {
   MoreVertical,
   AlertTriangle,
 } from "lucide-react";
-import { demoItems, currentUser } from "../lib/demoData";
+import { demoItems } from "../lib/demoData";
+import { Conversation, Message } from "../types";
 import { useAuth } from "../hooks/useAuth";
 
 export function ItemDetailPage() {
@@ -27,14 +28,24 @@ export function ItemDetailPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportReason, setReportReason] = useState("");
-  const [wishlist, setWishlist] = useState<{ [key: string]: string }>(() => {
+  const [wishlist, setWishlist] = useState<{
+    [key: string]: { note: string; createdAt: string };
+  }>(() => {
     const stored = localStorage.getItem("wishlist");
     return stored ? JSON.parse(stored) : {};
   });
   const [showWishlistModal, setShowWishlistModal] = useState(false);
   const [wishlistNote, setWishlistNote] = useState("");
 
-  const item = demoItems.find((item) => item.id === id);
+  const lsItems = (() => {
+    try {
+      const ls = localStorage.getItem("items");
+      return ls ? JSON.parse(ls) : [];
+    } catch {
+      return [];
+    }
+  })();
+  const item = [...demoItems, ...lsItems].find((item) => item.id === id);
 
   if (!item) {
     return (
@@ -100,8 +111,66 @@ export function ItemDetailPage() {
       navigate("/login");
       return;
     }
-    // In a real app, this would send the message
-    console.log("Sending message:", message);
+    // Persist conversation and message to localStorage
+    const convId = `conv-${user.id}-${item.id}-${item.user_id}`;
+    try {
+      const convsRaw = localStorage.getItem("conversations");
+      const conversations: Conversation[] = convsRaw
+        ? JSON.parse(convsRaw)
+        : [];
+      let conversation = conversations.find((c) => c.id === convId);
+      const nowIso = new Date().toISOString();
+
+      if (!conversation) {
+        conversation = {
+          id: convId,
+          participants: [user, item.user || ({} as any)],
+          other_user: item.user,
+          item: {
+            id: item.id,
+            title: item.title,
+            type: item.type,
+            location: item.location,
+          } as any,
+          item_id: item.id,
+          last_message: "",
+          last_message_at: nowIso,
+          updated_at: nowIso,
+          messages: [],
+        } as unknown as Conversation;
+        conversations.push(conversation);
+      }
+
+      const msgsRaw = localStorage.getItem("messages");
+      const persistedMsgs: Message[] = msgsRaw ? JSON.parse(msgsRaw) : [];
+      const newMsg: Message = {
+        id: `msg-${Date.now()}`,
+        content: message,
+        sender_id: user.id,
+        receiver_id: item.user_id,
+        conversation_id: convId,
+        item_id: item.id,
+        created_at: nowIso,
+        sender: user as any,
+        receiver: item.user as any,
+        read: false,
+        message_type: "text",
+      } as Message;
+
+      persistedMsgs.push(newMsg);
+      localStorage.setItem("messages", JSON.stringify(persistedMsgs));
+
+      // Update conversation preview
+      const convIndex = conversations.findIndex((c) => c.id === convId);
+      if (convIndex !== -1) {
+        conversations[convIndex].last_message = message;
+        conversations[convIndex].last_message_at = nowIso;
+        conversations[convIndex].updated_at = nowIso;
+      }
+      localStorage.setItem("conversations", JSON.stringify(conversations));
+    } catch (e) {
+      console.error("Failed to persist message", e);
+    }
     setShowMessageModal(false);
     setMessage("");
     alert("Message sent successfully!");
@@ -122,12 +191,12 @@ export function ItemDetailPage() {
   };
 
   const handleSaveWishlist = () => {
-    const updated = { 
-      ...wishlist, 
+    const updated = {
+      ...wishlist,
       [item.id]: {
         note: wishlistNote,
-        createdAt: new Date().toISOString()
-      }
+        createdAt: new Date().toISOString(),
+      },
     };
     setWishlist(updated);
     localStorage.setItem("wishlist", JSON.stringify(updated));
@@ -138,9 +207,18 @@ export function ItemDetailPage() {
 
   const handleDeleteItem = () => {
     // In a real app, this would delete from backend
-    const itemIndex = demoItems.findIndex(i => i.id === item.id);
+    const itemIndex = demoItems.findIndex((i) => i.id === item.id);
     if (itemIndex !== -1) {
       demoItems.splice(itemIndex, 1);
+    }
+    // Remove from wishlist if present
+    const stored = localStorage.getItem("wishlist");
+    if (stored) {
+      const data = JSON.parse(stored);
+      if (data[item.id]) {
+        delete data[item.id];
+        localStorage.setItem("wishlist", JSON.stringify(data));
+      }
     }
     navigate("/browse");
   };
@@ -265,7 +343,9 @@ export function ItemDetailPage() {
                 <MapPin className="h-5 w-5 text-gray-400" />
                 <div>
                   <span className="text-gray-700 font-medium">
-                    {item.location.type === "on-campus" ? "On Campus" : "Off Campus"}
+                    {item.location.type === "on-campus"
+                      ? "On Campus"
+                      : "Off Campus"}
                   </span>
                   <span className="text-gray-500 mx-2">•</span>
                   <span className="text-gray-700">{item.location.name}</span>
@@ -294,7 +374,9 @@ export function ItemDetailPage() {
                   <div className="h-5 w-5 bg-purple-100 rounded-full flex items-center justify-center">
                     <div className="h-2 w-2 bg-purple-600 rounded-full"></div>
                   </div>
-                  <span className="text-gray-700">Department: {item.department}</span>
+                  <span className="text-gray-700">
+                    Department: {item.department}
+                  </span>
                 </div>
               )}
             </div>
@@ -305,21 +387,24 @@ export function ItemDetailPage() {
               <div className="flex items-center space-x-3">
                 <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
                 <span className="text-gray-700">
-                  <span className="font-medium">Category:</span> {item.category.name}
+                  <span className="font-medium">Category:</span>{" "}
+                  {item.category.name}
                 </span>
               </div>
 
               <div className="flex items-center space-x-3">
                 <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
                 <span className="text-gray-700">
-                  <span className="font-medium">Condition:</span> {item.condition}
+                  <span className="font-medium">Condition:</span>{" "}
+                  {item.condition}
                 </span>
               </div>
 
               <div className="flex items-center space-x-3">
                 <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
                 <span className="text-gray-700">
-                  <span className="font-medium">Type:</span> {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
+                  <span className="font-medium">Type:</span>{" "}
+                  {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
                 </span>
               </div>
             </div>
@@ -352,19 +437,28 @@ export function ItemDetailPage() {
                   <span>{isWishlisted ? "Wishlisted" : "Add to Wishlist"}</span>
                 </button>
 
-                <button className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-xl font-medium hover:bg-gray-200 transition-colors flex items-center justify-center space-x-2">
+                <button
+                  onClick={() => {
+                    const link = window.location.href;
+                    navigator.clipboard
+                      .writeText(link)
+                      .then(() => alert("Link Copied"))
+                      .catch(() => alert("Failed to copy link"));
+                  }}
+                  className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-xl font-medium hover:bg-gray-200 transition-colors flex items-center justify-center space-x-2"
+                >
                   <Share2 className="h-5 w-5" />
                   <span>Share</span>
                 </button>
 
                 <div className="relative">
-                  <button 
+                  <button
                     onClick={() => setShowOptionsMenu(!showOptionsMenu)}
                     className="px-4 bg-gray-100 text-gray-700 py-3 rounded-xl font-medium hover:bg-gray-200 transition-colors"
                   >
                     <MoreVertical className="h-5 w-5" />
                   </button>
-                  
+
                   {showOptionsMenu && (
                     <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
                       {isOwnItem ? (
@@ -413,7 +507,7 @@ export function ItemDetailPage() {
                 <div className="text-green-800 font-semibold mb-1">
                   Your Wishlist Note:
                 </div>
-                <div className="text-green-900">{wishlist[item.id]}</div>
+                <div className="text-green-900">{wishlist[item.id]?.note}</div>
               </div>
             )}
           </div>
@@ -470,7 +564,8 @@ export function ItemDetailPage() {
             </div>
 
             <p className="text-gray-700 mb-6">
-              Are you sure you want to delete "{item.title}"? This will permanently remove the post and all associated data.
+              Are you sure you want to delete "{item.title}"? This will
+              permanently remove the post and all associated data.
             </p>
 
             <div className="flex space-x-4">

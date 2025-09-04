@@ -11,34 +11,46 @@ import {
   BookOpen,
   Trash2,
 } from "lucide-react";
-import { demoUsers, demoItems, currentUser } from "../lib/demoData";
+import { demoItems } from "../lib/demoData";
+import { useAuth } from "../hooks/useAuth";
 import { ItemCard } from "../components/Items/ItemCard";
 
 export function ProfilePage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<"active" | "exchanged" | "wishlist">("active");
+  const [activeTab, setActiveTab] = useState<
+    "active" | "exchanged" | "wishlist"
+  >("active");
+  const { user: authUser } = useAuth();
 
-  const profileUser = id
-    ? demoUsers.find((user) => user.id === id)
-    : currentUser;
-  const isOwnProfile = !id || id === currentUser.id;
+  const profileUser = !id
+    ? authUser
+    : id === authUser?.id
+    ? authUser
+    : undefined;
+  const isOwnProfile = !!authUser && (!id || id === authUser.id);
 
-  const [profilePic, setProfilePic] = useState(profileUser?.profile_picture || '/default-avatar.png');
+  const [profilePic, setProfilePic] = useState(
+    profileUser?.profile_picture || "/default-avatar.png"
+  );
 
   // Get wishlist data from localStorage
-  const [wishlist, setWishlist] = useState<{ [key: string]: { note: string; createdAt: string } }>(() => {
+  const [wishlist, setWishlist] = useState<{
+    [key: string]: { note: string; createdAt: string };
+  }>(() => {
     const stored = localStorage.getItem("wishlist");
     return stored ? JSON.parse(stored) : {};
   });
 
-  const [tuitionWishlist, setTuitionWishlist] = useState<{ [key: string]: { note: string; createdAt: string } }>(() => {
+  const [tuitionWishlist, setTuitionWishlist] = useState<{
+    [key: string]: { note: string; createdAt: string };
+  }>(() => {
     const stored = localStorage.getItem("tuitionWishlist");
     return stored ? JSON.parse(stored) : {};
   });
 
-  const removeFromWishlist = (itemId: string, type: 'item' | 'tuition') => {
-    if (type === 'item') {
+  const removeFromWishlist = (itemId: string, type: "item" | "tuition") => {
+    if (type === "item") {
       const updated = { ...wishlist };
       delete updated[itemId];
       setWishlist(updated);
@@ -81,7 +93,7 @@ export function ProfilePage() {
   const exchangedItems = userItems.filter((item) => item.is_exchanged);
 
   // Get wishlisted items
-  const wishlistedItems = demoItems.filter(item => wishlist[item.id]);
+  const wishlistedItems = demoItems.filter((item) => wishlist[item.id]);
   const wishlistedTuitions = []; // Add tuition data when available
 
   const formatDate = (dateString: string) =>
@@ -100,7 +112,10 @@ export function ProfilePage() {
     { label: "Items Listed", value: userItems.length },
     { label: "Active Listings", value: activeItems.length },
     { label: "Successful Exchanges", value: exchangedItems.length },
-    { label: "Wishlist Items", value: Object.keys(wishlist).length + Object.keys(tuitionWishlist).length },
+    {
+      label: "Wishlist Items",
+      value: Object.keys(wishlist).length + Object.keys(tuitionWishlist).length,
+    },
   ];
 
   return (
@@ -221,7 +236,10 @@ export function ProfilePage() {
                       : "text-gray-600 hover:text-gray-900"
                   }`}
                 >
-                  Wishlist ({Object.keys(wishlist).length + Object.keys(tuitionWishlist).length})
+                  Wishlist (
+                  {Object.keys(wishlist).length +
+                    Object.keys(tuitionWishlist).length}
+                  )
                 </button>
               )}
             </div>
@@ -229,14 +247,16 @@ export function ProfilePage() {
 
           {activeTab === "wishlist" && isOwnProfile ? (
             <div className="space-y-6">
-              {Object.keys(wishlist).length === 0 && Object.keys(tuitionWishlist).length === 0 ? (
+              {Object.keys(wishlist).length === 0 &&
+              Object.keys(tuitionWishlist).length === 0 ? (
                 <div className="text-center py-20">
                   <Heart className="h-20 w-20 text-gray-400 mx-auto mb-6" />
                   <h3 className="text-2xl font-bold text-gray-900 mb-3">
                     No saved items
                   </h3>
                   <p className="text-gray-600 text-lg mb-8 max-w-xl mx-auto">
-                    Items you save will appear here. Start browsing to find items you're interested in!
+                    Items you save will appear here. Start browsing to find
+                    items you're interested in!
                   </p>
                   <Link
                     to="/browse"
@@ -253,11 +273,16 @@ export function ProfilePage() {
                     <div>
                       <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center space-x-2">
                         <Package className="h-6 w-6" />
-                        <span>Saved Items ({Object.keys(wishlist).length})</span>
+                        <span>
+                          Saved Items ({Object.keys(wishlist).length})
+                        </span>
                       </h3>
                       <div className="space-y-4">
                         {wishlistedItems.map((item) => (
-                          <div key={item.id} className="bg-gray-50 rounded-xl p-6 flex items-start space-x-4">
+                          <div
+                            key={item.id}
+                            className="bg-gray-50 rounded-xl p-6 flex items-start space-x-4"
+                          >
                             <div className="flex-shrink-0">
                               {item.images && item.images.length > 0 ? (
                                 <img
@@ -280,22 +305,35 @@ export function ProfilePage() {
                                   >
                                     {item.title}
                                   </Link>
-                                  <p className="text-gray-600 mt-1">{item.description.substring(0, 100)}...</p>
+                                  <p className="text-gray-600 mt-1">
+                                    {item.description.substring(0, 100)}...
+                                  </p>
                                   <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
-                                    <span>Saved on {formatWishlistDate(wishlist[item.id]?.createdAt || new Date().toISOString())}</span>
+                                    <span>
+                                      Saved on{" "}
+                                      {formatWishlistDate(
+                                        wishlist[item.id]?.createdAt ||
+                                          new Date().toISOString()
+                                      )}
+                                    </span>
                                     <span>•</span>
                                     <span>{item.location.name}</span>
                                   </div>
                                   {wishlist[item.id]?.note && (
                                     <div className="mt-3 bg-blue-50 border-l-4 border-blue-400 p-3 rounded">
                                       <p className="text-pine-green text-sm">
-                                        <span className="font-medium">Note:</span> {wishlist[item.id].note}
+                                        <span className="font-medium">
+                                          Note:
+                                        </span>{" "}
+                                        {wishlist[item.id].note}
                                       </p>
                                     </div>
                                   )}
                                 </div>
                                 <button
-                                  onClick={() => removeFromWishlist(item.id, 'item')}
+                                  onClick={() =>
+                                    removeFromWishlist(item.id, "item")
+                                  }
                                   className="text-burnt-sienna hover:text-burnt-sienna/80 p-2 rounded-full hover:bg-burnt-sienna/10 transition-colors"
                                 >
                                   <Trash2 className="h-5 w-5" />
@@ -313,26 +351,42 @@ export function ProfilePage() {
                     <div>
                       <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center space-x-2">
                         <BookOpen className="h-6 w-6" />
-                        <span>Saved Tuitions ({Object.keys(tuitionWishlist).length})</span>
+                        <span>
+                          Saved Tuitions ({Object.keys(tuitionWishlist).length})
+                        </span>
                       </h3>
                       <div className="space-y-4">
                         {Object.keys(tuitionWishlist).map((tuitionId) => (
-                          <div key={tuitionId} className="bg-gray-50 rounded-xl p-6 flex items-start justify-between">
+                          <div
+                            key={tuitionId}
+                            className="bg-gray-50 rounded-xl p-6 flex items-start justify-between"
+                          >
                             <div className="flex-1">
-                              <div className="text-lg font-semibold text-gray-900">Tuition #{tuitionId}</div>
+                              <div className="text-lg font-semibold text-gray-900">
+                                Tuition #{tuitionId}
+                              </div>
                               <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
-                                <span>Saved on {formatWishlistDate(tuitionWishlist[tuitionId]?.createdAt || new Date().toISOString())}</span>
+                                <span>
+                                  Saved on{" "}
+                                  {formatWishlistDate(
+                                    tuitionWishlist[tuitionId]?.createdAt ||
+                                      new Date().toISOString()
+                                  )}
+                                </span>
                               </div>
                               {tuitionWishlist[tuitionId]?.note && (
                                 <div className="mt-3 bg-powder-blue border-l-4 border-bright-cyan p-3 rounded">
                                   <p className="text-pine-green text-sm">
-                                    <span className="font-medium">Note:</span> {tuitionWishlist[tuitionId].note}
+                                    <span className="font-medium">Note:</span>{" "}
+                                    {tuitionWishlist[tuitionId].note}
                                   </p>
                                 </div>
                               )}
                             </div>
                             <button
-                              onClick={() => removeFromWishlist(tuitionId, 'tuition')}
+                              onClick={() =>
+                                removeFromWishlist(tuitionId, "tuition")
+                              }
                               className="text-burnt-sienna hover:text-burnt-sienna/80 p-2 rounded-full hover:bg-burnt-sienna/10 transition-colors"
                             >
                               <Trash2 className="h-5 w-5" />
@@ -368,34 +422,36 @@ export function ProfilePage() {
             </div>
           )}
 
-          {activeTab !== "wishlist" && (activeTab === "active" ? activeItems : exchangedItems).length === 0 && (
-            <div className="text-center py-20">
-              <Package className="h-20 w-20 text-gray-400 mx-auto mb-6" />
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">
-                No {activeTab} items
-              </h3>
-              <p className="text-gray-600 text-lg mb-8 max-w-xl mx-auto">
-                {activeTab === "active"
-                  ? isOwnProfile
-                    ? "You haven't posted any items yet."
-                    : `${profileUser.username} hasn't posted any items yet.`
-                  : isOwnProfile
-                  ? "You haven't completed any exchanges yet."
-                  : `${profileUser.username} hasn't completed any exchanges yet.`}
-              </p>
-              {isOwnProfile && activeTab === "active" && (
-                <Link
-                  to="/post-item"
-                  className="bg-blue-600 text-white px-8 py-4 rounded-xl hover:bg-blue-700 transition inline-flex items-center space-x-3 shadow-md"
-                >
-                  <Package className="h-6 w-6" />
-                  <span className="text-lg font-semibold">
-                    Post Your First Item
-                  </span>
-                </Link>
-              )}
-            </div>
-          )}
+          {activeTab !== "wishlist" &&
+            (activeTab === "active" ? activeItems : exchangedItems).length ===
+              0 && (
+              <div className="text-center py-20">
+                <Package className="h-20 w-20 text-gray-400 mx-auto mb-6" />
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                  No {activeTab} items
+                </h3>
+                <p className="text-gray-600 text-lg mb-8 max-w-xl mx-auto">
+                  {activeTab === "active"
+                    ? isOwnProfile
+                      ? "You haven't posted any items yet."
+                      : `${profileUser.username} hasn't posted any items yet.`
+                    : isOwnProfile
+                    ? "You haven't completed any exchanges yet."
+                    : `${profileUser.username} hasn't completed any exchanges yet.`}
+                </p>
+                {isOwnProfile && activeTab === "active" && (
+                  <Link
+                    to="/post-item"
+                    className="bg-blue-600 text-white px-8 py-4 rounded-xl hover:bg-blue-700 transition inline-flex items-center space-x-3 shadow-md"
+                  >
+                    <Package className="h-6 w-6" />
+                    <span className="text-lg font-semibold">
+                      Post Your First Item
+                    </span>
+                  </Link>
+                )}
+              </div>
+            )}
         </div>
       </div>
     </div>

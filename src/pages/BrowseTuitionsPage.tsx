@@ -18,40 +18,49 @@ export function BrowseTuitionsPage() {
     !!selectedStatus;
 
   useEffect(() => {
-    let filtered = demoTuitions;
+    const ls = localStorage.getItem("tuitions");
+    const localTuitions = ls ? JSON.parse(ls) : [];
+    // ensure only tuitions
+    const base = [...demoTuitions, ...localTuitions];
+    // de-duplicate by id
+    const map = new Map(base.map((t) => [t.id, t]));
+    let filtered = Array.from(map.values());
 
     if (searchTerm) {
       filtered = filtered.filter(
         (tuition) =>
           tuition.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          tuition.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          tuition.tutor?.username.toLowerCase().includes(searchTerm.toLowerCase())
+          tuition.description
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          tuition.tutor?.username
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())
       );
     }
 
     if (selectedSubject) {
       filtered = filtered.filter((tuition) =>
-        tuition.subjects.some(subject => 
+        tuition.subjects.some((subject) =>
           subject.toLowerCase().includes(selectedSubject.toLowerCase())
         )
       );
     }
 
     if (selectedClassLevel) {
-      filtered = filtered.filter((tuition) => tuition.class_level === selectedClassLevel);
+      filtered = filtered.filter(
+        (tuition) => tuition.class_level === selectedClassLevel
+      );
     }
 
     if (selectedStatus) {
-      filtered = filtered.filter((tuition) => tuition.status === selectedStatus);
+      filtered = filtered.filter(
+        (tuition) => tuition.status === selectedStatus
+      );
     }
 
     setFilteredTuitions(filtered);
-  }, [
-    searchTerm,
-    selectedSubject,
-    selectedClassLevel,
-    selectedStatus,
-  ]);
+  }, [searchTerm, selectedSubject, selectedClassLevel, selectedStatus]);
 
   const handleClearFilters = () => {
     setSearchTerm("");
@@ -64,8 +73,12 @@ export function BrowseTuitionsPage() {
     <div className="min-h-screen bg-bright-cyan/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8 pt-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Browse Tuitions</h1>
-          <p className="text-gray-600">Find tutoring opportunities from fellow students</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Browse Tuitions
+          </h1>
+          <p className="text-gray-600">
+            Find tutoring opportunities from fellow students
+          </p>
         </div>
 
         {/* Filter Bar */}

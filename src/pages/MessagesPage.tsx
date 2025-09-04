@@ -11,17 +11,32 @@ import {
   Paperclip,
   Image,
 } from "lucide-react";
-import { demoConversations, demoMessages, currentUser } from "../lib/demoData";
+import { demoConversations, demoMessages } from "../lib/demoData";
+import { useAuth } from "../hooks/useAuth";
 import { Conversation, Message } from "../types";
 
 export function MessagesPage() {
+  const { user } = useAuth();
   const [selectedConversation, setSelectedConversation] =
     useState<Conversation | null>(null);
   const [newMessage, setNewMessage] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  // merge persisted with demo
+  const persistedConvs = (() => {
+    try {
+      const ls = localStorage.getItem("conversations");
+      return ls ? (JSON.parse(ls) as Conversation[]) : [];
+    } catch {
+      return [] as Conversation[];
+    }
+  })();
+  const mergedConvsMap = new Map(
+    [...demoConversations, ...persistedConvs].map((c) => [c.id, c])
+  );
+  const mergedConversations = Array.from(mergedConvsMap.values());
 
-  const filteredConversations = demoConversations.filter(
+  const filteredConversations = mergedConversations.filter(
     (conv) =>
       conv.other_user?.username
         .toLowerCase()
@@ -37,18 +52,22 @@ export function MessagesPage() {
     const newMsg: Message = {
       id: String(demoMessages.length + 1),
       content: newMessage,
-      sender_id: currentUser.id,
+      sender_id: user?.id || "",
       receiver_id: selectedConversation.other_user?.id || "",
       conversation_id: selectedConversation.id,
       item_id: selectedConversation.item_id,
       created_at: new Date().toISOString(),
-      sender: currentUser,
+      sender: user || undefined,
       receiver: selectedConversation.other_user,
       read: false,
       message_type: "text",
     };
 
     demoMessages.push(newMsg);
+    const lsMsgs = localStorage.getItem("messages");
+    const persistedMsgs = lsMsgs ? (JSON.parse(lsMsgs) as Message[]) : [];
+    persistedMsgs.push(newMsg);
+    localStorage.setItem("messages", JSON.stringify(persistedMsgs));
 
     const convIndex = demoConversations.findIndex(
       (c) => c.id === selectedConversation.id
@@ -123,9 +142,7 @@ export function MessagesPage() {
             >
               {/* Header */}
               <div className="p-6 border-b border-gray-100 bg-gradient-to-r from-pine-green to-dark-teal">
-                <h1 className="text-2xl font-bold text-white mb-4">
-                  Messages
-                </h1>
+                <h1 className="text-2xl font-bold text-white mb-4">Messages</h1>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                   <input
@@ -236,7 +253,9 @@ export function MessagesPage() {
                       <div className="w-10 h-10 rounded-full flex items-center justify-center relative">
                         {selectedConversation.other_user?.profile_picture ? (
                           <img
-                            src={selectedConversation.other_user.profile_picture}
+                            src={
+                              selectedConversation.other_user.profile_picture
+                            }
                             alt={selectedConversation.other_user.username}
                             className="w-full h-full object-cover rounded-full border-2 border-gray-100"
                           />
@@ -255,7 +274,9 @@ export function MessagesPage() {
                         <h2 className="font-semibold text-gray-900">
                           {selectedConversation.other_user?.username}
                         </h2>
-                        <p className="text-sm text-green-600 font-medium">Online</p>
+                        <p className="text-sm text-green-600 font-medium">
+                          Online
+                        </p>
                       </div>
                     </div>
 
@@ -297,7 +318,17 @@ export function MessagesPage() {
 
                   {/* Messages */}
                   <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-gray-50 to-white">
-                    {demoMessages
+                    {[
+                      ...demoMessages,
+                      ...(() => {
+                        try {
+                          const ls = localStorage.getItem("messages");
+                          return ls ? (JSON.parse(ls) as Message[]) : [];
+                        } catch {
+                          return [] as Message[];
+                        }
+                      })(),
+                    ]
                       .filter(
                         (msg) => msg.conversation_id === selectedConversation.id
                       )
@@ -310,12 +341,12 @@ export function MessagesPage() {
                         <div
                           key={message.id}
                           className={`flex items-end space-x-2 ${
-                            message.sender_id === currentUser.id
+                            message.sender_id === (user?.id || "")
                               ? "justify-end"
                               : "justify-start"
                           }`}
                         >
-                          {message.sender_id !== currentUser.id && (
+                          {message.sender_id !== (user?.id || "") && (
                             <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
                               {message.sender?.profile_picture ? (
                                 <img
@@ -336,7 +367,7 @@ export function MessagesPage() {
                           )}
                           <div
                             className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl shadow-sm ${
-                              message.sender_id === currentUser.id
+                              message.sender_id === (user?.id || "")
                                 ? "bg-gradient-to-r from-pine-green to-dark-teal text-white rounded-br-md"
                                 : "bg-white text-gray-900 rounded-bl-md border border-gray-200"
                             }`}
@@ -344,31 +375,33 @@ export function MessagesPage() {
                             <p className="leading-relaxed">{message.content}</p>
                             <p
                               className={`text-xs mt-2 ${
-                                message.sender_id === currentUser.id
+                                message.sender_id === (user?.id || "")
                                   ? "text-powder-blue/80"
                                   : "text-gray-500"
                               }`}
                             >
                               {formatTime(message.created_at)}
-                              {message.sender_id === currentUser.id && (
+                              {message.sender_id === (user?.id || "") && (
                                 <span className="ml-1">
                                   {message.read ? "✓✓" : "✓"}
                                 </span>
                               )}
                             </p>
                           </div>
-                          {message.sender_id === currentUser.id && (
+                          {message.sender_id === (user?.id || "") && (
                             <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
-                              {currentUser.profile_picture ? (
+                              {user?.profile_picture ? (
                                 <img
-                                  src={currentUser.profile_picture}
-                                  alt={currentUser.username}
+                                  src={user.profile_picture}
+                                  alt={user.username}
                                   className="w-full h-full object-cover"
                                 />
                               ) : (
                                 <div className="w-full h-full bg-gradient-to-br from-pine-green to-bright-cyan rounded-full flex items-center justify-center">
                                   <span className="text-white text-xs font-semibold">
-                                    {currentUser.username.charAt(0).toUpperCase()}
+                                    {user?.username
+                                      ? user.username.charAt(0).toUpperCase()
+                                      : ""}
                                   </span>
                                 </div>
                               )}

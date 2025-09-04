@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { X, ImagePlus } from "lucide-react";
+import { X } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { demoItems } from "../lib/demoData";
 import { mockLocations } from "../lib/mockData";
@@ -11,7 +11,7 @@ export function PostTuitionPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [selectedLocationType, setSelectedLocationType] = useState("");
-  const imageInputRef = useRef<HTMLInputElement>(null);
+  const addressInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -22,7 +22,8 @@ export function PostTuitionPage() {
     days_week: "",
     class: "",
     subject: "",
-    images: [] as string[],
+    address_url: "",
+    preferred_tutor: "both", // male | female | both
     post_time: new Date().toISOString(),
   });
 
@@ -30,22 +31,11 @@ export function PostTuitionPage() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleImageAdd = () => {
-    const input = imageInputRef.current;
-    if (input && input.value.trim() && formData.images.length < 5) {
-      setFormData((prev) => ({
-        ...prev,
-        images: [...prev.images, input.value.trim()],
-      }));
-      input.value = "";
+  const handleAddressSet = () => {
+    const input = addressInputRef.current;
+    if (input && input.value.trim()) {
+      setFormData((prev) => ({ ...prev, address_url: input.value.trim() }));
     }
-  };
-
-  const handleImageRemove = (index: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      images: prev.images.filter((_, i) => i !== index),
-    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -87,7 +77,7 @@ export function PostTuitionPage() {
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const newItem = {
-        id: String(demoItems.length + 1),
+        id: `tuition-${Date.now()}`,
         title,
         description,
         category: { id: "tuition", name: "Tuition" },
@@ -103,12 +93,24 @@ export function PostTuitionPage() {
         created_at: formData.post_time,
         user_id: user.id,
         user,
-        images: formData.images,
+        address_url: formData.address_url,
+        preferred_tutor: formData.preferred_tutor,
         is_exchanged: false,
       };
 
-      demoItems.push(newItem);
-      navigate("/browse");
+      const stored = localStorage.getItem("tuitions");
+      const arr = stored ? JSON.parse(stored) : [];
+      arr.push(newItem);
+      localStorage.setItem("tuitions", JSON.stringify(arr));
+
+      const goEdit = window.confirm(
+        "Item has been listed. Press OK to edit or Cancel to continue."
+      );
+      if (goEdit) {
+        navigate(`/tuition/${newItem.id}`);
+      } else {
+        navigate("/browse/tuitions");
+      }
     } catch (err: any) {
       setError(err.message || "Failed to post tuition offer");
     } finally {
@@ -260,53 +262,45 @@ export function PostTuitionPage() {
             onChange={handleInputChange}
           />
 
-          <div>
-            <label className="block font-medium mb-2">
-              Images (up to 5 URLs)
-            </label>
-            <div className="flex gap-2 mb-2">
-              <input
-                type="url"
-                ref={imageInputRef}
-                placeholder="Paste image URL here..."
-                className="flex-1 border px-4 py-3 rounded-lg"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleImageAdd();
-                  }
-                }}
-              />
-              <button
-                type="button"
-                onClick={handleImageAdd}
-                disabled={formData.images.length >= 5}
-                className="bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 flex items-center gap-2"
-              >
-                <ImagePlus className="h-5 w-5" />
-                Add
-              </button>
-            </div>
-
-            {formData.images.length > 0 && (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {formData.images.map((url, index) => (
-                  <div key={index} className="relative group">
-                    <img
-                      src={url}
-                      className="w-full h-32 object-cover rounded-lg border"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleImageRemove(index)}
-                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  </div>
-                ))}
+          {/* Address URL and Preferred Tutor */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block font-medium mb-2">Address URL *</label>
+              <div className="flex gap-2">
+                <input
+                  type="url"
+                  ref={addressInputRef}
+                  defaultValue={formData.address_url}
+                  placeholder="Paste Google Maps or address URL"
+                  className="flex-1 border px-4 py-3 rounded-lg"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={handleAddressSet}
+                  className="bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700"
+                >
+                  Set
+                </button>
               </div>
-            )}
+            </div>
+            <div>
+              <label className="block font-medium mb-2">
+                Preferred Tutor *
+              </label>
+              <select
+                value={formData.preferred_tutor}
+                onChange={(e) =>
+                  handleInputChange("preferred_tutor", e.target.value)
+                }
+                className="w-full border px-4 py-3 rounded-lg"
+                required
+              >
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="both">Both</option>
+              </select>
+            </div>
           </div>
 
           <div className="flex gap-4">
