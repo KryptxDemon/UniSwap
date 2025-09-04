@@ -4,8 +4,6 @@ import {
   Search,
   Send,
   ArrowLeft,
-  Phone,
-  Video,
   MoreVertical,
   Smile,
   Image,
@@ -44,13 +42,18 @@ export function MessagesPage() {
   const handleSendMessage = () => {
     if (!newMessage.trim() || !selectedConversation) return;
     if (isSendingRef.current) return;
+    
     isSendingRef.current = true;
+    const messageContent = newMessage.trim();
+    
+    // Clear input immediately to prevent duplicate sends
+    setNewMessage("");
 
-    console.log("Sending message:", newMessage);
+    console.log("Sending message:", messageContent);
 
     const newMsg: Message = {
-      id: `msg-${Date.now()}`,
-      content: newMessage,
+      id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      content: messageContent,
       sender_id: user?.id || "",
       receiver_id: selectedConversation.other_user?.id || "",
       conversation_id: selectedConversation.id,
@@ -61,30 +64,46 @@ export function MessagesPage() {
       read: false,
       message_type: "text",
     };
-    const lsMsgs = localStorage.getItem("messages");
-    const persistedMsgs = lsMsgs ? (JSON.parse(lsMsgs) as Message[]) : [];
-    persistedMsgs.push(newMsg);
-    localStorage.setItem("messages", JSON.stringify(persistedMsgs));
 
-    // update conversation preview in storage
     try {
-      const convsRaw = localStorage.getItem("conversations");
-      const conversations: Conversation[] = convsRaw
-        ? JSON.parse(convsRaw)
-        : [];
-      const idx = conversations.findIndex(
-        (c) => c.id === selectedConversation.id
+      const lsMsgs = localStorage.getItem("messages");
+      const persistedMsgs = lsMsgs ? (JSON.parse(lsMsgs) as Message[]) : [];
+      
+      // Check if message already exists to prevent duplicates
+      const messageExists = persistedMsgs.some(msg => 
+        msg.content === messageContent && 
+        msg.sender_id === user?.id && 
+        msg.conversation_id === selectedConversation.id &&
+        Math.abs(new Date(msg.created_at).getTime() - new Date().getTime()) < 5000 // within 5 seconds
       );
-      if (idx !== -1) {
-        conversations[idx].last_message = newMessage;
-        conversations[idx].last_message_at = new Date().toISOString();
-        conversations[idx].updated_at = new Date().toISOString();
-        localStorage.setItem("conversations", JSON.stringify(conversations));
-      }
-    } catch {}
+      
+      if (!messageExists) {
+        persistedMsgs.push(newMsg);
+        localStorage.setItem("messages", JSON.stringify(persistedMsgs));
 
-    setNewMessage("");
-    isSendingRef.current = false;
+        // update conversation preview in storage
+        const convsRaw = localStorage.getItem("conversations");
+        const conversations: Conversation[] = convsRaw
+          ? JSON.parse(convsRaw)
+          : [];
+        const idx = conversations.findIndex(
+          (c) => c.id === selectedConversation.id
+        );
+        if (idx !== -1) {
+          conversations[idx].last_message = messageContent;
+          conversations[idx].last_message_at = new Date().toISOString();
+          conversations[idx].updated_at = new Date().toISOString();
+          localStorage.setItem("conversations", JSON.stringify(conversations));
+        }
+      }
+    } catch (error) {
+      console.error("Error sending message:", error);
+    } finally {
+      // Reset the sending flag after a short delay
+      setTimeout(() => {
+        isSendingRef.current = false;
+      }, 1000);
+    }
   };
 
   const imageInputRef = useRef<HTMLInputElement | null>(null);
@@ -332,13 +351,11 @@ export function MessagesPage() {
                     </div>
 
                     <div className="flex items-center space-x-2">
-                      <button className="p-2 text-gray-600 hover:text-pine-green hover:bg-powder-blue/50 rounded-full transition-colors">
-                        <Phone className="h-5 w-5" />
-                      </button>
-                      <button className="p-2 text-gray-600 hover:text-pine-green hover:bg-powder-blue/50 rounded-full transition-colors">
-                        <Video className="h-5 w-5" />
-                      </button>
-                      <button className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors">
+                      {/* Removed non-functional phone and video call buttons */}
+                      <button 
+                        onClick={() => alert("More options coming soon!")}
+                        className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors"
+                      >
                         <MoreVertical className="h-5 w-5" />
                       </button>
                     </div>
@@ -385,7 +402,14 @@ export function MessagesPage() {
                           new Date(a.created_at).getTime() -
                           new Date(b.created_at).getTime()
                       )
-                      .map((message) => (
+                      .map((message) => {
+                        // Ensure sender info is populated
+                        const isCurrentUserSender = message.sender_id === (user?.id || "");
+                        const senderInfo = isCurrentUserSender 
+                          ? user 
+                          : selectedConversation?.other_user;
+                        
+                        return (
                         <div
                           key={message.id}
                           className={`flex items-end space-x-2 ${
@@ -396,17 +420,17 @@ export function MessagesPage() {
                         >
                           {message.sender_id !== (user?.id || "") && (
                             <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
-                              {message.sender?.profile_picture ? (
+                              {senderInfo?.profile_picture ? (
                                 <img
-                                  src={message.sender.profile_picture}
-                                  alt={message.sender.username}
+                                  src={senderInfo.profile_picture}
+                                  alt={senderInfo.username}
                                   className="w-full h-full object-cover"
                                 />
                               ) : (
                                 <div className="w-full h-full bg-gradient-to-br from-pine-green to-bright-cyan rounded-full flex items-center justify-center">
                                   <span className="text-white text-xs font-semibold">
-                                    {message.sender?.username
-                                      .charAt(0)
+                                    {senderInfo?.username
+                                      ?.charAt(0)
                                       .toUpperCase()}
                                   </span>
                                 </div>
@@ -466,7 +490,8 @@ export function MessagesPage() {
                             </div>
                           )}
                         </div>
-                      ))}
+                        );
+                      })}
                   </div>
 
                   {/* Message Input */}

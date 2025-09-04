@@ -15,6 +15,10 @@ import {
   DollarSign,
   Clock,
   GraduationCap,
+  Phone,
+  Building,
+  ExternalLink,
+  UserCheck,
 } from "lucide-react";
 // Using only localStorage tuitions
 import { useAuth } from "../hooks/useAuth";
@@ -45,6 +49,27 @@ export function TuitionDetailPage() {
     }
   })();
   const tuition = lsTuitions.find((t: any) => t.id === id);
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Sign In Required
+          </h2>
+          <p className="text-gray-600 mb-6">
+            You need to be signed in to view tuition details.
+          </p>
+          <button
+            onClick={() => navigate("/login")}
+            className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
+          >
+            Sign In
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (!tuition) {
     return (
@@ -196,7 +221,7 @@ export function TuitionDetailPage() {
               <div className="mb-6">
                 <h3 className="font-semibold text-gray-900 mb-3">Subjects</h3>
                 <div className="flex flex-wrap gap-2">
-                  {tuition.subjects.map((subject, index) => (
+                  {tuition.subjects.map((subject: string, index: number) => (
                     <span
                       key={index}
                       className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium"
@@ -270,6 +295,78 @@ export function TuitionDetailPage() {
                     </div>
                   </div>
                 </div>
+              </div>
+
+              {/* Additional Information */}
+              <div className="grid md:grid-cols-2 gap-6 mb-6">
+                {tuition.department && (
+                  <div className="bg-indigo-50 rounded-xl p-6">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
+                        <Building className="h-5 w-5 text-indigo-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Department</h4>
+                        <p className="text-lg font-bold text-indigo-600">
+                          {tuition.department}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {tuition.phone && (
+                  <div className="bg-teal-50 rounded-xl p-6">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center">
+                        <Phone className="h-5 w-5 text-teal-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Phone</h4>
+                        <p className="text-lg font-bold text-teal-600">
+                          {tuition.phone}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {tuition.preferred_tutor && (
+                  <div className="bg-pink-50 rounded-xl p-6">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <div className="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center">
+                        <UserCheck className="h-5 w-5 text-pink-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Preferred Tutor</h4>
+                        <p className="text-lg font-bold text-pink-600 capitalize">
+                          {tuition.preferred_tutor}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {tuition.address_url && (
+                  <div className="bg-amber-50 rounded-xl p-6">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+                        <ExternalLink className="h-5 w-5 text-amber-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Address</h4>
+                        <a
+                          href={tuition.address_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-lg font-bold text-amber-600 hover:text-amber-700 underline"
+                        >
+                          View Location
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center space-x-2 text-sm text-gray-500">

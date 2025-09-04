@@ -12,6 +12,7 @@ import {
   Trash2,
   MoreVertical,
   AlertTriangle,
+  Phone,
 } from "lucide-react";
 // Using only localStorage items
 import { Conversation, Message } from "../types";
@@ -36,6 +37,9 @@ export function ItemDetailPage() {
   });
   const [showWishlistModal, setShowWishlistModal] = useState(false);
   const [wishlistNote, setWishlistNote] = useState("");
+  const [showStatusModal, setShowStatusModal] = useState(false);
+  const [newStatus, setNewStatus] = useState("");
+  const [statusNote, setStatusNote] = useState("");
 
   const lsItems = (() => {
     try {
@@ -45,7 +49,28 @@ export function ItemDetailPage() {
       return [];
     }
   })();
-  const item = lsItems.find((it: any) => it.id === id);
+  const item = lsItems.find((it: any) => String(it.id) === String(id));
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Sign In Required
+          </h2>
+          <p className="text-gray-600 mb-6">
+            You need to be signed in to view item details.
+          </p>
+          <button
+            onClick={() => navigate("/login")}
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Sign In
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (!item) {
     return (
@@ -240,6 +265,46 @@ export function ItemDetailPage() {
     alert("User report submitted successfully!");
   };
 
+  const handleStatusUpdate = () => {
+    if (!newStatus || !statusNote.trim()) return;
+
+    try {
+      // Update item status
+      const ls = localStorage.getItem("items");
+      const items = ls ? JSON.parse(ls) : [];
+      const itemIndex = items.findIndex((i: any) => i.id === item.id);
+      
+      if (itemIndex !== -1) {
+        items[itemIndex].status = newStatus;
+        items[itemIndex].status_updated_at = new Date().toISOString();
+        localStorage.setItem("items", JSON.stringify(items));
+
+        // Add to status history
+        const historyKey = `item_status_history_${item.id}`;
+        const existingHistory = JSON.parse(localStorage.getItem(historyKey) || "[]");
+        const newHistoryEntry = {
+          id: `history-${Date.now()}`,
+          status: newStatus,
+          note: statusNote,
+          updated_at: new Date().toISOString(),
+          updated_by: user?.username || "Unknown"
+        };
+        existingHistory.push(newHistoryEntry);
+        localStorage.setItem(historyKey, JSON.stringify(existingHistory));
+
+        setShowStatusModal(false);
+        setNewStatus("");
+        setStatusNote("");
+        
+        // Refresh the page to show updated status
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+      alert("Failed to update status");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -278,7 +343,7 @@ export function ItemDetailPage() {
 
             {item.images && item.images.length > 1 && (
               <div className="flex space-x-2 overflow-x-auto">
-                {item.images.map((image, index) => (
+                {item.images.map((image: string, index: number) => (
                   <button
                     key={index}
                     onClick={() => setCurrentImageIndex(index)}
@@ -382,6 +447,15 @@ export function ItemDetailPage() {
                   </span>
                 </div>
               )}
+
+              {item.phone && (
+                <div className="flex items-center space-x-3">
+                  <Phone className="h-5 w-5 text-gray-400" />
+                  <span className="text-gray-700">
+                    Phone: {item.phone}
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Additional Details */}
@@ -411,6 +485,45 @@ export function ItemDetailPage() {
                 </span>
               </div>
             </div>
+
+            {/* Status Update (Owner Only) */}
+            {isOwnItem && item.status !== "donated" && item.status !== "exchanged" && item.status !== "rented" && (
+              <div className="bg-yellow-50 rounded-xl p-6 mb-6">
+                <h3 className="font-semibold text-gray-900 mb-3">Update Item Status</h3>
+                <p className="text-gray-600 mb-4">Mark this item as donated, exchanged, or rented when completed.</p>
+                <button
+                  onClick={() => setShowStatusModal(true)}
+                  className="bg-yellow-600 text-white px-6 py-3 rounded-lg hover:bg-yellow-700 transition-colors"
+                >
+                  Update Status
+                </button>
+              </div>
+            )}
+
+            {/* Status History */}
+            {(() => {
+              const historyKey = `item_status_history_${item.id}`;
+              const history = JSON.parse(localStorage.getItem(historyKey) || "[]");
+              return history.length > 0 ? (
+                <div className="bg-gray-50 rounded-xl p-6 mb-6">
+                  <h3 className="font-semibold text-gray-900 mb-3">Status History</h3>
+                  <div className="space-y-3">
+                    {history.reverse().map((entry: any) => (
+                      <div key={entry.id} className="bg-white rounded-lg p-4 border border-gray-200">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-medium text-gray-900 capitalize">{entry.status}</span>
+                          <span className="text-sm text-gray-500">
+                            {new Date(entry.updated_at).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <p className="text-gray-600 text-sm">{entry.note}</p>
+                        <p className="text-xs text-gray-500 mt-1">Updated by {entry.updated_by}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null;
+            })()}
 
             {/* Actions */}
             <div className="space-y-4">
@@ -666,6 +779,62 @@ export function ItemDetailPage() {
                 className="flex-1 bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
               >
                 Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Status Update Modal */}
+      {showStatusModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-md">
+            <h3 className="text-xl font-bold text-gray-900 mb-4">
+              Update Item Status
+            </h3>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                New Status
+              </label>
+              <select
+                value={newStatus}
+                onChange={(e) => setNewStatus(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-yellow-500"
+              >
+                <option value="">Select status</option>
+                <option value="donated">Donated</option>
+                <option value="exchanged">Exchanged</option>
+                <option value="rented">Rented</option>
+              </select>
+            </div>
+
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Note (required)
+              </label>
+              <textarea
+                value={statusNote}
+                onChange={(e) => setStatusNote(e.target.value)}
+                placeholder="Add details about the transaction..."
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-yellow-500 focus:border-transparent resize-none"
+                rows={3}
+              />
+            </div>
+
+            <div className="flex space-x-4">
+              <button
+                onClick={() => setShowStatusModal(false)}
+                className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleStatusUpdate}
+                disabled={!newStatus || !statusNote.trim()}
+                className="flex-1 bg-yellow-600 text-white py-3 rounded-lg font-medium hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Update Status
               </button>
             </div>
           </div>

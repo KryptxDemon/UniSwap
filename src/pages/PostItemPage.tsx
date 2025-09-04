@@ -26,6 +26,7 @@ export function PostItemPage() {
     swap_with: "",
     location_id: "",
     department: "",
+    phone: "",
     images: [] as string[],
     post_time: new Date().toISOString(),
   });
@@ -75,7 +76,7 @@ export function PostItemPage() {
       return;
     }
 
-    const { title, description, category_id, condition, type, location_id } =
+    const { title, description, category_id, condition, type, location_id, phone } =
       formData;
     if (
       !title ||
@@ -83,7 +84,8 @@ export function PostItemPage() {
       !category_id ||
       !condition ||
       !type ||
-      !location_id
+      !location_id ||
+      !phone
     ) {
       setError("Please fill in all required fields");
       return;
@@ -105,6 +107,7 @@ export function PostItemPage() {
         type: formData.type as "free" | "swap" | "rent",
         location: mockLocations.find((l) => l.id === location_id)!,
         department: formData.department,
+        phone: formData.phone,
         images: formData.images,
         swap_with: formData.type === "swap" ? formData.swap_with : undefined,
         created_at: formData.post_time,
@@ -276,17 +279,29 @@ export function PostItemPage() {
             </select>
           </div>
 
-          {/* Department */}
-          <div>
-            <label className="block font-medium mb-2">
-              Department (optional)
-            </label>
-            <input
-              type="text"
-              value={formData.department}
-              onChange={(e) => handleInputChange("department", e.target.value)}
-              className="w-full border px-4 py-3 rounded-lg"
-            />
+          {/* Department and Phone */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block font-medium mb-2">
+                Department (optional)
+              </label>
+              <input
+                type="text"
+                value={formData.department}
+                onChange={(e) => handleInputChange("department", e.target.value)}
+                className="w-full border px-4 py-3 rounded-lg"
+              />
+            </div>
+            <div>
+              <label className="block font-medium mb-2">Phone Number *</label>
+              <input
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => handleInputChange("phone", e.target.value)}
+                className="w-full border px-4 py-3 rounded-lg"
+                required
+              />
+            </div>
           </div>
 
           {/* Image URL Input */}

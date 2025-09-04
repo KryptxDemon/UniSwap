@@ -33,20 +33,48 @@ export function ProfilePage() {
     profileUser?.profile_picture || "/default-avatar.png"
   );
 
-  // Get wishlist data from localStorage
+  // Get wishlist data from localStorage with real-time updates
   const [wishlist, setWishlist] = useState<{
     [key: string]: { note: string; createdAt: string };
-  }>(() => {
-    const stored = localStorage.getItem("wishlist");
-    return stored ? JSON.parse(stored) : {};
-  });
+  }>({});
 
   const [tuitionWishlist, setTuitionWishlist] = useState<{
     [key: string]: { note: string; createdAt: string };
-  }>(() => {
-    const stored = localStorage.getItem("tuitionWishlist");
-    return stored ? JSON.parse(stored) : {};
-  });
+  }>({});
+
+  // Update wishlist state when localStorage changes
+  React.useEffect(() => {
+    const updateWishlist = () => {
+      try {
+        const stored = localStorage.getItem("wishlist");
+        setWishlist(stored ? JSON.parse(stored) : {});
+      } catch {
+        setWishlist({});
+      }
+    };
+
+    const updateTuitionWishlist = () => {
+      try {
+        const stored = localStorage.getItem("tuitionWishlist");
+        setTuitionWishlist(stored ? JSON.parse(stored) : {});
+      } catch {
+        setTuitionWishlist({});
+      }
+    };
+
+    // Initial load
+    updateWishlist();
+    updateTuitionWishlist();
+
+    // Listen for storage changes
+    window.addEventListener('storage', updateWishlist);
+    window.addEventListener('storage', updateTuitionWishlist);
+
+    return () => {
+      window.removeEventListener('storage', updateWishlist);
+      window.removeEventListener('storage', updateTuitionWishlist);
+    };
+  }, []);
 
   const removeFromWishlist = (itemId: string, type: "item" | "tuition") => {
     if (type === "item") {

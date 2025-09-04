@@ -1,14 +1,10 @@
-import React from "react";
 import logoImg from "../../assets/logo.jpg";
 import { Link, useNavigate } from "react-router-dom";
 
 import {
-  Search,
   MessageCircle,
-  User,
   PlusCircle,
   LogOut,
-  BookOpen,
 } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 
@@ -72,9 +68,26 @@ export function Header() {
               >
                 <MessageCircle className="h-5 w-5" />
                 {/* Notification badge */}
-                <span className="absolute -top-1 -right-1 bg-burnt-sienna text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  2
-                </span>
+                {(() => {
+                  try {
+                    const conversations = JSON.parse(localStorage.getItem("conversations") || "[]");
+                    const messages = JSON.parse(localStorage.getItem("messages") || "[]");
+                    
+                    // Count unread conversations (conversations with messages not from current user)
+                    const unreadCount = conversations.filter((conv: any) => {
+                      const convMessages = messages.filter((msg: any) => msg.conversation_id === conv.id);
+                      return convMessages.some((msg: any) => msg.sender_id !== user?.id && !msg.read);
+                    }).length;
+                    
+                    return unreadCount > 0 ? (
+                      <span className="absolute -top-1 -right-1 bg-burnt-sienna text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                        {unreadCount > 99 ? '99+' : unreadCount}
+                      </span>
+                    ) : null;
+                  } catch {
+                    return null;
+                  }
+                })()}
               </Link>
               <div className="relative">
                 <Link
@@ -83,6 +96,7 @@ export function Header() {
                 >
                   {user.profile_picture ? (
                     <img
+                      key={user.profile_picture} // Force re-render when profile picture changes
                       src={user.profile_picture}
                       alt={user.username}
                       className="w-8 h-8 rounded-full object-cover"

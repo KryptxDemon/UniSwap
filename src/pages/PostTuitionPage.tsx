@@ -1,8 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { X } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
-import { demoItems } from "../lib/demoData";
 import { mockLocations } from "../lib/mockData";
 
 export function PostTuitionPage() {
@@ -24,6 +22,7 @@ export function PostTuitionPage() {
     subject: "",
     address_url: "",
     preferred_tutor: "both", // male | female | both
+    phone: "",
     post_time: new Date().toISOString(),
   });
 
@@ -54,6 +53,7 @@ export function PostTuitionPage() {
       days_week,
       class: cls,
       subject,
+      phone,
     } = formData;
 
     if (
@@ -63,7 +63,8 @@ export function PostTuitionPage() {
       !salary ||
       !days_week ||
       !cls ||
-      !subject
+      !subject ||
+      !phone
     ) {
       setError("Please fill in all required fields");
       return;
@@ -95,6 +96,7 @@ export function PostTuitionPage() {
         user,
         address_url: formData.address_url,
         preferred_tutor: formData.preferred_tutor,
+        phone: formData.phone,
         is_exchanged: false,
       };
 
@@ -259,6 +261,13 @@ export function PostTuitionPage() {
             label="Subject *"
             value={formData.subject}
             field="subject"
+            onChange={handleInputChange}
+          />
+
+          <InputField
+            label="Phone Number *"
+            value={formData.phone}
+            field="phone"
             onChange={handleInputChange}
           />
 
