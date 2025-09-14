@@ -78,7 +78,11 @@ export const userAPI = {
 const addImagePrefix = (imagePath: string): string => {
   if (!imagePath) return "";
   // If it's already a full URL, return as-is
-  if (imagePath.startsWith("http://") || imagePath.startsWith("https://") || imagePath.startsWith("/api/")) {
+  if (
+    imagePath.startsWith("http://") ||
+    imagePath.startsWith("https://") ||
+    imagePath.startsWith("/api/")
+  ) {
     return imagePath;
   }
   // Otherwise, prepend the backend URL

@@ -92,7 +92,8 @@ const resolveLocationName = (item: any) => {
 
 const getImages = (item: any): string[] => {
   // prefer array already parsed
-  if (Array.isArray(item?.images) && item.images.length) return item.images.map(addImagePrefix);
+  if (Array.isArray(item?.images) && item.images.length)
+    return item.images.map(addImagePrefix);
   // try CSV in post.imageUrls
   const csv = item?.post?.imageUrls ?? item?.imageUrls;
   if (typeof csv === "string" && csv.trim()) {
@@ -109,7 +110,11 @@ const getImages = (item: any): string[] => {
 const addImagePrefix = (imagePath: string): string => {
   if (!imagePath) return "";
   // If it's already a full URL, return as-is
-  if (imagePath.startsWith("http://") || imagePath.startsWith("https://") || imagePath.startsWith("/api/")) {
+  if (
+    imagePath.startsWith("http://") ||
+    imagePath.startsWith("https://") ||
+    imagePath.startsWith("/api/")
+  ) {
     return imagePath;
   }
   // Otherwise, prepend the backend URL
@@ -223,9 +228,12 @@ export function ItemDetailPage() {
     try {
       setSwapLoading(true);
       const items = await itemAPI.getUserItems(user.userId);
-      setUserItems(items.filter((userItem: any) => 
-        userItem.id !== item?.id && userItem.itemId !== item?.itemId
-      ));
+      setUserItems(
+        items.filter(
+          (userItem: any) =>
+            userItem.id !== item?.id && userItem.itemId !== item?.itemId
+        )
+      );
     } catch (error) {
       console.error("Error fetching user items:", error);
     } finally {
@@ -237,20 +245,27 @@ export function ItemDetailPage() {
     if (!user || !item || !selectedSwapItem) return;
     try {
       // Send a message about the swap request
-      const receiverStr = getNormalizedId(item.post?.user) ?? getNormalizedId(item.user);
+      const receiverStr =
+        getNormalizedId(item.post?.user) ?? getNormalizedId(item.user);
       const receiverId = receiverStr ? parseInt(receiverStr) : 0;
-      const swapItemData = userItems.find(userItem => 
-        userItem.id === selectedSwapItem || userItem.itemId === selectedSwapItem
+      const swapItemData = userItems.find(
+        (userItem) =>
+          userItem.id === selectedSwapItem ||
+          userItem.itemId === selectedSwapItem
       );
-      const swapMessage = `Hi! I'd like to swap my "${swapItemData?.itemName || swapItemData?.title}" for your "${item.itemName || item.title}". Let me know if you're interested!`;
-      
+      const swapMessage = `Hi! I'd like to swap my "${
+        swapItemData?.itemName || swapItemData?.title
+      }" for your "${
+        item.itemName || item.title
+      }". Let me know if you're interested!`;
+
       await messageAPI.sendMessage({
         senderId: user.userId,
         receiverId,
         text: swapMessage,
         itemId: Number(item.itemId ?? item.id),
       });
-      
+
       setShowSwapModal(false);
       setSelectedSwapItem("");
       alert("Swap request sent successfully!");
@@ -770,7 +785,7 @@ function AsideActions(props: {
                         ? "Remove from wishlist"
                         : "Add to wishlist"}
                     </button>
-                    
+
                     {/* Swap button for swap-type items */}
                     {itemType === "swap" && (
                       <button
@@ -863,7 +878,9 @@ function AsideActions(props: {
           <div className="rounded-2xl bg-white/90 backdrop-blur shadow-sm ring-1 ring-slate-200 p-5">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900">Choose Item to Swap</h3>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Choose Item to Swap
+                </h3>
                 <button
                   onClick={() => setShowSwapModal(false)}
                   className="text-gray-400 hover:text-gray-600"
@@ -871,9 +888,11 @@ function AsideActions(props: {
                   <X className="h-5 w-5" />
                 </button>
               </div>
-              
+
               {swapLoading ? (
-                <div className="text-center py-4 text-gray-500">Loading your items...</div>
+                <div className="text-center py-4 text-gray-500">
+                  Loading your items...
+                </div>
               ) : userItems.length === 0 ? (
                 <div className="text-center py-4 text-gray-500">
                   You don't have any items available for swapping.
@@ -891,13 +910,17 @@ function AsideActions(props: {
                     >
                       <option value="">Choose an item...</option>
                       {userItems.map((item) => (
-                        <option key={item.id || item.itemId} value={item.id || item.itemId}>
-                          {item.itemName || item.title} ({item.itemCondition || item.condition})
+                        <option
+                          key={item.id || item.itemId}
+                          value={item.id || item.itemId}
+                        >
+                          {item.itemName || item.title} (
+                          {item.itemCondition || item.condition})
                         </option>
                       ))}
                     </select>
                   </div>
-                  
+
                   <div className="flex gap-2">
                     <button
                       onClick={onSwapRequest}
