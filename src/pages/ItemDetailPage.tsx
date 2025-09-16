@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   MapPin,
@@ -7,369 +7,251 @@ import {
   User as UserIcon,
   MessageCircle,
   Heart,
-  Share2,
   Trash2,
-  MoreVertical,
   AlertTriangle,
   Phone,
   Copy,
-  CheckCircle2,
-  XCircle,
   Tag,
   Boxes,
   Repeat,
-  Building2,
-  X,
+  Edit3,
+  Check,
+  ExternalLink,
 } from "lucide-react";
-import { Item } from "../types";
 import { useAuth } from "../hooks/useAuth";
-import { itemAPI, wishlistAPI, messageAPI } from "../services/apiService";
-import { mockCategories, mockLocations } from "../lib/mockData";
+import { itemAPI, wishlistAPI } from "../services/apiService";
 
-// ---------- helpers ----------
-const getNormalizedId = (u: any): string | null => {
-  const raw = u?.id ?? u?.userId ?? u?.user_id ?? null;
-  return raw !== null && raw !== undefined ? String(raw) : null;
-};
-
-const statusStyle: Record<
-  string,
-  { bg: string; text: string; ring: string; label: string }
-> = {
-  pending: {
-    bg: "bg-yellow-50",
-    text: "text-yellow-700",
-    ring: "ring-yellow-200",
-    label: "Pending",
-  },
-  accepted: {
-    bg: "bg-blue-50",
-    text: "text-blue-700",
-    ring: "ring-blue-200",
-    label: "Accepted",
-  },
-  rejected: {
-    bg: "bg-rose-50",
-    text: "text-rose-700",
-    ring: "ring-rose-200",
-    label: "Rejected",
-  },
-  completed: {
-    bg: "bg-emerald-50",
-    text: "text-emerald-700",
-    ring: "ring-emerald-200",
-    label: "Completed",
-  },
-};
-
-const safeDate = (iso?: string) => {
-  try {
-    return new Date(iso ?? "").toLocaleString();
-  } catch {
-    return "";
-  }
-};
-
-const resolveCategoryName = (item: any) => {
-  const id = Number(
-    item?.categoryId ?? item?.category_id ?? item?.category?.id
-  );
-  if (!id) return item?.category?.name ?? "Uncategorized";
-  return (
-    mockCategories.find((c) => Number(c.id) === id)?.name ?? "Uncategorized"
-  );
-};
-
-const resolveLocationName = (item: any) => {
-  const loc =
-    item?.location?.locationName ??
-    item?.location?.name ??
-    mockLocations.find(
-      (l) => Number(l.id) === Number(item?.locationId ?? item?.location_id)
-    )?.name;
-  return loc ?? "Unknown location";
-};
-
+// Helper functions
 const getImages = (item: any): string[] => {
-  // prefer array already parsed
-  if (Array.isArray(item?.images) && item.images.length)
-    return item.images.map(addImagePrefix);
-  // try CSV in post.imageUrls
-  const csv = item?.post?.imageUrls ?? item?.imageUrls;
-  if (typeof csv === "string" && csv.trim()) {
-    return csv
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean)
-      .map(addImagePrefix);
+  console.log("getImages called with item:", item);
+
+  // The item should already be normalized by apiService.normalizeItem()
+  // So we can directly use the normalized images array
+  if (Array.isArray(item?.images) && item.images.length > 0) {
+    console.log("Using normalized item.images:", item.images.length, "images");
+    return item.images;
   }
+
+  console.log("No images found or images array is empty");
   return [];
 };
 
-// Helper function to add the proper URL prefix for images
-const addImagePrefix = (imagePath: string): string => {
-  if (!imagePath) return "";
-  // If it's already a full URL, return as-is
-  if (
-    imagePath.startsWith("http://") ||
-    imagePath.startsWith("https://") ||
-    imagePath.startsWith("/api/")
-  ) {
-    return imagePath;
+const formatDate = (dateString?: string) => {
+  console.log("formatDate received:", dateString);
+  if (!dateString) return "Unknown date";
+  try {
+    const date = new Date(dateString);
+    const now = new Date();
+    console.log("Parsed date:", date);
+    console.log("Current time:", now);
+
+    const diffInHours = Math.floor(
+      (now.getTime() - date.getTime()) / (1000 * 60 * 60)
+    );
+    console.log("Time difference in hours:", diffInHours);
+
+    if (diffInHours < 1) return "Just posted";
+    if (diffInHours < 24) return `${diffInHours}h ago`;
+    if (diffInHours < 168) return `${Math.floor(diffInHours / 24)}d ago`;
+    return date.toLocaleDateString();
+  } catch (error) {
+    console.error("Date parsing error:", error);
+    return "Invalid date";
   }
-  // Otherwise, prepend the backend URL
-  return `http://localhost:8080/api/uploads/files/${imagePath}`;
 };
 
-export function ItemDetailPage() {
-  const { id } = useParams();
+const getTypeColor = (type: string) => {
+  switch (type?.toLowerCase()) {
+    case "free":
+      return "bg-green-100 text-green-800 border-green-200";
+    case "swap":
+      return "bg-blue-100 text-blue-800 border-blue-200";
+    case "rent":
+      return "bg-orange-100 text-orange-800 border-orange-200";
+    default:
+      return "bg-gray-100 text-gray-800 border-gray-200";
+  }
+};
+
+const getConditionColor = (condition: string) => {
+  switch (condition?.toLowerCase()) {
+    case "new":
+      return "bg-emerald-100 text-emerald-800 border-emerald-200";
+    case "like-new":
+      return "bg-teal-100 text-teal-800 border-teal-200";
+    case "good":
+      return "bg-blue-100 text-blue-800 border-blue-200";
+    case "fair":
+      return "bg-yellow-100 text-yellow-800 border-yellow-200";
+    case "poor":
+      return "bg-red-100 text-red-800 border-red-200";
+    default:
+      return "bg-gray-100 text-gray-800 border-gray-200";
+  }
+};
+
+export default function ItemDetailPage() {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const [item, setItem] = useState<Item | null>(null);
+  const [item, setItem] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isWishlisted, setIsWishlisted] = useState(false);
-  const [wishlistNote, setWishlistNote] = useState("");
-  const [message, setMessage] = useState("");
-  const [statusActionOpen, setStatusActionOpen] = useState(false);
-  const [newStatus, setNewStatus] = useState<
-    "pending" | "accepted" | "rejected" | "completed" | ""
-  >("");
-  const [statusNote, setStatusNote] = useState("");
-  const [copied, setCopied] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [isInWishlist, setIsInWishlist] = useState(false);
+  const [wishlistLoading, setWishlistLoading] = useState(false);
+  const [showFullDescription, setShowFullDescription] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showCompleteConfirm, setShowCompleteConfirm] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
 
-  // Swap functionality state
-  const [showSwapModal, setShowSwapModal] = useState(false);
-  const [userItems, setUserItems] = useState<any[]>([]);
-  const [selectedSwapItem, setSelectedSwapItem] = useState<string>("");
-  const [swapLoading, setSwapLoading] = useState(false);
-
-  // gallery state
-  const imgs = useMemo(() => getImages(item), [item]);
-  const [activeImgIdx, setActiveImgIdx] = useState(0);
-
-  useEffect(() => {
-    setActiveImgIdx(0);
-  }, [imgs.length]);
-
-  // -------- fetch --------
   useEffect(() => {
     const fetchItem = async () => {
       if (!id) return;
+
       try {
         setLoading(true);
-        const fetchedItem = await itemAPI.getItemById(parseInt(id));
-        setItem(fetchedItem);
+        console.log("Current user object:", user);
+        console.log("User ID:", user?.userId);
+        console.log("Auth token:", localStorage.getItem("auth_token"));
 
-        if (user) {
+        const itemData = await itemAPI.getItemById(parseInt(id));
+        setItem(itemData);
+
+        // Check if item is in user's wishlist
+        if (user?.userId) {
+          console.log(
+            "Checking wishlist status for user:",
+            user.userId,
+            "item:",
+            parseInt(id)
+          );
           try {
-            const wishlistItems = await wishlistAPI.getUserWishlists(
-              parseInt(user.userId.toString())
+            const wishlistStatus = await wishlistAPI.checkWishlistStatus(
+              user.userId,
+              parseInt(id)
             );
-            const exists = wishlistItems.some(
-              (w: any) =>
-                Number(w.item?.id ?? w.itemId) ===
-                Number(fetchedItem.id ?? fetchedItem.itemId)
-            );
-            setIsWishlisted(exists);
-          } catch {
-            /* ignore */
+            setIsInWishlist(wishlistStatus.inWishlist);
+          } catch (wishlistErr) {
+            console.warn("Failed to check wishlist status:", wishlistErr);
+            // Don't set error state for wishlist - it's not critical
+            setIsInWishlist(false);
           }
+        } else {
+          console.log("No user ID available, skipping wishlist check");
         }
-      } catch (e: any) {
-        setError(e?.message || "Failed to load item");
+      } catch (err) {
+        console.error("Error fetching item:", err);
+        setError("Failed to load item details");
       } finally {
         setLoading(false);
       }
     };
+
     fetchItem();
   }, [id, user]);
 
-  // -------- actions --------
-  const handleAddToWishlist = async () => {
-    if (!user || !item) return;
-    await wishlistAPI.addToWishlist(
-      user.userId,
-      Number(item.id ?? item.itemId),
-      wishlistNote
-    );
-    setIsWishlisted(true);
-    setWishlistNote("");
-  };
+  const images = useMemo(() => getImages(item), [item]);
 
-  const handleRemoveFromWishlist = async () => {
-    if (!user || !item) return;
-    await wishlistAPI.removeFromWishlist(
-      user.userId,
-      Number(item.id ?? item.itemId)
-    );
-    setIsWishlisted(false);
-  };
+  const toggleWishlist = async () => {
+    if (!user?.userId || !item?.itemId) return;
 
-  const handleSendMessage = async () => {
-    if (!user || !item || !message.trim()) return;
-    const receiverStr =
-      getNormalizedId(item.post?.user) ?? getNormalizedId(item.user);
-    const receiverId = receiverStr ? parseInt(receiverStr) : 0;
-    await messageAPI.sendMessage({
-      senderId: user.userId,
-      receiverId,
-      text: message.trim(),
-      itemId: Number(item.itemId ?? item.id),
-    });
-    setMessage("");
-    navigate("/messages");
-  };
-
-  // Fetch user's items for swapping
-  const fetchUserItems = async () => {
-    if (!user) return;
+    setWishlistLoading(true);
     try {
-      setSwapLoading(true);
-      const items = await itemAPI.getUserItems(user.userId);
-      setUserItems(
-        items.filter(
-          (userItem: any) =>
-            userItem.id !== item?.id && userItem.itemId !== item?.itemId
-        )
-      );
+      if (isInWishlist) {
+        await wishlistAPI.removeFromWishlist(user.userId, item.itemId);
+        setIsInWishlist(false);
+      } else {
+        await wishlistAPI.addToWishlist(user.userId, item.itemId, "");
+        setIsInWishlist(true);
+      }
     } catch (error) {
-      console.error("Error fetching user items:", error);
+      console.error("Error updating wishlist:", error);
     } finally {
-      setSwapLoading(false);
+      setWishlistLoading(false);
     }
   };
 
-  const handleSwapRequest = async () => {
-    if (!user || !item || !selectedSwapItem) return;
+  const handleContactSeller = async () => {
+    const sellerId = item?.user?.userId || item?.post?.user?.userId;
+    if (!user?.userId || !sellerId) return;
+
     try {
-      // Send a message about the swap request
-      const receiverStr =
-        getNormalizedId(item.post?.user) ?? getNormalizedId(item.user);
-      const receiverId = receiverStr ? parseInt(receiverStr) : 0;
-      const swapItemData = userItems.find(
-        (userItem) =>
-          userItem.id === selectedSwapItem ||
-          userItem.itemId === selectedSwapItem
-      );
-      const swapMessage = `Hi! I'd like to swap my "${
-        swapItemData?.itemName || swapItemData?.title
-      }" for your "${
-        item.itemName || item.title
-      }". Let me know if you're interested!`;
-
-      await messageAPI.sendMessage({
-        senderId: user.userId,
-        receiverId,
-        text: swapMessage,
-        itemId: Number(item.itemId ?? item.id),
-      });
-
-      setShowSwapModal(false);
-      setSelectedSwapItem("");
-      alert("Swap request sent successfully!");
+      navigate(`/messages?user=${sellerId}`);
     } catch (error) {
-      console.error("Error sending swap request:", error);
-      alert("Failed to send swap request. Please try again.");
+      console.error("Error navigating to messages:", error);
     }
   };
 
-  const isOwner =
-    Number(user?.userId) ===
-    Number(
-      getNormalizedId(item?.post?.user) ??
-        getNormalizedId(item?.user) ??
-        (item as any)?.user?.id
-    );
+  const copyPhoneNumber = () => {
+    if (item?.phone) {
+      navigator.clipboard.writeText(item.phone);
+      // You could add a toast notification here
+    }
+  };
 
   const handleDeleteItem = async () => {
-    if (!item) return;
-    await itemAPI.deleteItem(Number(item.id ?? (item as any)?.itemId));
-    navigate("/browse");
-  };
+    if (!item?.itemId) return;
 
-  const handleStatusUpdate = async () => {
-    if (!item || !newStatus || !statusNote.trim()) return;
-    await itemAPI.updateItem(Number(item.id ?? (item as any)?.itemId), {
-      status: newStatus,
-      statusNote: statusNote.trim(),
-    });
-    setNewStatus("");
-    setStatusNote("");
-    setStatusActionOpen(false);
-    const refreshed = await itemAPI.getItemById(
-      Number(item.id ?? (item as any)?.itemId)
-    );
-    setItem(refreshed);
-  };
-
-  // -------- derived display fields --------
-  const display = useMemo(() => {
-    const i: any = item ?? {};
-    return {
-      title: i.title ?? i.itemName ?? "Untitled item",
-      description: i.description ?? "",
-      category: resolveCategoryName(i),
-      condition: i.itemCondition ?? i.condition ?? "—",
-      type: (i.itemType ?? i.type ?? "").toString().toLowerCase(),
-      swapWith: i.swapWith ?? i.swap_with ?? "",
-      department: i.department ?? i.post?.department ?? "",
-      phone: i.phone ?? i.post?.user?.phone ?? "",
-      locationName: resolveLocationName(i),
-      postedAt:
-        safeDate(i.post?.postTime) ||
-        safeDate(i.postTime) ||
-        safeDate(i.created_at) ||
-        safeDate(i.postDate),
-      status: (i.status ?? "").toString().toLowerCase(),
-      ownerUsername:
-        i.post?.user?.username ?? i.user?.username ?? "Unknown user",
-      ownerId: getNormalizedId(i.post?.user) ?? getNormalizedId(i.user) ?? "",
-      id: i.id ?? i.itemId,
-    };
-  }, [item]);
-
-  const shareUrl = useMemo(() => {
-    if (!display.id) return window.location.href;
-    return `${window.location.origin}/item/${display.id}`;
-  }, [display.id]);
-
-  const handleCopy = async () => {
+    setActionLoading(true);
     try {
-      await navigator.clipboard.writeText(shareUrl);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1400);
-    } catch {}
+      await itemAPI.deleteItem(item.itemId);
+      navigate("/browse"); // Redirect to browse page after deletion
+    } catch (error) {
+      console.error("Error deleting item:", error);
+      // You could add error toast notification here
+    } finally {
+      setActionLoading(false);
+      setShowDeleteConfirm(false);
+    }
   };
 
-  const statusKey = (display.status || "") as
-    | "pending"
-    | "accepted"
-    | "rejected"
-    | "completed"
-    | "";
+  const handleMarkAsCompleted = async () => {
+    if (!item?.itemId) return;
 
-  // -------- UI --------
+    setActionLoading(true);
+    try {
+      await itemAPI.markAsExchanged(item.itemId);
+      // Refresh the item data to show updated status
+      const updatedItem = await itemAPI.getItemById(item.itemId);
+      setItem(updatedItem);
+    } catch (error) {
+      console.error("Error marking item as completed:", error);
+      // You could add error toast notification here
+    } finally {
+      setActionLoading(false);
+      setShowCompleteConfirm(false);
+    }
+  };
+
+  const handleShareItem = async () => {
+    const currentUrl = window.location.href;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: item?.name || "Check out this item",
+          text: `${item?.name} - ${item?.description}`,
+          url: currentUrl,
+        });
+      } catch (error) {
+        // Fallback to clipboard copy if sharing fails
+        navigator.clipboard.writeText(currentUrl);
+      }
+    } else {
+      // Fallback to clipboard copy
+      navigator.clipboard.writeText(currentUrl);
+      // You could add toast notification here
+    }
+  };
+
   if (loading) {
     return (
-      <div className="min-h-[80vh] bg-gradient-to-b from-slate-50 via-white to-slate-50">
-        <div className="max-w-6xl mx-auto p-6">
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center space-x-2 text-slate-600 hover:text-slate-900 transition"
-          >
-            <ArrowLeft className="h-5 w-5" />
-            <span>Back</span>
-          </button>
-          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="h-96 rounded-2xl bg-slate-100 animate-pulse" />
-            <div className="space-y-4">
-              <div className="h-10 w-2/3 bg-slate-100 rounded-lg animate-pulse" />
-              <div className="h-6 w-1/2 bg-slate-100 rounded-lg animate-pulse" />
-              <div className="h-24 w-full bg-slate-100 rounded-xl animate-pulse" />
-            </div>
-          </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading item details...</p>
         </div>
       </div>
     );
@@ -377,578 +259,509 @@ export function ItemDetailPage() {
 
   if (error || !item) {
     return (
-      <div className="min-h-[60vh] bg-gradient-to-b from-slate-50 via-white to-slate-50">
-        <div className="max-w-5xl mx-auto p-6">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+          <h1 className="text-xl font-semibold text-gray-900 mb-2">
+            Item Not Found
+          </h1>
+          <p className="text-gray-600 mb-4">
+            {error || "This item doesn't exist or has been removed."}
+          </p>
           <button
-            onClick={() => navigate(-1)}
-            className="flex items-center space-x-2 text-slate-600 hover:text-slate-900 transition"
+            onClick={() => navigate("/browse")}
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
           >
-            <ArrowLeft className="h-5 w-5" />
-            <span>Back</span>
+            Back to Browse
           </button>
-          <div className="mt-10 rounded-2xl border border-rose-200 bg-rose-50 p-6 text-rose-700 flex items-start gap-3">
-            <AlertTriangle className="h-6 w-6 mt-0.5" />
-            <div>
-              <div className="font-semibold">Something went wrong</div>
-              <div className="text-rose-600/80">
-                {error ?? "Item not found"}
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     );
   }
 
+  const isOwner =
+    user?.userId === (item?.user?.userId || item?.post?.user?.userId);
+
   return (
-    <div className="min-h-[100vh] bg-[radial-gradient(1200px_600px_at_50%_-10%,#e0f2fe_0%,transparent_50%),radial-gradient(800px_400px_at_100%_0,#fce7f3_0%,transparent_45%)]">
-      <div className="max-w-6xl mx-auto p-6">
-        {/* Top bar */}
-        <div className="flex items-center justify-between">
-          <button
-            onClick={() => navigate(-1)}
-            className="group inline-flex items-center gap-2 text-slate-700 hover:text-slate-900"
-          >
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border bg-white/80 backdrop-blur-sm group-hover:shadow transition">
-              <ArrowLeft className="h-4 w-4" />
-            </span>
-            <span className="hidden sm:inline">Back</span>
-          </button>
-
-          {statusKey && (
-            <span
-              className={[
-                "inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm ring-1",
-                statusStyle[statusKey]?.bg ?? "bg-slate-50",
-                statusStyle[statusKey]?.text ?? "text-slate-700",
-                statusStyle[statusKey]?.ring ?? "ring-slate-200",
-              ].join(" ")}
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center text-gray-600 hover:text-gray-900"
             >
-              <span className="h-2 w-2 rounded-full bg-current opacity-60" />
-              {statusStyle[statusKey]?.label ?? "Status"}
-            </span>
-          )}
-        </div>
-
-        {/* Content */}
-        <div className="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Left: Gallery + Description */}
-          <div className="lg:col-span-8 space-y-6">
-            {/* Card */}
-            <div className="rounded-2xl bg-white/70 backdrop-blur shadow-sm ring-1 ring-slate-200 overflow-hidden">
-              {/* Hero */}
-              <div className="relative">
-                {imgs.length ? (
-                  <img
-                    src={imgs[activeImgIdx] || imgs[0]}
-                    alt={display.title}
-                    className="w-full h-[420px] object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-[420px] bg-slate-100 flex items-center justify-center text-slate-400">
-                    No image
-                  </div>
-                )}
-                {imgs.length ? (
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
-                    <div className="flex gap-2 bg-white/70 backdrop-blur rounded-full px-2 py-2 ring-1 ring-slate-200">
-                      {imgs.map((img, i) => (
-                        <button
-                          key={i}
-                          onClick={() => setActiveImgIdx(i)}
-                          className={[
-                            "h-12 w-12 rounded-full overflow-hidden ring-2 transition",
-                            i === activeImgIdx
-                              ? "ring-slate-900"
-                              : "ring-transparent hover:ring-slate-300",
-                          ].join(" ")}
-                          title={`Image ${i + 1}`}
-                        >
-                          <img
-                            src={img}
-                            alt={`thumb ${i + 1}`}
-                            className="h-full w-full object-cover"
-                          />
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ) : null}
-              </div>
-
-              {/* Meta */}
-              <div className="p-6 md:p-8">
-                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-                  <div>
-                    <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-slate-900">
-                      {display.title}
-                    </h1>
-                    <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-600">
-                      <div className="inline-flex items-center gap-2">
-                        <MapPin className="h-5 w-5 text-slate-400" />
-                        <span>{display.locationName}</span>
-                      </div>
-                      <div className="inline-flex items-center gap-2">
-                        <Calendar className="h-5 w-5 text-slate-400" />
-                        <span>Posted {display.postedAt || "—"}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={handleCopy}
-                      className="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 bg-white hover:shadow-sm transition"
-                      title="Copy link"
-                    >
-                      {copied ? (
-                        <>
-                          <CheckCircle2 className="h-4 w-4" />
-                          <span className="text-sm">Copied</span>
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="h-4 w-4" />
-                          <span className="text-sm">Copy link</span>
-                        </>
-                      )}
-                    </button>
-                    <button
-                      className="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 bg-white hover:shadow-sm transition"
-                      title="Share"
-                      onClick={() => {
-                        if ((navigator as any).share) {
-                          (navigator as any).share({
-                            title: display.title,
-                            url: shareUrl,
-                          });
-                        } else {
-                          handleCopy();
-                        }
-                      }}
-                    >
-                      <Share2 className="h-4 w-4" />
-                      <span className="text-sm">Share</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Owner */}
-                <div className="mt-6 flex flex-wrap items-center gap-4">
-                  <Link
-                    to={`/profile/${display.ownerId}`}
-                    className="group inline-flex items-center gap-3 rounded-xl border px-3 py-2 bg-white hover:bg-slate-50 transition"
+              <ArrowLeft className="h-5 w-5 mr-2" />
+              Back
+            </button>
+            <div className="flex items-center space-x-4">
+              {isOwner ? (
+                // Owner actions
+                <>
+                  <button
+                    onClick={() => navigate(`/edit-item/${item.itemId}`)}
+                    className="p-2 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors"
+                    title="Edit listing"
                   >
-                    <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-slate-100">
-                      <UserIcon className="h-5 w-5 text-slate-500" />
-                    </span>
-                    <div className="leading-tight">
-                      <div className="font-medium text-slate-900 group-hover:underline">
-                        {display.ownerUsername}
-                      </div>
-                      <div className="text-xs text-slate-500">View profile</div>
-                    </div>
-                  </Link>
-
-                  {(
-                    Array.isArray(display.phone)
-                      ? display.phone.length
-                      : display.phone
-                  ) ? (
-                    <div className="inline-flex items-center gap-2 text-slate-600">
-                      <Phone className="h-4 w-4 text-slate-400" />
-                      <span className="truncate">
-                        {Array.isArray(display.phone)
-                          ? display.phone.join(" • ")
-                          : display.phone}
-                      </span>
-                    </div>
-                  ) : null}
-                </div>
-              </div>
-            </div>
-
-            {/* Specs Card */}
-            <div className="rounded-2xl bg-white/70 backdrop-blur shadow-sm ring-1 ring-slate-200 p-6 md:p-8">
-              <h2 className="text-lg font-semibold text-slate-900">Details</h2>
-              <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Spec
-                  icon={<Tag className="h-5 w-5" />}
-                  label="Category"
-                  value={display.category}
-                />
-                <Spec
-                  icon={<Boxes className="h-5 w-5" />}
-                  label="Condition"
-                  value={display.condition}
-                />
-                <Spec
-                  icon={<Repeat className="h-5 w-5" />}
-                  label="Type"
-                  value={
-                    display.type
-                      ? display.type.charAt(0).toUpperCase() +
-                        display.type.slice(1)
-                      : "—"
+                    <Edit3 className="h-5 w-5" />
+                  </button>
+                  <button
+                    onClick={() => setShowCompleteConfirm(true)}
+                    disabled={actionLoading}
+                    className="p-2 rounded-full bg-green-100 text-green-600 hover:bg-green-200 transition-colors disabled:opacity-50"
+                    title="Mark as completed"
+                  >
+                    <Check className="h-5 w-5" />
+                  </button>
+                  <button
+                    onClick={() => setShowDeleteConfirm(true)}
+                    disabled={actionLoading}
+                    className="p-2 rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-colors disabled:opacity-50"
+                    title="Delete listing"
+                  >
+                    <Trash2 className="h-5 w-5" />
+                  </button>
+                </>
+              ) : (
+                // Non-owner actions
+                <button
+                  onClick={toggleWishlist}
+                  disabled={wishlistLoading}
+                  className={`p-2 rounded-full transition-colors ${
+                    isInWishlist
+                      ? "bg-red-100 text-red-600 hover:bg-red-200"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
+                  title={
+                    isInWishlist ? "Remove from wishlist" : "Add to wishlist"
                   }
-                />
-                {display.type === "swap" && (
-                  <Spec
-                    icon={<Repeat className="h-5 w-5" />}
-                    label="Swap With"
-                    value={display.swapWith || "—"}
+                >
+                  <Heart
+                    className={`h-5 w-5 ${isInWishlist ? "fill-current" : ""}`}
                   />
-                )}
-                <Spec
-                  icon={<Building2 className="h-5 w-5" />}
-                  label="Department"
-                  value={display.department || "—"}
-                />
-              </div>
-
-              {/* Description */}
-              <div className="mt-6">
-                <h3 className="text-base font-medium text-slate-900">
-                  Description
-                </h3>
-                <p className="mt-2 leading-7 text-slate-700">
-                  {display.description || "No description provided."}
-                </p>
-              </div>
+                </button>
+              )}
+              <button
+                onClick={handleShareItem}
+                className="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+                title="Share item"
+              >
+                <ExternalLink className="h-5 w-5" />
+              </button>
             </div>
           </div>
-
-          {/* Right: Sticky Actions */}
-          <AsideActions
-            isOwner={isOwner}
-            message={message}
-            setMessage={setMessage}
-            wishlistNote={wishlistNote}
-            setWishlistNote={setWishlistNote}
-            isWishlisted={isWishlisted}
-            onSend={handleSendMessage}
-            onAddRemoveWishlist={() =>
-              isWishlisted ? handleRemoveFromWishlist() : handleAddToWishlist()
-            }
-            onDelete={handleDeleteItem}
-            statusActionOpen={statusActionOpen}
-            setStatusActionOpen={setStatusActionOpen}
-            newStatus={newStatus}
-            setNewStatus={setNewStatus}
-            statusNote={statusNote}
-            setStatusNote={setStatusNote}
-            onUpdateStatus={handleStatusUpdate}
-            // Swap props
-            itemType={display.type}
-            showSwapModal={showSwapModal}
-            setShowSwapModal={setShowSwapModal}
-            userItems={userItems}
-            selectedSwapItem={selectedSwapItem}
-            setSelectedSwapItem={setSelectedSwapItem}
-            swapLoading={swapLoading}
-            onFetchUserItems={fetchUserItems}
-            onSwapRequest={handleSwapRequest}
-          />
         </div>
       </div>
-    </div>
-  );
-}
 
-function Spec({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="rounded-xl border bg-white p-4 flex items-start gap-3">
-      <div className="text-slate-500">{icon}</div>
-      <div>
-        <div className="text-xs uppercase tracking-wide text-slate-500">
-          {label}
-        </div>
-        <div className="text-slate-900 font-medium">{value || "—"}</div>
-      </div>
-    </div>
-  );
-}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Image Section */}
+          <div className="space-y-4">
+            <div className="aspect-w-1 aspect-h-1 bg-gray-200 rounded-lg overflow-hidden">
+              {images.length > 0 ? (
+                <div className="relative">
+                  <img
+                    src={images[selectedImageIndex]}
+                    alt={item.itemName}
+                    className="w-full h-96 object-cover"
+                    onError={(e) => {
+                      console.error("Image failed to load:", e);
+                      console.error("Image src:", images[selectedImageIndex]);
+                      console.error(
+                        "Image src type:",
+                        typeof images[selectedImageIndex]
+                      );
+                      console.error(
+                        "Image src length:",
+                        images[selectedImageIndex]?.length
+                      );
 
-function AsideActions(props: {
-  isOwner: boolean;
-  message: string;
-  setMessage: (s: string) => void;
-  wishlistNote: string;
-  setWishlistNote: (s: string) => void;
-  isWishlisted: boolean;
-  onSend: () => void;
-  onAddRemoveWishlist: () => void;
-  onDelete: () => void;
-  statusActionOpen: boolean;
-  setStatusActionOpen: (b: boolean) => void;
-  newStatus: "" | "pending" | "accepted" | "rejected" | "completed";
-  setNewStatus: (v: any) => void;
-  statusNote: string;
-  setStatusNote: (s: string) => void;
-  onUpdateStatus: () => void;
-  // Swap props
-  itemType?: string;
-  showSwapModal: boolean;
-  setShowSwapModal: (b: boolean) => void;
-  userItems: any[];
-  selectedSwapItem: string;
-  setSelectedSwapItem: (s: string) => void;
-  swapLoading: boolean;
-  onFetchUserItems: () => void;
-  onSwapRequest: () => void;
-}) {
-  const {
-    isOwner,
-    message,
-    setMessage,
-    wishlistNote,
-    setWishlistNote,
-    isWishlisted,
-    onSend,
-    onAddRemoveWishlist,
-    onDelete,
-    statusActionOpen,
-    setStatusActionOpen,
-    newStatus,
-    setNewStatus,
-    statusNote,
-    setStatusNote,
-    onUpdateStatus,
-    // Swap props
-    itemType,
-    showSwapModal,
-    setShowSwapModal,
-    userItems,
-    selectedSwapItem,
-    setSelectedSwapItem,
-    swapLoading,
-    onFetchUserItems,
-    onSwapRequest,
-  } = props;
+                      // Hide the broken image and show fallback
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = "none";
 
-  return (
-    <aside className="lg:col-span-4">
-      <div className="lg:sticky lg:top-6 space-y-6">
-        <div className="rounded-2xl bg-white/80 backdrop-blur shadow-sm ring-1 ring-slate-200 p-5">
-          {!isOwner ? (
-            <>
-              <div className="space-y-3">
-                <div className="flex gap-3">
-                  <input
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Write a message…"
-                    className="flex-1 rounded-xl border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-300"
+                      // Create fallback element
+                      const fallback = document.createElement("div");
+                      fallback.className =
+                        "w-full h-96 bg-gradient-to-br from-red-100 to-red-200 flex flex-col items-center justify-center text-red-600";
+                      fallback.innerHTML = `
+                        <svg class="h-16 w-16 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                        </svg>
+                        <p class="text-sm font-medium">Image failed to load</p>
+                        <p class="text-xs text-gray-500 mt-1">Invalid image data</p>
+                      `;
+                      target.parentElement?.appendChild(fallback);
+                    }}
+                    onLoad={(e) => {
+                      console.log("Image loaded successfully");
+                      console.log(
+                        "Image dimensions:",
+                        (e.target as HTMLImageElement).naturalWidth,
+                        "x",
+                        (e.target as HTMLImageElement).naturalHeight
+                      );
+                    }}
                   />
+                </div>
+              ) : (
+                <div className="w-full h-96 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+                  <div className="text-center">
+                    <Tag className="h-16 w-16 text-gray-400 mx-auto mb-2" />
+                    <p className="text-gray-500 text-sm">No image available</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {images.length > 1 && (
+              <div className="grid grid-cols-4 gap-2">
+                {images.map((image, index) => (
                   <button
-                    onClick={onSend}
-                    disabled={!message.trim()}
-                    className="inline-flex items-center gap-2 rounded-xl bg-slate-900 text-white px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed hover:translate-y-[-1px] active:translate-y-0 transition"
+                    key={index}
+                    onClick={() => setSelectedImageIndex(index)}
+                    className={`aspect-w-1 aspect-h-1 rounded-lg overflow-hidden border-2 ${
+                      selectedImageIndex === index
+                        ? "border-blue-500"
+                        : "border-gray-200 hover:border-gray-300"
+                    }`}
                   >
-                    <MessageCircle className="h-5 w-5" />
-                    Send
+                    <img
+                      src={image}
+                      alt={`${item.itemName} ${index + 1}`}
+                      className="w-full h-20 object-cover"
+                    />
                   </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Item Details */}
+          <div className="space-y-6">
+            <div>
+              <div className="flex items-start justify-between mb-4">
+                <h1 className="text-3xl font-bold text-gray-900">
+                  {item.itemName}
+                </h1>
+                <div className="flex space-x-2">
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm font-medium border ${getTypeColor(
+                      item.itemType
+                    )}`}
+                  >
+                    {item.itemType?.charAt(0).toUpperCase() +
+                      item.itemType?.slice(1)}
+                  </span>
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm font-medium border ${getConditionColor(
+                      item.itemCondition
+                    )}`}
+                  >
+                    {item.itemCondition}
+                  </span>
+                </div>
+              </div>
+
+              <div className="prose max-w-none mb-6">
+                <p
+                  className={`text-gray-700 ${
+                    !showFullDescription && item.description?.length > 300
+                      ? "line-clamp-4"
+                      : ""
+                  }`}
+                >
+                  {item.description}
+                </p>
+                {item.description?.length > 300 && (
+                  <button
+                    onClick={() => setShowFullDescription(!showFullDescription)}
+                    className="text-blue-600 hover:text-blue-700 text-sm font-medium mt-2"
+                  >
+                    {showFullDescription ? "Show less" : "Show more"}
+                  </button>
+                )}
+              </div>
+
+              {/* Swap Details */}
+              {item.itemType === "swap" && item.swapWith && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                  <h3 className="font-semibold text-blue-900 mb-2 flex items-center">
+                    <Repeat className="h-5 w-5 mr-2" />
+                    Looking to swap for:
+                  </h3>
+                  <p className="text-blue-800">{item.swapWith}</p>
+                </div>
+              )}
+
+              {/* Item Information Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                <div className="flex items-center space-x-3">
+                  <Boxes className="h-5 w-5 text-gray-400" />
+                  <div>
+                    <p className="text-sm text-gray-500">Category</p>
+                    <p className="font-medium">
+                      {item.category?.categoryName ||
+                        item.category?.name ||
+                        (typeof item.category === "string"
+                          ? item.category
+                          : "Uncategorized")}
+                    </p>
+                  </div>
                 </div>
 
-                <div className="rounded-xl border p-3 bg-white">
-                  <div className="flex items-center justify-between">
-                    <div className="font-medium text-slate-900">Wishlist</div>
-                    <div className="text-xs text-slate-500">(private note)</div>
-                  </div>
-                  <textarea
-                    value={wishlistNote}
-                    onChange={(e) => setWishlistNote(e.target.value)}
-                    placeholder="Why do you want this item?"
-                    className="mt-2 w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-300"
-                    rows={3}
-                  />
-                  <div className="mt-3 flex gap-2">
-                    <button
-                      onClick={onAddRemoveWishlist}
-                      className={[
-                        "inline-flex items-center gap-2 rounded-xl px-4 py-2 border transition",
-                        isWishlisted
-                          ? "bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100"
-                          : "bg-pink-50 text-pink-700 border-pink-200 hover:bg-pink-100",
-                      ].join(" ")}
-                    >
-                      <Heart className="h-5 w-5" />
-                      {isWishlisted
-                        ? "Remove from wishlist"
-                        : "Add to wishlist"}
-                    </button>
-
-                    {/* Swap button for swap-type items */}
-                    {itemType === "swap" && (
-                      <button
-                        onClick={() => {
-                          setShowSwapModal(true);
-                          onFetchUserItems();
-                        }}
-                        className="inline-flex items-center gap-2 rounded-xl px-4 py-2 border bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100 transition"
-                      >
-                        <Repeat className="h-5 w-5" />
-                        Propose Swap
-                      </button>
+                <div className="flex items-center space-x-3">
+                  <MapPin className="h-5 w-5 text-gray-400" />
+                  <div>
+                    <p className="text-sm text-gray-500">Location</p>
+                    <p className="font-medium">
+                      {item.location?.locationName ||
+                        item.location?.name ||
+                        (typeof item.location === "string"
+                          ? item.location
+                          : "Unknown")}
+                    </p>
+                    {item.locationType && (
+                      <p className="text-xs text-gray-500 capitalize">
+                        {item.locationType}
+                      </p>
                     )}
                   </div>
                 </div>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={onDelete}
-                  className="inline-flex items-center gap-2 rounded-xl border px-4 py-2 hover:bg-slate-50 transition"
-                >
-                  <Trash2 className="h-5 w-5 text-slate-700" /> Delete
-                </button>
 
-                <div className="relative">
-                  <button
-                    onClick={() => setStatusActionOpen(!statusActionOpen)}
-                    className="inline-flex items-center gap-2 rounded-xl border px-4 py-2 hover:bg-slate-50 transition"
-                  >
-                    <MoreVertical className="h-5 w-5 text-slate-700" /> Update
-                    status
-                  </button>
+                <div className="flex items-center space-x-3">
+                  <Calendar className="h-5 w-5 text-gray-400" />
+                  <div>
+                    <p className="text-sm text-gray-500">Posted</p>
+                    <p className="font-medium">
+                      {(() => {
+                        console.log("Item date fields:", {
+                          postDate: item.postDate,
+                          postTime: item.post?.postTime,
+                          createdAt: item.createdAt,
+                          datePosted: item.datePosted,
+                          timestamp: item.timestamp,
+                          dateCreated: item.dateCreated,
+                          updatedAt: item.updatedAt,
+                        });
 
-                  {statusActionOpen && (
-                    <div className="absolute right-0 z-10 mt-2 w-72 bg-white border rounded-xl p-3 space-y-2 shadow-lg">
-                      <label className="text-sm font-medium text-slate-700">
-                        Status
-                      </label>
-                      <select
-                        className="w-full border rounded-lg px-2 py-2 focus:outline-none focus:ring-2 focus:ring-slate-300"
-                        value={newStatus}
-                        onChange={(e) =>
-                          setNewStatus(e.target.value as typeof newStatus)
+                        // Try to find the most recent timestamp
+                        const possibleDates = [
+                          item.updatedAt,
+                          item.dateCreated,
+                          item.timestamp,
+                          item.createdAt,
+                          item.datePosted,
+                          item.postDate,
+                          item.post?.postTime,
+                        ].filter(Boolean);
+
+                        console.log("Available dates:", possibleDates);
+
+                        // Use the most recent valid date
+                        let dateToUse = possibleDates[0];
+
+                        // If the date seems too old (more than 1 day ago), it might be wrong
+                        if (dateToUse) {
+                          const testDate = new Date(dateToUse);
+                          const now = new Date();
+                          const hoursAgo =
+                            (now.getTime() - testDate.getTime()) /
+                            (1000 * 60 * 60);
+                          console.log(
+                            "Hours difference for",
+                            dateToUse,
+                            ":",
+                            hoursAgo
+                          );
+
+                          // If it's more than 24 hours old, try other dates
+                          if (hoursAgo > 24) {
+                            for (const altDate of possibleDates.slice(1)) {
+                              const altTestDate = new Date(altDate);
+                              const altHoursAgo =
+                                (now.getTime() - altTestDate.getTime()) /
+                                (1000 * 60 * 60);
+                              console.log(
+                                "Alternative date",
+                                altDate,
+                                "hours ago:",
+                                altHoursAgo
+                              );
+                              if (altHoursAgo < 24) {
+                                dateToUse = altDate;
+                                break;
+                              }
+                            }
+                          }
                         }
-                      >
-                        <option value="">Select status</option>
-                        <option value="pending">Pending</option>
-                        <option value="accepted">Accepted</option>
-                        <option value="rejected">Rejected</option>
-                        <option value="completed">Completed</option>
-                      </select>
-                      <label className="text-sm font-medium text-slate-700">
-                        Note
-                      </label>
-                      <textarea
-                        className="w-full border rounded-lg px-2 py-2 focus:outline-none focus:ring-2 focus:ring-slate-300"
-                        placeholder="Status note…"
-                        value={statusNote}
-                        onChange={(e) => setStatusNote(e.target.value)}
-                        rows={3}
-                      />
-                      <div className="flex items-center gap-2">
+
+                        console.log("Using date:", dateToUse);
+                        return formatDate(dateToUse);
+                      })()}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  <UserIcon className="h-5 w-5 text-gray-400" />
+                  <div>
+                    <p className="text-sm text-gray-500">Posted by</p>
+                    <p className="font-medium">
+                      {item.user?.username ||
+                        item.post?.user?.username ||
+                        "Unknown user"}
+                    </p>
+                  </div>
+                </div>
+
+                {item.phone && (
+                  <div className="flex items-center space-x-3">
+                    <Phone className="h-5 w-5 text-gray-400" />
+                    <div>
+                      <p className="text-sm text-gray-500">Contact</p>
+                      <div className="flex items-center space-x-2">
+                        <p className="font-medium">{item.phone}</p>
                         <button
-                          onClick={onUpdateStatus}
-                          disabled={!newStatus || !statusNote.trim()}
-                          className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 text-white px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-amber-600 transition"
+                          onClick={copyPhoneNumber}
+                          className="text-blue-600 hover:text-blue-700"
+                          title="Copy phone number"
                         >
-                          <CheckCircle2 className="h-5 w-5" /> Update
-                        </button>
-                        <button
-                          onClick={() => setStatusActionOpen(false)}
-                          className="inline-flex items-center gap-2 rounded-xl border px-3 py-2 hover:bg-slate-50 transition"
-                        >
-                          <XCircle className="h-5 w-5" /> Close
+                          <Copy className="h-4 w-4" />
                         </button>
                       </div>
                     </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Action Buttons */}
+              {!isOwner && (
+                <div className="flex space-x-4">
+                  <button
+                    onClick={handleContactSeller}
+                    className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 flex items-center justify-center space-x-2"
+                  >
+                    <MessageCircle className="h-5 w-5" />
+                    <span>Contact Seller</span>
+                  </button>
+                  {item.phone && (
+                    <a
+                      href={`tel:${item.phone}`}
+                      className="flex-1 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 flex items-center justify-center space-x-2"
+                    >
+                      <Phone className="h-5 w-5" />
+                      <span>Call</span>
+                    </a>
                   )}
                 </div>
-              </div>
-            </>
-          )}
-        </div>
+              )}
 
-        {/* Swap Modal */}
-        {showSwapModal && (
-          <div className="rounded-2xl bg-white/90 backdrop-blur shadow-sm ring-1 ring-slate-200 p-5">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Choose Item to Swap
-                </h3>
-                <button
-                  onClick={() => setShowSwapModal(false)}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-
-              {swapLoading ? (
-                <div className="text-center py-4 text-gray-500">
-                  Loading your items...
+              {isOwner && (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                  <p className="text-yellow-800 font-medium">
+                    This is your listing
+                  </p>
+                  <p className="text-yellow-700 text-sm">
+                    You can edit or delete this item from your profile page.
+                  </p>
                 </div>
-              ) : userItems.length === 0 ? (
-                <div className="text-center py-4 text-gray-500">
-                  You don't have any items available for swapping.
-                </div>
-              ) : (
-                <>
-                  <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Select an item to offer:
-                    </label>
-                    <select
-                      value={selectedSwapItem}
-                      onChange={(e) => setSelectedSwapItem(e.target.value)}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="">Choose an item...</option>
-                      {userItems.map((item) => (
-                        <option
-                          key={item.id || item.itemId}
-                          value={item.id || item.itemId}
-                        >
-                          {item.itemName || item.title} (
-                          {item.itemCondition || item.condition})
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <button
-                      onClick={onSwapRequest}
-                      disabled={!selectedSwapItem}
-                      className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
-                    >
-                      Send Swap Request
-                    </button>
-                    <button
-                      onClick={() => setShowSwapModal(false)}
-                      className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </>
               )}
             </div>
           </div>
-        )}
-
-        <div className="rounded-2xl bg-white/60 backdrop-blur ring-1 ring-slate-200 p-4 text-sm text-slate-600">
-          Be respectful. Avoid sharing sensitive info. Report issues if
-          something looks off.
         </div>
       </div>
-    </aside>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-mx-4">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="bg-red-100 p-2 rounded-full">
+                <Trash2 className="h-6 w-6 text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Delete Listing
+                </h3>
+                <p className="text-sm text-gray-500">
+                  This action cannot be undone
+                </p>
+              </div>
+            </div>
+            <p className="text-gray-700 mb-6">
+              Are you sure you want to delete "{item?.name}"? This will
+              permanently remove the listing.
+            </p>
+            <div className="flex space-x-3">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={actionLoading}
+                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteItem}
+                disabled={actionLoading}
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 flex items-center justify-center"
+              >
+                {actionLoading ? (
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                ) : (
+                  "Delete"
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mark as Completed Confirmation Modal */}
+      {showCompleteConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-mx-4">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="bg-green-100 p-2 rounded-full">
+                <Check className="h-6 w-6 text-green-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Mark as Completed
+                </h3>
+                <p className="text-sm text-gray-500">
+                  This will mark the item as exchanged
+                </p>
+              </div>
+            </div>
+            <p className="text-gray-700 mb-6">
+              Mark "{item?.name}" as completed? This indicates the item has been
+              successfully exchanged or donated.
+            </p>
+            <div className="flex space-x-3">
+              <button
+                onClick={() => setShowCompleteConfirm(false)}
+                disabled={actionLoading}
+                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleMarkAsCompleted}
+                disabled={actionLoading}
+                className="flex-1 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 flex items-center justify-center"
+              >
+                {actionLoading ? (
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                ) : (
+                  "Mark Complete"
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
-
-export default ItemDetailPage;

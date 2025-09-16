@@ -1,18 +1,254 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import {
-  Calendar,
   Edit3,
   MessageCircle,
   Package,
-  Star,
   Heart,
-  BookOpen,
   Trash2,
+  Settings,
+  User,
+  Mail,
+  CreditCard,
+  Lock,
+  AlertTriangle,
+  Eye,
+  EyeOff,
+  X,
+  BookOpen,
+  Star,
 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { ItemCard } from "../components/Items/ItemCard";
 import { userAPI, itemAPI, wishlistAPI } from "../services/apiService";
+
+interface SettingsModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onPasswordChange: (oldPassword: string, newPassword: string) => Promise<void>;
+  onAccountDeletion: (reason: string) => Promise<void>;
+}
+
+function SettingsModal({
+  isOpen,
+  onClose,
+  onPasswordChange,
+  onAccountDeletion,
+}: SettingsModalProps) {
+  const [activeTab, setActiveTab] = useState<"password" | "account">(
+    "password"
+  );
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPasswords, setShowPasswords] = useState(false);
+  const [deleteReason, setDeleteReason] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handlePasswordChange = async () => {
+    if (newPassword !== confirmPassword) {
+      setError("New passwords do not match");
+      return;
+    }
+    if (newPassword.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    try {
+      await onPasswordChange(oldPassword, newPassword);
+      setOldPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      alert("Password changed successfully!");
+    } catch (err: any) {
+      setError(err.message || "Failed to change password");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAccountDeletion = async () => {
+    if (!deleteReason.trim()) {
+      setError("Please provide a reason for account deletion");
+      return;
+    }
+
+    if (
+      !confirm(
+        "Are you sure you want to delete your account? This action cannot be undone."
+      )
+    ) {
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    try {
+      await onAccountDeletion(deleteReason);
+      alert("Account deletion request sent to admin");
+      onClose();
+    } catch (err: any) {
+      setError(err.message || "Failed to submit deletion request");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold text-gray-900">Account Settings</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600"
+          >
+            <X className="h-6 w-6" />
+          </button>
+        </div>
+
+        <div className="flex space-x-1 mb-6 bg-gray-100 rounded-lg p-1">
+          <button
+            onClick={() => setActiveTab("password")}
+            className={`flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors ${
+              activeTab === "password"
+                ? "bg-white text-blue-600 shadow-sm"
+                : "text-gray-600 hover:text-gray-900"
+            }`}
+          >
+            <Lock className="h-4 w-4 inline mr-2" />
+            Change Password
+          </button>
+          <button
+            onClick={() => setActiveTab("account")}
+            className={`flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors ${
+              activeTab === "account"
+                ? "bg-white text-red-600 shadow-sm"
+                : "text-gray-600 hover:text-gray-900"
+            }`}
+          >
+            <Trash2 className="h-4 w-4 inline mr-2" />
+            Delete Account
+          </button>
+        </div>
+
+        {error && (
+          <div className="bg-red-50 text-red-700 p-3 rounded-lg mb-4 text-sm">
+            {error}
+          </div>
+        )}
+
+        {activeTab === "password" && (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Current Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showPasswords ? "text" : "password"}
+                  value={oldPassword}
+                  onChange={(e) => setOldPassword(e.target.value)}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 pr-10"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPasswords(!showPasswords)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                >
+                  {showPasswords ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                New Password
+              </label>
+              <input
+                type={showPasswords ? "text" : "password"}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Confirm New Password
+              </label>
+              <input
+                type={showPasswords ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                required
+              />
+            </div>
+
+            <button
+              onClick={handlePasswordChange}
+              disabled={
+                loading || !oldPassword || !newPassword || !confirmPassword
+              }
+              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+            >
+              {loading ? "Changing..." : "Change Password"}
+            </button>
+          </div>
+        )}
+
+        {activeTab === "account" && (
+          <div className="space-y-4">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div className="flex items-start">
+                <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5 mr-3 flex-shrink-0" />
+                <div className="text-sm text-red-800">
+                  <strong>Warning:</strong> Account deletion is permanent and
+                  cannot be undone. All your listings, messages, and data will
+                  be lost.
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Reason for account deletion *
+              </label>
+              <textarea
+                value={deleteReason}
+                onChange={(e) => setDeleteReason(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 h-24"
+                placeholder="Please tell us why you want to delete your account..."
+                required
+              />
+            </div>
+
+            <button
+              onClick={handleAccountDeletion}
+              disabled={loading || !deleteReason.trim()}
+              className="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 disabled:opacity-50"
+            >
+              {loading ? "Submitting..." : "Request Account Deletion"}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export function ProfilePage() {
   const { id } = useParams<{ id: string }>();
@@ -25,6 +261,7 @@ export function ProfilePage() {
   // State for profile user data
   const [profileUser, setProfileUser] = useState<any>(null);
   const [profilePic, setProfilePic] = useState("/default-avatar.png");
+  const [showSettings, setShowSettings] = useState(false);
 
   const isOwnProfile = !!authUser && (!id || id === authUser.userId.toString());
 
@@ -155,6 +392,78 @@ export function ProfilePage() {
       alert("Failed to remove from wishlist. Please try again.");
     }
   };
+
+  // Settings Modal Handlers
+  const handlePasswordChange = async (
+    oldPassword: string,
+    newPassword: string
+  ) => {
+    if (!authUser) return;
+
+    try {
+      // Use the new API endpoint for password change
+      const response = await fetch(
+        `/api/users/${authUser.userId}/change-password`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Assuming you store JWT token
+          },
+          body: JSON.stringify({
+            oldPassword,
+            newPassword,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        throw new Error(errorMessage);
+      }
+
+      console.log("Password change requested for user:", authUser.userId);
+    } catch (error) {
+      console.error("Error changing password:", error);
+      throw new Error("Failed to change password. Please try again.");
+    }
+  };
+
+  const handleAccountDeletion = async (reason: string) => {
+    if (!authUser) return;
+
+    try {
+      // Use the new API endpoint for account deletion request
+      const response = await fetch(
+        `/api/users/${authUser.userId}/request-deletion`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`, // Assuming you store JWT token
+          },
+          body: JSON.stringify({
+            reason,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        throw new Error(errorMessage);
+      }
+
+      console.log(
+        "Account deletion requested for user:",
+        authUser.userId,
+        "Reason:",
+        reason
+      );
+    } catch (error) {
+      console.error("Error requesting account deletion:", error);
+      throw new Error("Failed to submit deletion request. Please try again.");
+    }
+  };
   const handleProfilePicChange = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -195,9 +504,20 @@ export function ProfilePage() {
     );
   }
 
-  const activeItems = userItems.filter((item) => item.status !== "exchanged");
+  const activeItems = userItems.filter(
+    (item) =>
+      item.status !== "exchanged" &&
+      item.status !== "donated" &&
+      item.status !== "rented" &&
+      !item.is_exchanged
+  );
+
   const exchangedItems = userItems.filter(
-    (item) => item.status === "exchanged"
+    (item) =>
+      item.status === "exchanged" ||
+      item.status === "donated" ||
+      item.status === "rented" ||
+      item.is_exchanged === true
   );
 
   // Loading and error states
@@ -271,27 +591,48 @@ export function ProfilePage() {
 
           <div className="flex-1">
             <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4">
-              <div>
+              <div className="flex-1">
                 <h1 className="text-4xl font-extrabold text-gray-900">
                   {profileUser.username}
                 </h1>
-                <p className="text-gray-600 mt-1 flex items-center space-x-2 text-lg">
-                  <Calendar className="h-5 w-5" />
-                  <span>Student ID: {profileUser.studentId}</span>
-                </p>
+
+                {/* Enhanced User Information */}
+                <div className="mt-3 space-y-2">
+                  <div className="flex items-center space-x-2 text-gray-600">
+                    <Mail className="h-4 w-4" />
+                    <span>{profileUser.email}</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-gray-600">
+                    <CreditCard className="h-4 w-4" />
+                    <span>Student ID: {profileUser.studentId}</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-gray-600">
+                    <User className="h-4 w-4" />
+                    <span>Username: {profileUser.username}</span>
+                  </div>
+                </div>
               </div>
 
-              <div>
+              <div className="flex space-x-3">
                 {isOwnProfile ? (
-                  <button
-                    onClick={() =>
-                      navigate(`/profile/${profileUser.userId}/edit`)
-                    }
-                    className="bg-pine-green text-white px-8 py-3 rounded-xl hover:bg-dark-teal transition flex items-center space-x-3 shadow-md"
-                  >
-                    <Edit3 className="h-5 w-5" />
-                    <span className="text-lg font-semibold">Edit Profile</span>
-                  </button>
+                  <>
+                    <button
+                      onClick={() => setShowSettings(true)}
+                      className="bg-gray-600 text-white px-6 py-3 rounded-xl hover:bg-gray-700 transition flex items-center space-x-2 shadow-md"
+                    >
+                      <Settings className="h-5 w-5" />
+                      <span className="font-semibold">Settings</span>
+                    </button>
+                    <button
+                      onClick={() =>
+                        navigate(`/profile/${profileUser.userId}/edit`)
+                      }
+                      className="bg-pine-green text-white px-6 py-3 rounded-xl hover:bg-dark-teal transition flex items-center space-x-2 shadow-md"
+                    >
+                      <Edit3 className="h-5 w-5" />
+                      <span className="font-semibold">Edit Profile</span>
+                    </button>
+                  </>
                 ) : (
                   <button className="bg-pine-green text-white px-8 py-3 rounded-xl hover:bg-dark-teal transition flex items-center space-x-3 shadow-md">
                     <MessageCircle className="h-5 w-5" />
@@ -302,9 +643,14 @@ export function ProfilePage() {
             </div>
 
             {profileUser.bio && (
-              <p className="text-gray-700 mt-6 max-w-xl leading-relaxed text-lg">
-                {profileUser.bio}
-              </p>
+              <div className="mt-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  Bio
+                </h3>
+                <p className="text-gray-700 leading-relaxed bg-gray-50 p-4 rounded-lg">
+                  {profileUser.bio}
+                </p>
+              </div>
             )}
 
             {/* Stats */}
@@ -403,78 +749,115 @@ export function ProfilePage() {
                         <span>Saved Items ({wishlistedItems.length})</span>
                       </h3>
                       <div className="space-y-4">
-                        {wishlistedItems.map((item) => (
-                          <div
-                            key={item.id}
-                            className="bg-gray-50 rounded-xl p-6 flex items-start space-x-4"
-                          >
-                            <div className="flex-shrink-0">
-                              {item.images && item.images.length > 0 ? (
-                                <img
-                                  src={item.images[0]}
-                                  alt={item.title}
-                                  className="w-20 h-20 object-cover rounded-lg"
-                                />
-                              ) : (
-                                <div className="w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center">
-                                  <Package className="h-8 w-8 text-gray-400" />
-                                </div>
-                              )}
-                            </div>
-                            <div className="flex-1">
-                              <div className="flex items-start justify-between">
-                                <div>
-                                  <Link
-                                    to={`/item/${item.itemId}`}
-                                    className="text-lg font-semibold text-gray-900 hover:text-pine-green transition-colors"
-                                  >
-                                    {item.itemName}
-                                  </Link>
-                                  <p className="text-gray-600 mt-1">
-                                    {item.description?.substring(0, 100) ||
-                                      "No description"}
-                                    ...
-                                  </p>
-                                  <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
-                                    <span>
-                                      Saved on{" "}
-                                      {formatWishlistDate(
-                                        item.wishlistCreatedAt ||
-                                          new Date().toISOString()
-                                      )}
-                                    </span>
-                                    <span>•</span>
-                                    <span>
-                                      {item.location?.locationName ||
-                                        "Unknown location"}
-                                    </span>
+                        {wishlistedItems.map((item) => {
+                          const isUnavailable =
+                            item.status === "exchanged" ||
+                            item.status === "donated" ||
+                            item.status === "rented" ||
+                            item.is_exchanged === true;
+
+                          return (
+                            <div
+                              key={item.id}
+                              className={`bg-gray-50 rounded-xl p-6 flex items-start space-x-4 ${
+                                isUnavailable ? "opacity-50 grayscale" : ""
+                              }`}
+                            >
+                              <div className="flex-shrink-0">
+                                {item.images && item.images.length > 0 ? (
+                                  <img
+                                    src={item.images[0]}
+                                    alt={item.title}
+                                    className="w-20 h-20 object-cover rounded-lg"
+                                  />
+                                ) : (
+                                  <div className="w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center">
+                                    <Package className="h-8 w-8 text-gray-400" />
                                   </div>
-                                  {item.wishlistNote && (
-                                    <div className="mt-3 bg-blue-50 border-l-4 border-blue-400 p-3 rounded">
-                                      <p className="text-pine-green text-sm">
-                                        <span className="font-medium">
-                                          Note:
-                                        </span>{" "}
-                                        {item.wishlistNote}
-                                      </p>
+                                )}
+                              </div>
+                              <div className="flex-1">
+                                <div className="flex items-start justify-between">
+                                  <div>
+                                    <Link
+                                      to={`/item/${item.itemId}`}
+                                      className={`text-lg font-semibold hover:text-pine-green transition-colors ${
+                                        isUnavailable
+                                          ? "text-gray-500"
+                                          : "text-gray-900"
+                                      }`}
+                                    >
+                                      {item.itemName}
+                                      {isUnavailable && (
+                                        <span className="ml-2 text-sm text-red-500 font-normal">
+                                          (No longer available)
+                                        </span>
+                                      )}
+                                    </Link>
+                                    <p
+                                      className={`mt-1 ${
+                                        isUnavailable
+                                          ? "text-gray-400"
+                                          : "text-gray-600"
+                                      }`}
+                                    >
+                                      {item.description?.substring(0, 100) ||
+                                        "No description"}
+                                      ...
+                                    </p>
+                                    <div
+                                      className={`flex items-center space-x-4 mt-2 text-sm ${
+                                        isUnavailable
+                                          ? "text-gray-400"
+                                          : "text-gray-500"
+                                      }`}
+                                    >
+                                      <span>
+                                        Saved on{" "}
+                                        {formatWishlistDate(
+                                          item.wishlistCreatedAt ||
+                                            new Date().toISOString()
+                                        )}
+                                      </span>
+                                      <span>•</span>
+                                      <span>
+                                        {item.location?.locationName ||
+                                          "Unknown location"}
+                                      </span>
                                     </div>
-                                  )}
+                                    {item.wishlistNote && (
+                                      <div className="mt-3 bg-blue-50 border-l-4 border-blue-400 p-3 rounded">
+                                        <p
+                                          className={`text-sm ${
+                                            isUnavailable
+                                              ? "text-gray-500"
+                                              : "text-pine-green"
+                                          }`}
+                                        >
+                                          <span className="font-medium">
+                                            Note:
+                                          </span>{" "}
+                                          {item.wishlistNote}
+                                        </p>
+                                      </div>
+                                    )}
+                                  </div>
+                                  <button
+                                    onClick={() =>
+                                      removeFromWishlist(
+                                        item.itemId.toString(),
+                                        "item"
+                                      )
+                                    }
+                                    className="text-burnt-sienna hover:text-burnt-sienna/80 p-2 rounded-full hover:bg-burnt-sienna/10 transition-colors"
+                                  >
+                                    <Trash2 className="h-5 w-5" />
+                                  </button>
                                 </div>
-                                <button
-                                  onClick={() =>
-                                    removeFromWishlist(
-                                      item.itemId.toString(),
-                                      "item"
-                                    )
-                                  }
-                                  className="text-burnt-sienna hover:text-burnt-sienna/80 p-2 rounded-full hover:bg-burnt-sienna/10 transition-colors"
-                                >
-                                  <Trash2 className="h-5 w-5" />
-                                </button>
                               </div>
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
                   )}
@@ -489,53 +872,88 @@ export function ProfilePage() {
                         </span>
                       </h3>
                       <div className="space-y-4">
-                        {wishlistedTuitions.map((tuition) => (
-                          <div
-                            key={tuition.tuitionId}
-                            className="bg-gray-50 rounded-xl p-6 flex items-start justify-between"
-                          >
-                            <div className="flex-1">
-                              <Link
-                                to={`/tuition/${tuition.tuitionId}`}
-                                className="text-lg font-semibold text-gray-900 hover:text-pine-green transition-colors"
-                              >
-                                {tuition.subject} Tuition
-                              </Link>
-                              <p className="text-gray-600 mt-1">
-                                Class: {tuition.clazz} • Salary: ৳
-                                {tuition.salary}
-                              </p>
-                              <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
-                                <span>
-                                  Saved on{" "}
-                                  {formatWishlistDate(
-                                    tuition.wishlistCreatedAt ||
-                                      new Date().toISOString()
-                                  )}
-                                </span>
-                              </div>
-                              {tuition.wishlistNote && (
-                                <div className="mt-3 bg-powder-blue border-l-4 border-bright-cyan p-3 rounded">
-                                  <p className="text-pine-green text-sm">
-                                    <span className="font-medium">Note:</span>{" "}
-                                    {tuition.wishlistNote}
-                                  </p>
-                                </div>
-                              )}
-                            </div>
-                            <button
-                              onClick={() =>
-                                removeFromWishlist(
-                                  tuition.tuitionId.toString(),
-                                  "tuition"
-                                )
-                              }
-                              className="text-burnt-sienna hover:text-burnt-sienna/80 p-2 rounded-full hover:bg-burnt-sienna/10 transition-colors"
+                        {wishlistedTuitions.map((tuition) => {
+                          const isUnavailable =
+                            tuition.tStatus === "taken" ||
+                            tuition.tStatus === "completed";
+
+                          return (
+                            <div
+                              key={tuition.tuitionId}
+                              className={`bg-gray-50 rounded-xl p-6 flex items-start justify-between ${
+                                isUnavailable ? "opacity-50 grayscale" : ""
+                              }`}
                             >
-                              <Trash2 className="h-5 w-5" />
-                            </button>
-                          </div>
-                        ))}
+                              <div className="flex-1">
+                                <Link
+                                  to={`/tuition/${tuition.tuitionId}`}
+                                  className={`text-lg font-semibold hover:text-pine-green transition-colors ${
+                                    isUnavailable
+                                      ? "text-gray-500"
+                                      : "text-gray-900"
+                                  }`}
+                                >
+                                  {tuition.subject} Tuition
+                                  {isUnavailable && (
+                                    <span className="ml-2 text-sm text-red-500 font-normal">
+                                      (No longer available)
+                                    </span>
+                                  )}
+                                </Link>
+                                <p
+                                  className={`mt-1 ${
+                                    isUnavailable
+                                      ? "text-gray-400"
+                                      : "text-gray-600"
+                                  }`}
+                                >
+                                  Class: {tuition.clazz} • Salary: ৳
+                                  {tuition.salary}
+                                </p>
+                                <div
+                                  className={`flex items-center space-x-4 mt-2 text-sm ${
+                                    isUnavailable
+                                      ? "text-gray-400"
+                                      : "text-gray-500"
+                                  }`}
+                                >
+                                  <span>
+                                    Saved on{" "}
+                                    {formatWishlistDate(
+                                      tuition.wishlistCreatedAt ||
+                                        new Date().toISOString()
+                                    )}
+                                  </span>
+                                </div>
+                                {tuition.wishlistNote && (
+                                  <div className="mt-3 bg-powder-blue border-l-4 border-bright-cyan p-3 rounded">
+                                    <p
+                                      className={`text-sm ${
+                                        isUnavailable
+                                          ? "text-gray-500"
+                                          : "text-pine-green"
+                                      }`}
+                                    >
+                                      <span className="font-medium">Note:</span>{" "}
+                                      {tuition.wishlistNote}
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                              <button
+                                onClick={() =>
+                                  removeFromWishlist(
+                                    tuition.tuitionId.toString(),
+                                    "tuition"
+                                  )
+                                }
+                                className="text-burnt-sienna hover:text-burnt-sienna/80 p-2 rounded-full hover:bg-burnt-sienna/10 transition-colors"
+                              >
+                                <Trash2 className="h-5 w-5" />
+                              </button>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
@@ -596,6 +1014,16 @@ export function ProfilePage() {
               </div>
             )}
         </div>
+
+        {/* Settings Modal */}
+        {isOwnProfile && (
+          <SettingsModal
+            isOpen={showSettings}
+            onClose={() => setShowSettings(false)}
+            onPasswordChange={handlePasswordChange}
+            onAccountDeletion={handleAccountDeletion}
+          />
+        )}
       </div>
     </div>
   );

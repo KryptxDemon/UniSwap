@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import logoImg from "../assets/logo.png";
 import { Link } from "react-router-dom";
 import {
@@ -12,8 +12,94 @@ import {
   Star,
   Quote,
 } from "lucide-react";
+import { itemAPI } from "../services/apiService";
 
 export default function HomePage() {
+  const [recentItems, setRecentItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRecentItems = async () => {
+      try {
+        const allItems = await itemAPI.getAllItems();
+        // Get the 6 most recent items
+        const sortedItems = allItems
+          .sort(
+            (a, b) =>
+              new Date(b.postDate || b.post?.postTime || 0).getTime() -
+              new Date(a.postDate || a.post?.postTime || 0).getTime()
+          )
+          .slice(0, 6);
+        setRecentItems(sortedItems);
+      } catch (error) {
+        console.error("Error fetching recent items:", error);
+        // Fallback to demo data if API fails
+        setRecentItems(sampleItems);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecentItems();
+  }, []);
+
+  const sampleItems = [
+    {
+      id: 1,
+      image:
+        "https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
+      title: "Discrete by Rosen Textbook",
+      subtitle: "Used, like new",
+      tags: ["Textbook", "Exchange"],
+      exchange: "Exchange",
+    },
+    {
+      id: 2,
+      image:
+        "https://images.pexels.com/photos/271816/pexels-photo-271816.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
+      title: "Compact Desk Lamp",
+      subtitle: "Perfect for late night study sessions",
+      tags: ["Dorm", "Gadget"],
+      exchange: "Swap",
+    },
+    {
+      id: 3,
+      image:
+        "https://images.pexels.com/photos/1350789/pexels-photo-1350789.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
+      title: "Hall Bedside Organizer",
+      subtitle: "Great condition",
+      tags: ["Furniture", "Pickup"],
+      exchange: "Giveaway",
+    },
+    {
+      id: 4,
+      image:
+        "https://images.pexels.com/photos/590493/pexels-photo-590493.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
+      title: "Course Notes Bundle",
+      subtitle: "Compiled over a semester",
+      tags: ["Notes", "Exchange"],
+      exchange: "Exchange",
+    },
+    {
+      id: 5,
+      image:
+        "https://images.pexels.com/photos/704767/pexels-photo-704767.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
+      title: "Scientific Calculator",
+      subtitle: "TI-84 Plus, great condition",
+      tags: ["Gadget", "Equipment"],
+      exchange: "Swap",
+    },
+    {
+      id: 6,
+      image:
+        "https://images.pexels.com/photos/1438081/pexels-photo-1438081.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
+      title: "Stationery Bundle",
+      subtitle: "Pens, notebooks, and more",
+      tags: ["Supplies", "Bundle"],
+      exchange: "Giveaway",
+    },
+  ];
+
   const features = [
     {
       icon: BookOpen,
@@ -115,44 +201,24 @@ export default function HomePage() {
     },
   ];
 
-  const sampleItems = [
-    {
-      id: 1,
-      image:
-        "https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
-      title: "Discrete by Rosen Textbook",
-      subtitle: "Used, like new",
-      tags: ["Textbook", "Exchange"],
-      exchange: "Exchange",
-    },
-    {
-      id: 2,
-      image:
-        "https://images.pexels.com/photos/271816/pexels-photo-271816.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
-      title: "Compact Desk Lamp",
-      subtitle: "Perfect for late night study sessions",
-      tags: ["Dorm", "Gadget"],
-      exchange: "Swap",
-    },
-    {
-      id: 3,
-      image:
-        "https://images.pexels.com/photos/1350789/pexels-photo-1350789.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
-      title: "Hall Bedside Organizer",
-      subtitle: "Great condition",
-      tags: ["Furniture", "Pickup"],
-      exchange: "Giveaway",
-    },
-    {
-      id: 4,
-      image:
-        "https://images.pexels.com/photos/590493/pexels-photo-590493.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
-      title: "Course Notes Bundle",
-      subtitle: "Complete notes for 3 semesters",
-      tags: ["Notes", "Tuition"],
-      exchange: "Exchange",
-    },
-  ];
+  // Function to map API item to display format
+  const mapItemToDisplay = (item: any) => ({
+    id: item.itemId,
+    image:
+      item.images && item.images.length > 0
+        ? item.images[0]
+        : "https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg?auto=compress&cs=tinysrgb&w=400&h=300",
+    title: item.itemName || "Unknown Item",
+    subtitle: item.description || "No description",
+    tags: [item.category?.categoryName || "General", item.itemType || "Item"],
+    exchange: item.itemType || "Exchange",
+  });
+
+  const displayItems = loading
+    ? sampleItems
+    : recentItems.length > 0
+    ? recentItems.map(mapItemToDisplay)
+    : sampleItems;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
@@ -323,7 +389,7 @@ export default function HomePage() {
                 className="marquee flex items-stretch gap-6 py-6"
                 onMouseEnter={() => {}}
               >
-                {[...sampleItems, ...sampleItems].map((item, idx) => (
+                {[...displayItems, ...displayItems].map((item, idx) => (
                   <div
                     key={idx}
                     className="min-w-[280px] bg-white rounded-2xl shadow-lg overflow-hidden transform transition hover:scale-105 group"

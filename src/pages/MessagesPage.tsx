@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   MessageCircle,
   Search,
@@ -9,11 +10,62 @@ import {
   Image,
 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
-import { messageAPI } from "../services/apiService";
+import { messageAPI, userAPI } from "../services/apiService";
+
+// Profile Picture Component with fallback
+interface ProfilePictureProps {
+  src?: string;
+  alt: string;
+  size: "sm" | "md" | "lg";
+  className?: string;
+}
+
+function ProfilePicture({
+  src,
+  alt,
+  size,
+  className = "",
+}: ProfilePictureProps) {
+  const [imageError, setImageError] = useState(false);
+
+  const sizeClasses = {
+    sm: "w-8 h-8",
+    md: "w-10 h-10",
+    lg: "w-12 h-12",
+  };
+
+  const textSizes = {
+    sm: "text-xs",
+    md: "text-sm",
+    lg: "text-base",
+  };
+
+  if (!src || imageError) {
+    return (
+      <div
+        className={`${sizeClasses[size]} rounded-full flex items-center justify-center bg-gradient-to-br from-pine-green to-bright-cyan ${className}`}
+      >
+        <span className={`text-white font-semibold ${textSizes[size]}`}>
+          {alt.charAt(0).toUpperCase()}
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className={`${sizeClasses[size]} rounded-full object-cover ${className}`}
+      onError={() => setImageError(true)}
+    />
+  );
+}
 
 interface ConversationData {
   partnerId: number;
   partnerUsername: string;
+  partnerProfilePicture?: string;
   lastMessage: string;
   lastMessageTime: string;
   messageCount: number;
@@ -22,6 +74,7 @@ interface ConversationData {
 interface UserSummary {
   userId: number;
   displayUsername: string;
+  profilePicture?: string;
 }
 
 interface MessageData {
@@ -34,6 +87,7 @@ interface MessageData {
 
 export function MessagesPage() {
   const { user } = useAuth();
+  const [searchParams] = useSearchParams();
   const [conversations, setConversations] = useState<ConversationData[]>([]);
   const [selectedConversation, setSelectedConversation] =
     useState<ConversationData | null>(null);
@@ -48,6 +102,46 @@ export function MessagesPage() {
       loadConversations();
     }
   }, [user]);
+
+  // Handle URL parameter for starting conversation with specific user
+  useEffect(() => {
+    const targetUserId = searchParams.get("user");
+    if (targetUserId && user?.userId && conversations.length > 0) {
+      // Find existing conversation or create new one
+      const existingConversation = conversations.find(
+        (conv) => conv.partnerId === parseInt(targetUserId)
+      );
+
+      if (existingConversation) {
+        setSelectedConversation(existingConversation);
+      } else {
+        // Create a new conversation placeholder
+        startNewConversation(parseInt(targetUserId));
+      }
+    }
+  }, [searchParams, conversations, user]);
+
+  const startNewConversation = async (partnerId: number) => {
+    try {
+      // Fetch partner user details
+      const partnerUser = await userAPI.getUserById(partnerId);
+
+      // Create a new conversation placeholder
+      const newConversation: ConversationData = {
+        partnerId: partnerId,
+        partnerUsername: partnerUser.username || `User ${partnerId}`,
+        partnerProfilePicture: partnerUser.profilePicture,
+        lastMessage: "Start a conversation...",
+        lastMessageTime: new Date().toISOString(),
+        messageCount: 0,
+      };
+
+      setSelectedConversation(newConversation);
+      setMessages([]); // Empty messages for new conversation
+    } catch (error) {
+      console.error("Error starting new conversation:", error);
+    }
+  };
 
   const loadConversations = async () => {
     try {
@@ -211,14 +305,13 @@ export function MessagesPage() {
                         }`}
                       >
                         <div className="flex items-start space-x-3">
-                          <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 relative">
-                            <div className="w-full h-full bg-gradient-to-br from-pine-green to-bright-cyan rounded-full flex items-center justify-center border-2 border-white shadow-sm">
-                              <span className="text-white font-semibold">
-                                {conversation.partnerUsername
-                                  .charAt(0)
-                                  .toUpperCase()}
-                              </span>
-                            </div>
+                          <div className="relative">
+                            <ProfilePicture
+                              src={conversation.partnerProfilePicture}
+                              alt={conversation.partnerUsername}
+                              size="lg"
+                              className="border-2 border-white shadow-sm"
+                            />
                             <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
                           </div>
                           <div className="flex-1 min-w-0">
@@ -278,14 +371,12 @@ export function MessagesPage() {
                     </button>
 
                     <div className="flex items-center space-x-3 flex-1">
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center relative">
-                        <div className="w-full h-full bg-gradient-to-br from-pine-green to-bright-cyan rounded-full flex items-center justify-center">
-                          <span className="text-white font-semibold">
-                            {selectedConversation.partnerUsername
-                              .charAt(0)
-                              .toUpperCase()}
-                          </span>
-                        </div>
+                      <div className="relative">
+                        <ProfilePicture
+                          src={selectedConversation.partnerProfilePicture}
+                          alt={selectedConversation.partnerUsername}
+                          size="md"
+                        />
                         <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
                       </div>
                       <div>
@@ -342,15 +433,12 @@ export function MessagesPage() {
                               }`}
                             >
                               {!isCurrentUserSender && (
-                                <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
-                                  <div className="w-full h-full bg-gradient-to-br from-pine-green to-bright-cyan rounded-full flex items-center justify-center">
-                                    <span className="text-white text-xs font-semibold">
-                                      {message.sender.displayUsername
-                                        ?.charAt(0)
-                                        .toUpperCase() || "?"}
-                                    </span>
-                                  </div>
-                                </div>
+                                <ProfilePicture
+                                  src={message.sender.profilePicture}
+                                  alt={message.sender.displayUsername || "User"}
+                                  size="sm"
+                                  className="flex-shrink-0"
+                                />
                               )}
                               <div
                                 className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl shadow-sm ${
@@ -376,15 +464,12 @@ export function MessagesPage() {
                                 </p>
                               </div>
                               {isCurrentUserSender && (
-                                <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
-                                  <div className="w-full h-full bg-gradient-to-br from-pine-green to-bright-cyan rounded-full flex items-center justify-center">
-                                    <span className="text-white text-xs font-semibold">
-                                      {user?.username
-                                        ? user.username.charAt(0).toUpperCase()
-                                        : ""}
-                                    </span>
-                                  </div>
-                                </div>
+                                <ProfilePicture
+                                  src={user?.profilePicture}
+                                  alt={user?.username || "You"}
+                                  size="sm"
+                                  className="flex-shrink-0"
+                                />
                               )}
                             </div>
                           );

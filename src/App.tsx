@@ -14,7 +14,7 @@ import { BrowsePage } from "./pages/BrowsePage";
 import { BrowseItemsPage } from "./pages/BrowseItemsPage";
 import { BrowseTuitionsPage } from "./pages/BrowseTuitionsPage";
 import { PostItemPage } from "./pages/PostItemPage";
-import { ItemDetailPage } from "./pages/ItemDetailPage";
+import ItemDetailPage from "./pages/ItemDetailPage";
 import { TuitionDetailPage } from "./pages/TuitionDetailPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { MessagesPage } from "./pages/MessagesPage";

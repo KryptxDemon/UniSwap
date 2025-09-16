@@ -10,6 +10,15 @@ import {
   BookOpen,
   GraduationCap,
   Mail,
+  Phone,
+  Copy,
+  Clock,
+  Users,
+  Repeat,
+  ExternalLink,
+  Building2,
+  CheckCircle,
+  Star,
 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { tuitionAPI, messageAPI } from "../services/apiService";
@@ -25,6 +34,7 @@ export function TuitionDetailPage() {
   const [showMessageModal, setShowMessageModal] = useState(false);
   const [message, setMessage] = useState("");
   const [sendingMessage, setSendingMessage] = useState(false);
+  const [showFullSwapDetails, setShowFullSwapDetails] = useState(false);
 
   useEffect(() => {
     const fetchTuition = async () => {
@@ -68,48 +78,86 @@ export function TuitionDetailPage() {
   };
 
   const getStatusColor = (status: string) => {
-    switch (status) {
+    switch (status?.toLowerCase()) {
       case "available":
-        return "bg-green-100 text-green-800";
+        return "bg-green-100 text-green-800 border-green-200";
       case "taken":
-        return "bg-orange-100 text-orange-800";
+        return "bg-orange-100 text-orange-800 border-orange-200";
       case "completed":
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 text-gray-800 border-gray-200";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-blue-100 text-blue-800 border-blue-200";
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+  const getTutorPreferenceColor = (preference: string) => {
+    return "bg-purple-100 text-purple-800 border-purple-200";
+  };
+
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "Date not specified";
+    try {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+      
+      if (diffInHours < 1) return "Just posted";
+      if (diffInHours < 24) return `${diffInHours}h ago`;
+      if (diffInHours < 168) return `${Math.floor(diffInHours / 24)}d ago`;
+      return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    } catch {
+      return "Invalid date";
+    }
+  };
+
+  const copyPhoneNumber = () => {
+    if (tuition?.contactPhone) {
+      navigator.clipboard.writeText(tuition.contactPhone);
+      // You could add a toast notification here
+    }
+  };
+
+  const openAddressInMaps = () => {
+    if (tuition?.addressUrl) {
+      window.open(tuition.addressUrl, '_blank');
+    }
+  };
+
+  const formatSubjects = (subjects: string | string[]) => {
+    if (Array.isArray(subjects)) {
+      return subjects.join(", ");
+    }
+    if (typeof subjects === "string") {
+      return subjects;
+    }
+    return "Not specified";
   };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading tuition details...</p>
         </div>
       </div>
     );
   }
 
-  if (error) {
+  if (error || !tuition) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Error</h2>
-          <p className="text-gray-600 mb-6">{error}</p>
+          <GraduationCap className="h-12 w-12 text-red-500 mx-auto mb-4" />
+          <h1 className="text-xl font-semibold text-gray-900 mb-2">Tuition Not Found</h1>
+          <p className="text-gray-600 mb-4">{error || "This tuition listing doesn't exist or has been removed."}</p>
           <button
             onClick={() => navigate("/browse-tuitions")}
-            className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
           >
             Back to Browse Tuitions
           </button>
@@ -118,243 +166,274 @@ export function TuitionDetailPage() {
     );
   }
 
-  if (!tuition) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            Tuition Not Found
-          </h2>
-          <p className="text-gray-600 mb-6">
-            The tuition you're looking for doesn't exist.
-          </p>
-          <button
-            onClick={() => navigate("/browse-tuitions")}
-            className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
-          >
-            Back to Browse Tuitions
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  const isOwner = user && tuition.post?.user?.userId === user.userId;
+  const isOwner = user?.userId === tuition.post?.user?.userId;
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="bg-white shadow-sm border-b">
+      {/* Header */}
+      <div className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between py-4">
+          <div className="flex items-center justify-between h-16">
             <button
-              onClick={() => navigate("/browse-tuitions")}
-              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+              onClick={() => navigate(-1)}
+              className="flex items-center text-gray-600 hover:text-gray-900"
             >
-              <ArrowLeft className="h-5 w-5" />
-              <span>Back to Tuitions</span>
+              <ArrowLeft className="h-5 w-5 mr-2" />
+              Back
             </button>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-              <div className="p-6 border-b border-gray-200">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                      {tuition.subject} Tuition
-                    </h1>
-                    <div className="flex items-center space-x-4 text-gray-600">
-                      <div className="flex items-center space-x-1">
-                        <GraduationCap className="h-5 w-5" />
-                        <span>{tuition.clazz}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <MapPin className="h-5 w-5" />
-                        <span>
-                          {tuition.location?.name || "Location not specified"}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <span
-                    className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
-                      tuition.tStatus
-                    )}`}
-                  >
-                    {tuition.tStatus.charAt(0).toUpperCase() +
-                      tuition.tStatus.slice(1)}
-                  </span>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+          {/* Header Section */}
+          <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-8">
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex-1">
+                <h1 className="text-3xl font-bold mb-2">{tuition.title || `${formatSubjects(tuition.subjects)} Tuition`}</h1>
+                <p className="text-blue-100 text-lg">{tuition.description}</p>
+              </div>
+              <div className="ml-6">
+                <span className={`px-4 py-2 rounded-full text-sm font-medium border bg-white/20 text-white border-white/30`}>
+                  {tuition.tStatus || tuition.status || "Available"}
+                </span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <div className="flex items-center space-x-3">
+                <DollarSign className="h-6 w-6 text-green-300" />
+                <div>
+                  <p className="text-blue-100 text-sm">Salary</p>
+                  <p className="text-xl font-bold">৳{tuition.salary}/hour</p>
                 </div>
               </div>
 
-              <div className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                  <div className="bg-green-50 rounded-lg p-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="bg-green-100 p-2 rounded-lg">
-                        <DollarSign className="h-6 w-6 text-green-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-600">Monthly Salary</p>
-                        <p className="text-xl font-bold text-green-600">
-                          ৳{tuition.salary}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-blue-50 rounded-lg p-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="bg-blue-100 p-2 rounded-lg">
-                        <Calendar className="h-6 w-6 text-blue-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-600">Days per Week</p>
-                        <p className="text-xl font-bold text-blue-600">
-                          {tuition.daysWeek} days
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-purple-50 rounded-lg p-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="bg-purple-100 p-2 rounded-lg">
-                        <BookOpen className="h-6 w-6 text-purple-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-600">Subject</p>
-                        <p className="text-lg font-semibold text-purple-600">
-                          {tuition.subject}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+              <div className="flex items-center space-x-3">
+                <Clock className="h-6 w-6 text-yellow-300" />
+                <div>
+                  <p className="text-blue-100 text-sm">Days per Week</p>
+                  <p className="text-xl font-bold">{tuition.daysWeek || tuition.daysPerWeek} days</p>
                 </div>
+              </div>
 
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                      Tuition Information
-                    </h3>
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <p className="text-sm text-gray-600">Class Level</p>
-                          <p className="font-medium text-gray-900">
-                            {tuition.clazz}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-gray-600">Status</p>
-                          <p className="font-medium text-gray-900">
-                            {tuition.tStatus}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-gray-600">Location</p>
-                          <p className="font-medium text-gray-900">
-                            {tuition.location?.name || "Not specified"}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-gray-600">Posted</p>
-                          <p className="font-medium text-gray-900">
-                            {tuition.post?.postTime
-                              ? formatDate(tuition.post.postTime)
-                              : "Unknown"}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+              <div className="flex items-center space-x-3">
+                <GraduationCap className="h-6 w-6 text-purple-300" />
+                <div>
+                  <p className="text-blue-100 text-sm">Level</p>
+                  <p className="text-xl font-bold">{tuition.clazz || tuition.classLevel}</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-              <div className="p-6 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Tutor Information
-                </h3>
-                <div className="flex items-center space-x-3 mb-4">
-                  <div className="bg-gray-100 p-3 rounded-full">
-                    <User className="h-8 w-8 text-gray-600" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-900">
-                      {tuition.post?.user?.username || "Anonymous"}
+          {/* Main Content */}
+          <div className="p-8 space-y-8">
+            {/* Subjects & Details */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                    <BookOpen className="h-6 w-6 mr-2 text-blue-600" />
+                    Subject Information
+                  </h2>
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <p className="text-lg font-medium text-gray-900 mb-2">
+                      {formatSubjects(tuition.subjects || tuition.subject)}
                     </p>
-                    <p className="text-sm text-gray-600">Tutor</p>
+                    <p className="text-gray-600">for {tuition.clazz || tuition.classLevel} level students</p>
                   </div>
                 </div>
 
-                {tuition.post?.user?.email && (
-                  <div className="flex items-center space-x-2 text-sm text-gray-600 mb-2">
-                    <Mail className="h-4 w-4" />
-                    <span>{tuition.post.user.email}</span>
+                {/* Tutor Preference */}
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2 flex items-center">
+                    <Users className="h-5 w-5 mr-2 text-purple-600" />
+                    Tutor Preference
+                  </h3>
+                  <span className={`px-3 py-1 rounded-full text-sm font-medium border ${getTutorPreferenceColor(tuition.tutorPreference || "Both")}`}>
+                    {tuition.tutorPreference || "No preference"}
+                  </span>
+                </div>
+
+                {/* Location Information */}
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-2 flex items-center">
+                    <MapPin className="h-5 w-5 mr-2 text-red-600" />
+                    Location
+                  </h3>
+                  <div className="space-y-2">
+                    <p className="text-gray-700">{tuition.location?.locationName || "Location not specified"}</p>
+                    {tuition.addressUrl && (
+                      <button
+                        onClick={openAddressInMaps}
+                        className="flex items-center text-blue-600 hover:text-blue-700 text-sm"
+                      >
+                        <ExternalLink className="h-4 w-4 mr-1" />
+                        View on map
+                      </button>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
 
-              {!isOwner && user && (
-                <div className="p-6">
+              <div className="space-y-6">
+                {/* Contact Information */}
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                    <User className="h-6 w-6 mr-2 text-green-600" />
+                    Contact Information
+                  </h2>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                      <div>
+                        <p className="text-sm text-gray-500">Posted by</p>
+                        <p className="font-medium text-gray-900">{tuition.post?.user?.username || "Unknown user"}</p>
+                      </div>
+                      <CheckCircle className="h-6 w-6 text-green-500" />
+                    </div>
+
+                    {tuition.contactPhone && (
+                      <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                        <div>
+                          <p className="text-sm text-gray-500">Phone Number</p>
+                          <p className="font-medium text-gray-900">{tuition.contactPhone}</p>
+                        </div>
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={copyPhoneNumber}
+                            className="p-2 text-blue-600 hover:text-blue-700"
+                            title="Copy phone number"
+                          >
+                            <Copy className="h-4 w-4" />
+                          </button>
+                          <a
+                            href={`tel:${tuition.contactPhone}`}
+                            className="p-2 text-green-600 hover:text-green-700"
+                            title="Call"
+                          >
+                            <Phone className="h-4 w-4" />
+                          </a>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg">
+                      <Calendar className="h-5 w-5 text-gray-400" />
+                      <div>
+                        <p className="text-sm text-gray-500">Posted</p>
+                        <p className="font-medium text-gray-900">{formatDate(tuition.post?.postTime)}</p>
+                      </div>
+                    </div>
+
+                    {tuition.department && (
+                      <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg">
+                        <Building2 className="h-5 w-5 text-gray-400" />
+                        <div>
+                          <p className="text-sm text-gray-500">Department</p>
+                          <p className="font-medium text-gray-900">{tuition.department}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Tuition Exchange Section */}
+            {tuition.canSwap && tuition.swapDetails && (
+              <div className="border-t pt-8">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+                  <Repeat className="h-6 w-6 mr-2 text-blue-600" />
+                  Tuition Exchange Available
+                </h2>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center space-x-2">
+                      <Star className="h-5 w-5 text-blue-600" />
+                      <h3 className="font-semibold text-blue-900">Exchange Details</h3>
+                    </div>
+                    <span className="px-3 py-1 bg-blue-200 text-blue-800 rounded-full text-sm font-medium">
+                      Exchange Available
+                    </span>
+                  </div>
+                  <div className={`text-blue-800 ${!showFullSwapDetails && tuition.swapDetails.length > 200 ? 'line-clamp-3' : ''}`}>
+                    {tuition.swapDetails}
+                  </div>
+                  {tuition.swapDetails.length > 200 && (
+                    <button
+                      onClick={() => setShowFullSwapDetails(!showFullSwapDetails)}
+                      className="text-blue-600 hover:text-blue-700 text-sm font-medium mt-2"
+                    >
+                      {showFullSwapDetails ? "Show less" : "Show more"}
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            {!isOwner && (
+              <div className="border-t pt-8">
+                <div className="flex space-x-4">
                   <button
                     onClick={() => setShowMessageModal(true)}
-                    className="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center space-x-2"
+                    className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 flex items-center justify-center space-x-2"
                   >
                     <MessageCircle className="h-5 w-5" />
-                    <span>Contact Tutor</span>
+                    <span>Send Message</span>
                   </button>
+                  {tuition.contactPhone && (
+                    <a
+                      href={`tel:${tuition.contactPhone}`}
+                      className="flex-1 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 flex items-center justify-center space-x-2"
+                    >
+                      <Phone className="h-5 w-5" />
+                      <span>Call Now</span>
+                    </a>
+                  )}
                 </div>
-              )}
+              </div>
+            )}
 
-              {!user && (
-                <div className="p-6">
-                  <button
-                    onClick={() => navigate("/login")}
-                    className="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors"
-                  >
-                    Sign In to Contact
-                  </button>
+            {isOwner && (
+              <div className="border-t pt-8">
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                  <p className="text-yellow-800 font-medium">This is your tuition listing</p>
+                  <p className="text-yellow-700 text-sm">You can edit or delete this listing from your profile page.</p>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
+      {/* Message Modal */}
       {showMessageModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Send Message to {tuition.post?.user?.username || "Tutor"}
-            </h3>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold mb-4">Send Message</h3>
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="Type your message here..."
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 h-32 resize-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              placeholder="Type your message..."
+              className="w-full border border-gray-300 rounded-lg p-3 h-32 resize-none"
+              rows={4}
             />
             <div className="flex space-x-3 mt-4">
               <button
                 onClick={() => setShowMessageModal(false)}
-                className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors"
+                className="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg hover:bg-gray-300"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSendMessage}
-                disabled={!message.trim() || sendingMessage}
-                className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                disabled={sendingMessage || !message.trim()}
+                className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
               >
-                {sendingMessage ? "Sending..." : "Send Message"}
+                {sendingMessage ? "Sending..." : "Send"}
               </button>
             </div>
           </div>

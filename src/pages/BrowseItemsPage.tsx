@@ -29,7 +29,7 @@ export function BrowseItemsPage() {
     const fetchItems = async () => {
       try {
         setLoading(true);
-        const items = await itemAPI.getAllItems();
+        const items = await itemAPI.getAvailableItems();
         setAllItems(items);
       } catch (err) {
         setError("Failed to load items");

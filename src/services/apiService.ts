@@ -89,20 +89,217 @@ const addImagePrefix = (imagePath: string): string => {
   return `http://localhost:8080/api/uploads/files/${imagePath}`;
 };
 
+// Import mockLocations for location mapping
+import { mockLocations } from "../lib/mockData";
+
+// Map backend location (could be ID or object) to frontend location format
+const mapLocationFromBackend = (backendLocation: any) => {
+  // If already a proper object with name, return as-is
+  if (
+    backendLocation &&
+    typeof backendLocation === "object" &&
+    backendLocation.name
+  ) {
+    return backendLocation;
+  }
+
+  // If it's a string that's not numeric, treat as location name
+  if (typeof backendLocation === "string" && isNaN(Number(backendLocation))) {
+    return {
+      id: backendLocation,
+      name: backendLocation,
+      locationName: backendLocation,
+    };
+  }
+
+  // If it's an ID (number or numeric string), look up in mockLocations
+  const locationId = String(backendLocation);
+  const foundLocation = mockLocations.find((loc) => loc.id === locationId);
+
+  if (foundLocation) {
+    return {
+      id: foundLocation.id,
+      name: foundLocation.name,
+      locationName: foundLocation.name,
+      type: foundLocation.type,
+    };
+  }
+
+  // Fallback for unknown location
+  return {
+    id: "unknown",
+    name: "Unknown Location",
+    locationName: "Unknown Location",
+  };
+};
+
 // Normalize backend Item to frontend-friendly shape (ensure images[])
 const normalizeItem = (raw: any) => {
-  const images: string[] =
-    Array.isArray(raw.images) && raw.images.length > 0
-      ? raw.images.map(addImagePrefix)
-      : typeof raw.post?.imageUrls === "string" && raw.post.imageUrls.length > 0
-      ? raw.post.imageUrls
-          .split(",")
-          .map((s: string) => s.trim())
-          .filter(Boolean)
-          .map(addImagePrefix)
-      : [];
+  let images: string[] = [];
+
+  console.log("Raw item data for image processing:", {
+    imageData: raw.imageData
+      ? {
+          type: typeof raw.imageData,
+          length: raw.imageData.length,
+          preview: `${raw.imageData.substring(0, 50)}...`,
+          startsWithDataImage: raw.imageData.startsWith("data:image/"),
+          hasComma: raw.imageData.includes(","),
+          endsCorrectly:
+            raw.imageData.endsWith("==") || raw.imageData.endsWith("="),
+        }
+      : null,
+    images: raw.images,
+    postImageUrls: raw.post?.imageUrls,
+    itemImage: raw.itemImage,
+    imagePath: raw.imagePath,
+  });
+
+  // Priority 1: Backend imageData field (base64 string) - most recent posts
+  if (
+    raw.imageData &&
+    typeof raw.imageData === "string" &&
+    raw.imageData.trim()
+  ) {
+    console.log("Using imageData field (base64)");
+
+    // Validate the base64 format
+    if (!raw.imageData.startsWith("data:image/")) {
+      console.warn("ImageData doesn't start with data:image/, fixing...");
+      // Try to fix it by adding the proper prefix if it's just base64 data
+      if (raw.imageData.match(/^[A-Za-z0-9+/]+=*$/)) {
+        const fixedImageData = `data:image/jpeg;base64,${raw.imageData}`;
+        console.log("Fixed imageData with proper prefix");
+        images = [fixedImageData];
+      } else {
+        console.error("ImageData format is invalid");
+      }
+    } else {
+      // Check if it has the proper structure: data:image/type;base64,data
+      const parts = raw.imageData.split(",");
+      if (parts.length === 2) {
+        const [header, base64Data] = parts;
+        console.log("Base64 header:", header);
+        console.log("Base64 data length:", base64Data.length);
+
+        // Clean the base64 data more thoroughly
+        const cleanedBase64 = base64Data
+          .replace(/\s/g, "") // Remove all whitespace
+          .replace(/[^A-Za-z0-9+/=]/g, ""); // Remove any non-base64 characters
+
+        console.log("Cleaned base64 length:", cleanedBase64.length);
+        console.log(
+          "Characters removed:",
+          base64Data.length - cleanedBase64.length
+        );
+
+        // Ensure base64 data is properly padded
+        let paddedBase64 = cleanedBase64;
+        while (paddedBase64.length % 4 !== 0) {
+          paddedBase64 += "=";
+        }
+
+        const finalImageData = `${header},${paddedBase64}`;
+        console.log("Final processed imageData length:", finalImageData.length);
+
+        if (paddedBase64 !== base64Data) {
+          console.log("Fixed base64 formatting and padding");
+          images = [finalImageData];
+        } else {
+          images = [raw.imageData];
+        }
+      } else {
+        console.error("Invalid imageData format - missing comma separator");
+        images = [raw.imageData]; // Use as-is and let validation catch it
+      }
+    }
+  }
+  // Priority 2: Direct itemImage field
+  else if (
+    raw.itemImage &&
+    typeof raw.itemImage === "string" &&
+    raw.itemImage.trim()
+  ) {
+    console.log("Using itemImage field");
+    if (raw.itemImage.startsWith("data:image/")) {
+      images = [raw.itemImage]; // Base64
+    } else {
+      images = [addImagePrefix(raw.itemImage)]; // File path
+    }
+  }
+  // Priority 3: Direct imagePath field
+  else if (
+    raw.imagePath &&
+    typeof raw.imagePath === "string" &&
+    raw.imagePath.trim()
+  ) {
+    console.log("Using imagePath field");
+    if (raw.imagePath.startsWith("data:image/")) {
+      images = [raw.imagePath]; // Base64
+    } else {
+      images = [addImagePrefix(raw.imagePath)]; // File path
+    }
+  }
+  // Priority 4: Existing images array
+  else if (Array.isArray(raw.images) && raw.images.length > 0) {
+    console.log("Using images array");
+    images = raw.images.map((img: string) => {
+      if (typeof img === "string" && img.startsWith("data:image/")) {
+        return img; // Base64 - use as is
+      }
+      return addImagePrefix(img); // File path - add prefix
+    });
+  }
+  // Priority 5: Post imageUrls
+  else if (
+    typeof raw.post?.imageUrls === "string" &&
+    raw.post.imageUrls.length > 0
+  ) {
+    console.log("Using post.imageUrls");
+    if (raw.post.imageUrls.startsWith("data:image/")) {
+      images = [raw.post.imageUrls]; // Base64 image - use as is
+    } else {
+      images = raw.post.imageUrls
+        .split(",")
+        .map((s: string) => s.trim())
+        .filter(Boolean)
+        .map((img: string) => {
+          if (img.startsWith("data:image/")) {
+            return img; // Base64 - use as is
+          }
+          return addImagePrefix(img); // File path - add prefix
+        });
+    }
+  }
+
+  console.log(
+    "Final normalized images:",
+    images.length > 0
+      ? `${images.length} image(s), first: ${images[0].substring(0, 50)}...`
+      : "No images found"
+  );
+
   return {
     ...raw,
+    // Map backend fields to frontend expected fields
+    id: raw.itemId || raw.id,
+    itemId: raw.itemId,
+    title: raw.itemName || raw.title,
+    itemName: raw.itemName,
+    condition: raw.itemCondition || raw.condition,
+    itemCondition: raw.itemCondition,
+    type: raw.itemType || raw.type,
+    itemType: raw.itemType,
+    // Ensure category and location have proper structure
+    category:
+      typeof raw.category === "string"
+        ? { id: raw.category, name: raw.category, categoryName: raw.category }
+        : raw.category || {
+            id: "uncategorized",
+            name: "Uncategorized",
+            categoryName: "Uncategorized",
+          },
+    location: mapLocationFromBackend(raw.location),
     images,
   };
 };
@@ -184,6 +381,12 @@ export const wishlistAPI = {
 export const itemAPI = {
   getAllItems: async () => {
     const response = await apiClient.get("/api/items");
+    const items = response.data || [];
+    return items.map(normalizeItem);
+  },
+
+  getAvailableItems: async () => {
+    const response = await apiClient.get("/api/items/available");
     const items = response.data || [];
     return items.map(normalizeItem);
   },
