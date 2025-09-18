@@ -4,6 +4,7 @@ import { Loader, AlertCircle } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { mockCategories, mockLocations } from "../lib/mockData";
 import { itemAPI } from "../services/apiService";
+import { uploadAPI } from "../services/uploadService";
 
 export function PostItemPage() {
   const { user } = useAuth();
@@ -22,8 +23,10 @@ export function PostItemPage() {
     location_id: "",
     phone: "+880",
     swapWith: "",
-    imageBase64: "", // Replace file upload with base64 string
+    imageUrl: "", // Store uploaded file URL instead of base64
   });
+
+  const [uploadPreviewUrl, setUploadPreviewUrl] = useState(""); // For instant preview using URL.createObjectURL
 
   const validatePhoneNumber = (phone: string) => {
     const phoneWithoutPrefix = phone.replace("+880", "").trim();
@@ -50,9 +53,9 @@ export function PostItemPage() {
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Validate file size (max 2MB for base64)
-      if (file.size > 2 * 1024 * 1024) {
-        setError("Image size must be less than 2MB");
+      // Validate file size (max 5MB for file upload)
+      if (file.size > 5 * 1024 * 1024) {
+        setError("Image size must be less than 5MB");
         return;
       }
 
@@ -62,12 +65,26 @@ export function PostItemPage() {
         return;
       }
 
+      // Show instant preview using URL.createObjectURL
+      const instantPreview = URL.createObjectURL(file);
+      setUploadPreviewUrl(instantPreview);
+      setError("");
+
       try {
-        const base64 = await convertToBase64(file);
-        setFormData((prev) => ({ ...prev, imageBase64: base64 }));
-        setError(""); // Clear any previous errors
+        setLoading(true);
+        const imageUrl = await uploadAPI.uploadImage(file);
+        setFormData((prev) => ({ ...prev, imageUrl }));
+        // Clean up the object URL after successful upload
+        URL.revokeObjectURL(instantPreview);
+        setUploadPreviewUrl("");
       } catch (error) {
-        setError("Failed to process image");
+        console.error("Upload error:", error);
+        setError("Failed to upload image");
+        // Clean up on error
+        URL.revokeObjectURL(instantPreview);
+        setUploadPreviewUrl("");
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -138,7 +155,7 @@ export function PostItemPage() {
         postDate: new Date().toISOString().split("T")[0],
         category: category_id, // Send as string now
         location: location_id, // Send as string now
-        imageData: formData.imageBase64, // Direct image data
+        imageData: formData.imageUrl, // Use uploaded file URL
       };
 
       await itemAPI.createItem(postData);
@@ -395,19 +412,46 @@ export function PostItemPage() {
               onChange={handleImageChange}
               className="w-full border border-gray-300 rounded-lg px-3 py-2"
             />
-            {formData.imageBase64 && (
+            {(uploadPreviewUrl || formData.imageUrl) && (
               <div className="mt-3">
-                <p className="text-sm text-green-600 mb-2">Image selected ✓</p>
-                <img
-                  src={formData.imageBase64}
-                  alt="Preview"
-                  className="w-32 h-32 object-cover rounded-lg border"
-                />
+                {uploadPreviewUrl && (
+                  <div className="mb-3">
+                    <p className="text-sm text-blue-600 mb-2">
+                      Upload Preview ⏳
+                    </p>
+                    <img
+                      src={uploadPreviewUrl}
+                      alt="Upload Preview"
+                      className="w-32 h-32 object-cover rounded-lg border border-blue-200"
+                    />
+                  </div>
+                )}
+
+                {formData.imageUrl && (
+                  <div className="mb-3">
+                    <p className="text-sm text-green-600 mb-2">
+                      Item Preview ✓
+                    </p>
+                    <img
+                      src={`${
+                        import.meta.env.VITE_API_BASE_URL ||
+                        "http://localhost:8080"
+                      }/api/uploads/${formData.imageUrl}`}
+                      alt="Item Preview"
+                      className="w-32 h-32 object-cover rounded-lg border border-green-200"
+                    />
+                  </div>
+                )}
+
                 <button
                   type="button"
-                  onClick={() =>
-                    setFormData((prev) => ({ ...prev, imageBase64: "" }))
-                  }
+                  onClick={() => {
+                    if (uploadPreviewUrl) {
+                      URL.revokeObjectURL(uploadPreviewUrl);
+                      setUploadPreviewUrl("");
+                    }
+                    setFormData((prev) => ({ ...prev, imageUrl: "" }));
+                  }}
                   className="mt-2 text-sm text-red-600 hover:text-red-800"
                 >
                   Remove image

@@ -134,10 +134,9 @@ export function BrowseItemsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-powder-blue/30">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Filter Bar */}
-        <div className="pt-6 pb-6">
+    <div className="min-h-screen bg-powder-blue/30 dark:bg-gray-900">
+      <div className="max-w-7xl mx-auto p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
           <ItemFilters
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
@@ -157,7 +156,7 @@ export function BrowseItemsPage() {
         </div>
 
         <div className="mb-4 flex items-center justify-between px-2">
-          <p className="text-gray-600 text-sm">
+          <p className="text-gray-600 dark:text-gray-300 text-sm">
             Showing {filteredItems.length}{" "}
             {filteredItems.length === 1 ? "item" : "items"}
           </p>
@@ -171,11 +170,11 @@ export function BrowseItemsPage() {
           </div>
         ) : (
           <div className="text-center py-12 pb-6">
-            <Package className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-            <h3 className="text-base font-medium text-gray-800">
+            <Package className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-3" />
+            <h3 className="text-base font-medium text-gray-800 dark:text-gray-200">
               No items found
             </h3>
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-600 dark:text-gray-400 text-sm">
               {hasActiveFilters
                 ? "Try adjusting your filters"
                 : "No items have been posted yet"}

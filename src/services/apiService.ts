@@ -74,19 +74,10 @@ export const userAPI = {
   },
 };
 
-// Helper function to add proper URL prefix for images
-const addImagePrefix = (imagePath: string): string => {
-  if (!imagePath) return "";
-  // If it's already a full URL, return as-is
-  if (
-    imagePath.startsWith("http://") ||
-    imagePath.startsWith("https://") ||
-    imagePath.startsWith("/api/")
-  ) {
-    return imagePath;
-  }
-  // Otherwise, prepend the backend URL
-  return `http://localhost:8080/api/uploads/files/${imagePath}`;
+// Helper function to generate item image URL by item ID
+const getItemImageUrl = (itemId: number | string): string => {
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+  return `${baseUrl}/api/items/${itemId}/image`;
 };
 
 // Import mockLocations for location mapping
@@ -138,137 +129,112 @@ const normalizeItem = (raw: any) => {
   let images: string[] = [];
 
   console.log("Raw item data for image processing:", {
+    itemId: raw.itemId || raw.id,
     imageData: raw.imageData
       ? {
           type: typeof raw.imageData,
           length: raw.imageData.length,
           preview: `${raw.imageData.substring(0, 50)}...`,
           startsWithDataImage: raw.imageData.startsWith("data:image/"),
-          hasComma: raw.imageData.includes(","),
-          endsCorrectly:
-            raw.imageData.endsWith("==") || raw.imageData.endsWith("="),
+          isFilename:
+            !raw.imageData.startsWith("data:image/") &&
+            !raw.imageData.includes(","),
         }
       : null,
-    images: raw.images,
-    postImageUrls: raw.post?.imageUrls,
-    itemImage: raw.itemImage,
-    imagePath: raw.imagePath,
   });
 
-  // Priority 1: Backend imageData field (base64 string) - most recent posts
+  // Get the item ID
+  const itemId = raw.itemId || raw.id;
+
+  // NEW APPROACH: Priority 1 - Always use ID-based URLs for items with imageData and valid itemId
   if (
+    itemId &&
     raw.imageData &&
     typeof raw.imageData === "string" &&
-    raw.imageData.trim()
+    raw.imageData.trim() &&
+    !raw.imageData.startsWith("data:image/") // Not base64
   ) {
-    console.log("Using imageData field (base64)");
+    console.log("Using NEW ID-based URL for item:", itemId);
+    images = [getItemImageUrl(itemId)];
+  }
+  // Priority 2: Handle base64 data URLs
+  else if (
+    raw.imageData &&
+    typeof raw.imageData === "string" &&
+    raw.imageData.startsWith("data:image/")
+  ) {
+    console.log("Using imageData field as base64");
 
-    // Validate the base64 format
-    if (!raw.imageData.startsWith("data:image/")) {
-      console.warn("ImageData doesn't start with data:image/, fixing...");
-      // Try to fix it by adding the proper prefix if it's just base64 data
-      if (raw.imageData.match(/^[A-Za-z0-9+/]+=*$/)) {
-        const fixedImageData = `data:image/jpeg;base64,${raw.imageData}`;
-        console.log("Fixed imageData with proper prefix");
-        images = [fixedImageData];
-      } else {
-        console.error("ImageData format is invalid");
+    // Validate and clean base64 data
+    const parts = raw.imageData.split(",");
+    if (parts.length === 2) {
+      const [header, base64Data] = parts;
+
+      // Clean the base64 data
+      const cleanedBase64 = base64Data
+        .replace(/\s/g, "") // Remove all whitespace
+        .replace(/[^A-Za-z0-9+/=]/g, ""); // Remove any non-base64 characters
+
+      // Ensure base64 data is properly padded
+      let paddedBase64 = cleanedBase64;
+      while (paddedBase64.length % 4 !== 0) {
+        paddedBase64 += "=";
       }
+
+      const finalImageData = `${header},${paddedBase64}`;
+      images = [finalImageData];
     } else {
-      // Check if it has the proper structure: data:image/type;base64,data
-      const parts = raw.imageData.split(",");
-      if (parts.length === 2) {
-        const [header, base64Data] = parts;
-        console.log("Base64 header:", header);
-        console.log("Base64 data length:", base64Data.length);
-
-        // Clean the base64 data more thoroughly
-        const cleanedBase64 = base64Data
-          .replace(/\s/g, "") // Remove all whitespace
-          .replace(/[^A-Za-z0-9+/=]/g, ""); // Remove any non-base64 characters
-
-        console.log("Cleaned base64 length:", cleanedBase64.length);
-        console.log(
-          "Characters removed:",
-          base64Data.length - cleanedBase64.length
-        );
-
-        // Ensure base64 data is properly padded
-        let paddedBase64 = cleanedBase64;
-        while (paddedBase64.length % 4 !== 0) {
-          paddedBase64 += "=";
-        }
-
-        const finalImageData = `${header},${paddedBase64}`;
-        console.log("Final processed imageData length:", finalImageData.length);
-
-        if (paddedBase64 !== base64Data) {
-          console.log("Fixed base64 formatting and padding");
-          images = [finalImageData];
-        } else {
-          images = [raw.imageData];
-        }
-      } else {
-        console.error("Invalid imageData format - missing comma separator");
-        images = [raw.imageData]; // Use as-is and let validation catch it
-      }
+      console.error("Invalid base64 imageData format");
+      images = [raw.imageData]; // Use as-is and let validation catch it
     }
   }
-  // Priority 2: Direct itemImage field
+  // Priority 3: Legacy support for other image fields (now disabled - use placeholders)
   else if (
     raw.itemImage &&
     typeof raw.itemImage === "string" &&
     raw.itemImage.trim()
   ) {
-    console.log("Using itemImage field");
+    console.log("Using itemImage field - legacy path, using placeholder");
     if (raw.itemImage.startsWith("data:image/")) {
       images = [raw.itemImage]; // Base64
     } else {
-      images = [addImagePrefix(raw.itemImage)]; // File path
+      images = ["/placeholder.jpg"]; // Use placeholder instead of legacy URL
     }
   }
-  // Priority 3: Direct imagePath field
+  // Priority 4: Direct imagePath field (now disabled - use placeholders)
   else if (
     raw.imagePath &&
     typeof raw.imagePath === "string" &&
     raw.imagePath.trim()
   ) {
-    console.log("Using imagePath field");
+    console.log("Using imagePath field - legacy path, using placeholder");
     if (raw.imagePath.startsWith("data:image/")) {
       images = [raw.imagePath]; // Base64
     } else {
-      images = [addImagePrefix(raw.imagePath)]; // File path
+      images = ["/placeholder.jpg"]; // Use placeholder instead of legacy URL
     }
   }
-  // Priority 4: Existing images array
+  // Priority 5: Existing images array (now disabled - use placeholders)
   else if (Array.isArray(raw.images) && raw.images.length > 0) {
-    console.log("Using images array");
+    console.log("Using images array - legacy path, using placeholder");
     images = raw.images.map((img: string) => {
       if (typeof img === "string" && img.startsWith("data:image/")) {
         return img; // Base64 - use as is
       }
-      return addImagePrefix(img); // File path - add prefix
+      return "/placeholder.jpg"; // Use placeholder instead of legacy URL
     });
   }
-  // Priority 5: Post imageUrls
+  // Priority 6: Post imageUrls (legacy path disabled)
   else if (
     typeof raw.post?.imageUrls === "string" &&
     raw.post.imageUrls.length > 0
   ) {
-    console.log("Using post.imageUrls");
+    console.log("Using post.imageUrls - legacy path, using placeholder");
     if (raw.post.imageUrls.startsWith("data:image/")) {
       images = [raw.post.imageUrls]; // Base64 image - use as is
     } else {
-      images = raw.post.imageUrls
-        .split(",")
-        .map((s: string) => s.trim())
-        .filter(Boolean)
-        .map((img: string) => {
-          if (img.startsWith("data:image/")) {
-            return img; // Base64 - use as is
-          }
-          return addImagePrefix(img); // File path - add prefix
-        });
+      // Use placeholder for legacy post image URLs
+      images = ["/placeholder.jpg"];
     }
   }
 

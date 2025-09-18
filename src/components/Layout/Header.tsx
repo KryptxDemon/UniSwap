@@ -1,11 +1,14 @@
 import logoImg from "../../assets/logo.jpg";
 import { Link, useNavigate } from "react-router-dom";
 
-import { MessageCircle, PlusCircle, LogOut } from "lucide-react";
+import { MessageCircle, PlusCircle, LogOut, Moon, Sun } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
+import { useTheme } from "../../hooks/useTheme";
+import { getProfilePictureUrl } from "../../utils/imageUtils";
 
 export function Header() {
   const { user, signOut } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -18,7 +21,7 @@ export function Header() {
   };
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+    <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -32,35 +35,50 @@ export function Header() {
               alt="UniSwap Logo"
               className="h-10 w-10 rounded-lg object-cover"
             />
-            <span className="text-2xl font-bold text-gray-900">UniSwap</span>
+            <span className="text-2xl font-bold text-gray-900 dark:text-white transition-colors">
+              UniSwap
+            </span>
           </Link>
 
           {/* Navigation */}
           {user ? (
             <div className="flex items-center space-x-4">
+              {/* Theme Toggle */}
+              <button
+                onClick={toggleTheme}
+                className="text-gray-700 dark:text-gray-300 hover:text-pine-green dark:hover:text-bright-cyan p-2 rounded-md transition-colors"
+                title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+              >
+                {isDark ? (
+                  <Sun className="h-5 w-5" />
+                ) : (
+                  <Moon className="h-5 w-5" />
+                )}
+              </button>
+
               <Link
                 to="/browse"
-                className="text-gray-700 hover:text-pine-green px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                className="text-gray-700 dark:text-gray-300 hover:text-pine-green dark:hover:text-bright-cyan px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 Browse
               </Link>
               <Link
                 to="/post-item"
-                className="bg-pine-green text-white hover:bg-dark-teal px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+                className="bg-pine-green text-white hover:bg-dark-teal dark:bg-bright-cyan dark:hover:bg-pine-green px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
               >
                 <PlusCircle className="h-4 w-4" />
                 <span>Post Item</span>
               </Link>
               <Link
                 to="/post-tuition"
-                className="bg-bright-cyan text-white hover:bg-pine-green px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
+                className="bg-bright-cyan text-white hover:bg-pine-green dark:bg-pine-green dark:hover:bg-bright-cyan px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors"
               >
                 <PlusCircle className="h-4 w-4" />
                 <span>Post Tuition</span>
               </Link>
               <Link
                 to="/messages"
-                className="text-gray-700 hover:text-pine-green p-2 rounded-md transition-colors relative"
+                className="text-gray-700 dark:text-gray-300 hover:text-pine-green dark:hover:text-bright-cyan p-2 rounded-md transition-colors relative"
               >
                 <MessageCircle className="h-5 w-5" />
                 {/* Notification badge */}
@@ -97,12 +115,12 @@ export function Header() {
               <div className="relative">
                 <Link
                   to="/profile"
-                  className="flex items-center space-x-2 text-gray-700 hover:text-pine-green p-2 rounded-md transition-colors"
+                  className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-pine-green dark:hover:text-bright-cyan p-2 rounded-md transition-colors"
                 >
                   {user.profilePicture ? (
                     <img
                       key={user.profilePicture} // Force re-render when profile picture changes
-                      src={user.profilePicture}
+                      src={getProfilePictureUrl(user.profilePicture)}
                       alt={user.username}
                       className="w-8 h-8 rounded-full object-cover"
                     />
@@ -117,7 +135,7 @@ export function Header() {
               </div>
               <button
                 onClick={handleSignOut}
-                className="text-gray-700 hover:text-burnt-sienna px-3 py-2 rounded-md transition-colors flex items-center space-x-2"
+                className="text-gray-700 dark:text-gray-300 hover:text-burnt-sienna dark:hover:text-red-400 px-3 py-2 rounded-md transition-colors flex items-center space-x-2"
               >
                 <LogOut className="h-5 w-5" />
                 <span className="text-sm font-medium">Log out</span>
@@ -125,21 +143,34 @@ export function Header() {
             </div>
           ) : (
             <div className="flex items-center space-x-4">
+              {/* Theme Toggle for non-logged users */}
+              <button
+                onClick={toggleTheme}
+                className="text-gray-700 dark:text-gray-300 hover:text-pine-green dark:hover:text-bright-cyan p-2 rounded-md transition-colors"
+                title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+              >
+                {isDark ? (
+                  <Sun className="h-5 w-5" />
+                ) : (
+                  <Moon className="h-5 w-5" />
+                )}
+              </button>
+
               <Link
                 to="/browse"
-                className="text-gray-700 hover:text-pine-green px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                className="text-gray-700 dark:text-gray-300 hover:text-pine-green dark:hover:text-bright-cyan px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 Browse
               </Link>
               <Link
                 to="/login"
-                className="text-gray-700 hover:text-pine-green px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                className="text-gray-700 dark:text-gray-300 hover:text-pine-green dark:hover:text-bright-cyan px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 Login
               </Link>
               <Link
                 to="/signup"
-                className="bg-pine-green text-white hover:bg-dark-teal px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                className="bg-pine-green text-white hover:bg-dark-teal dark:bg-bright-cyan dark:hover:bg-pine-green px-4 py-2 rounded-lg text-sm font-medium transition-colors"
               >
                 Sign Up
               </Link>

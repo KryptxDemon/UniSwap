@@ -121,7 +121,7 @@ export function PostTuitionPage() {
 
       await tuitionAPI.createTuition(tuitionData, user.userId);
       alert("Tuition posted successfully!");
-      navigate("/browse-tuitions");
+      navigate("/browse/tuitions");
     } catch (error: any) {
       console.error("Error posting tuition:", error);
       setError(error.response?.data?.message || "Failed to post tuition");

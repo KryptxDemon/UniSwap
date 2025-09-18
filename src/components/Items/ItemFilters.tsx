@@ -23,7 +23,6 @@ interface ItemFiltersProps {
 const conditions: Condition[] = ["New", "Like New", "Good", "Fair", "Poor"];
 const types = ["free", "swap", "rent"];
 
-
 export function ItemFilters({
   searchTerm,
   onSearchChange,
@@ -40,23 +39,23 @@ export function ItemFilters({
   onClearFilters,
   hasActiveFilters,
 }: ItemFiltersProps) {
-  const locationOptions = mockLocations.filter(location => {
+  const locationOptions = mockLocations.filter((location) => {
     if (locationType === "on-campus") return location.type === "on-campus";
     if (locationType === "off-campus") return location.type === "off-campus";
     return true;
   });
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm mb-8 space-y-6">
+    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm mb-8 space-y-6">
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 dark:text-gray-500" />
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search items by title, description, or username..."
-          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pine-green focus:border-transparent"
+          className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400 rounded-lg focus:ring-2 focus:ring-pine-green focus:border-transparent"
         />
       </div>
 
@@ -64,13 +63,13 @@ export function ItemFilters({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
         {/* Category */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Category
           </label>
           <select
             value={selectedCategory}
             onChange={(e) => onCategoryChange(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-pine-green"
+            className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg px-3 py-2 focus:ring-2 focus:ring-pine-green"
           >
             <option value="">All Categories</option>
             {mockCategories.map((c) => (
@@ -83,13 +82,13 @@ export function ItemFilters({
 
         {/* Condition */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Condition
           </label>
           <select
             value={selectedCondition}
             onChange={(e) => onConditionChange(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-pine-green"
+            className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg px-3 py-2 focus:ring-2 focus:ring-pine-green"
           >
             <option value="">Any Condition</option>
             {conditions.map((cond) => (
@@ -102,13 +101,13 @@ export function ItemFilters({
 
         {/* Type */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Type
           </label>
           <select
             value={selectedType}
             onChange={(e) => onTypeChange(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-pine-green"
+            className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg px-3 py-2 focus:ring-2 focus:ring-pine-green"
           >
             <option value="">All Types</option>
             {types.map((t) => (
@@ -121,13 +120,13 @@ export function ItemFilters({
 
         {/* Location Type */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Location Type
           </label>
           <select
             value={locationType}
             onChange={(e) => onLocationTypeChange(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-pine-green"
+            className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg px-3 py-2 focus:ring-2 focus:ring-pine-green"
           >
             <option value="">Select Type</option>
             <option value="on-campus">On Campus</option>
@@ -137,13 +136,13 @@ export function ItemFilters({
 
         {/* Location */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Location
           </label>
           <select
             value={selectedLocation}
             onChange={(e) => onLocationChange(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-pine-green"
+            className="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg px-3 py-2 focus:ring-2 focus:ring-pine-green"
             disabled={!locationType}
           >
             <option value="">All Locations</option>
@@ -160,7 +159,7 @@ export function ItemFilters({
           {hasActiveFilters && (
             <button
               onClick={onClearFilters}
-              className="w-full bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-lg flex items-center justify-center space-x-2 transition-colors"
+              className="w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 px-4 py-2 rounded-lg flex items-center justify-center space-x-2 transition-colors"
             >
               <X className="h-4 w-4" />
               <span>Clear</span>

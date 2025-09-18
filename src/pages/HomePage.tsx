@@ -1,17 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import logoImg from "../assets/logo.png";
 import { Link } from "react-router-dom";
-import {
-  ArrowRight,
-  BookOpen,
-  Recycle,
-  Users,
-  Heart,
-  ShoppingBag,
-  MessageCircle,
-  Star,
-  Quote,
-} from "lucide-react";
+import { Users, ShoppingBag, MessageCircle, Star, Quote } from "lucide-react";
 import { itemAPI } from "../services/apiService";
 
 export default function HomePage() {
@@ -25,7 +15,7 @@ export default function HomePage() {
         // Get the 6 most recent items
         const sortedItems = allItems
           .sort(
-            (a, b) =>
+            (a: any, b: any) =>
               new Date(b.postDate || b.post?.postTime || 0).getTime() -
               new Date(a.postDate || a.post?.postTime || 0).getTime()
           )
@@ -97,44 +87,6 @@ export default function HomePage() {
       subtitle: "Pens, notebooks, and more",
       tags: ["Supplies", "Bundle"],
       exchange: "Giveaway",
-    },
-  ];
-
-  const features = [
-    {
-      icon: BookOpen,
-      title: "Textbooks & Academic Materials",
-      description:
-        "Find affordable textbooks and course materials from fellow students",
-    },
-    {
-      icon: ShoppingBag,
-      title: "Electronics & Dorm Essentials",
-      description:
-        "Get electronics, furniture, and everything you need for dorm life",
-    },
-    {
-      icon: MessageCircle,
-      title: "Direct Communication",
-      description:
-        "Chat directly with other students to arrange exchanges and pickups",
-    },
-    {
-      icon: Recycle,
-      title: "Sustainable Exchange",
-      description: "Reduce waste and save money through item sharing and reuse",
-    },
-    {
-      icon: Users,
-      title: "Campus Community",
-      description:
-        "Connect with students from your university in a safe environment",
-    },
-    {
-      icon: Heart,
-      title: "Free & Donation Items",
-      description:
-        "Give away items you no longer need or find free items from others",
     },
   ];
 
@@ -221,7 +173,7 @@ export default function HomePage() {
     : sampleItems;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 transition-colors">
       <nav className="sticky top-0 z-50 flex items-center justify-between px-8 py-4 max-w-7xl mx-auto bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100">
         <Link to="/">
           <div className="flex items-center gap-4">
@@ -265,13 +217,13 @@ export default function HomePage() {
 
         <div className="max-w-7xl mx-auto px-8 grid md:grid-cols-2 items-center gap-12 relative z-10">
           <div className="space-y-8">
-            <h1 className="text-5xl md:text-7xl font-extrabold leading-tight text-gray-900 animate-fade-in">
+            <h1 className="text-5xl md:text-7xl font-extrabold leading-tight text-gray-900 dark:text-gray-100 animate-fade-in">
               Exchange, Share,{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-pine-green to-dark-teal">
                 Save
               </span>
             </h1>
-            <p className="text-xl text-gray-600 max-w-lg">
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-lg">
               The premium student marketplace for textbooks, electronics, and
               dorm essentials. Build lasting connections while saving money and
               promoting sustainability.
@@ -295,7 +247,7 @@ export default function HomePage() {
             <img
               src="https://images.pexels.com/photos/1438072/pexels-photo-1438072.jpeg?auto=compress&cs=tinysrgb&w=600&h=450"
               alt="Students exchanging items"
-              className="rounded-3xl shadow-2xl border border-gray-200 transform hover:scale-105 transition duration-500"
+              className="rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-600 transform hover:scale-105 transition duration-500"
               loading="lazy"
             />
             <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-pine-green/30 rounded-full opacity-50 blur-xl"></div>
@@ -314,7 +266,7 @@ export default function HomePage() {
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 1440 320"
-          className="w-full h-32 text-gray-50"
+          className="w-full h-32 text-gray-50 dark:text-gray-800"
         >
           <path
             fill="currentColor"
@@ -324,54 +276,62 @@ export default function HomePage() {
         </svg>
       </div>
 
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-white dark:bg-gray-800">
         <div className="max-w-6xl mx-auto px-8 grid grid-cols-2 md:grid-cols-4 gap-8">
           {stats.map((stat, i) => (
             <div
               key={i}
-              className="bg-gradient-to-br from-white to-pine-green/10 rounded-2xl shadow-lg p-8 text-center hover:shadow-2xl hover:scale-105 transition duration-300"
+              className="bg-gradient-to-br from-white to-pine-green/10 dark:from-gray-700 dark:to-pine-green/20 rounded-2xl shadow-lg p-8 text-center hover:shadow-2xl hover:scale-105 transition duration-300"
             >
               <div className="text-4xl font-bold text-pine-green">
                 {stat.number}
               </div>
-              <div className="text-gray-600 font-medium">{stat.label}</div>
+              <div className="text-gray-600 dark:text-gray-300 font-medium">
+                {stat.label}
+              </div>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
+      <section className="py-20 bg-gradient-to-b from-gray-50 to-white dark:from-gray-700 dark:to-gray-800">
         <div className="max-w-7xl mx-auto px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900">How It Works</h2>
-            <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100">
+              How It Works
+            </h2>
+            <p className="mt-4 text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
               Simple steps to start exchanging items on campus.
             </p>
           </div>
           <div className="grid md:grid-cols-4 gap-8">
             {howItWorks.map((step, i) => (
               <div key={i} className="text-center group">
-                <div className="w-20 h-20 mx-auto rounded-full bg-powder-blue flex items-center justify-center mb-6 group-hover:bg-bright-cyan/30 transition">
+                <div className="w-20 h-20 mx-auto rounded-full bg-powder-blue dark:bg-powder-blue/70 flex items-center justify-center mb-6 group-hover:bg-bright-cyan/30 transition">
                   <step.icon className="h-10 w-10 text-pine-green" />
                 </div>
                 <div className="text-2xl font-bold text-pine-green mb-2">
                   {step.step}
                 </div>
-                <h3 className="text-xl font-semibold mb-2">{step.title}</h3>
-                <p className="text-gray-600">{step.description}</p>
+                <h3 className="text-xl font-semibold mb-2 dark:text-gray-200">
+                  {step.title}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300">
+                  {step.description}
+                </p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-white dark:bg-gray-800">
         <div className="max-w-7xl mx-auto px-8">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900">
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100">
               Sample Exchanges
             </h2>
-            <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="mt-4 text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
               A curated showcase to inspire your next swap. Hover to pause
               animations and explore each item.
             </p>
@@ -392,7 +352,7 @@ export default function HomePage() {
                 {[...displayItems, ...displayItems].map((item, idx) => (
                   <div
                     key={idx}
-                    className="min-w-[280px] bg-white rounded-2xl shadow-lg overflow-hidden transform transition hover:scale-105 group"
+                    className="min-w-[280px] bg-white dark:bg-gray-700 rounded-2xl shadow-lg overflow-hidden transform transition hover:scale-105 group"
                   >
                     <div className="relative h-44 overflow-hidden">
                       <img
@@ -404,20 +364,22 @@ export default function HomePage() {
                       <div className="absolute top-3 left-3 bg-pine-green text-white px-3 py-1 rounded-full text-sm font-semibold">
                         {item.tags[0]}
                       </div>
-                      <div className="absolute top-3 right-3 bg-white text-gray-800 px-2 py-1 rounded-full text-sm shadow">
+                      <div className="absolute top-3 right-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 px-2 py-1 rounded-full text-sm shadow">
                         {item.exchange}
                       </div>
                     </div>
                     <div className="p-4">
-                      <div className="font-semibold text-lg">{item.title}</div>
-                      <div className="text-sm text-gray-500 mt-1">
+                      <div className="font-semibold text-lg dark:text-gray-200">
+                        {item.title}
+                      </div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                         {item.subtitle}
                       </div>
                       <div className="mt-4 flex items-center justify-between">
                         <button className="px-4 py-2 bg-gradient-to-r from-pine-green to-dark-teal text-white rounded-full text-sm font-semibold">
                           Request
                         </button>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-sm text-gray-500 dark:text-gray-400">
                           {item.tags.join(" ")}
                         </div>
                       </div>
@@ -439,13 +401,13 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-gray-50 dark:bg-gray-700">
         <div className="max-w-7xl mx-auto px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900">
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100">
               What Students Say
             </h2>
-            <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="mt-4 text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
               Hear from our community of satisfied users.
             </p>
           </div>
@@ -453,7 +415,7 @@ export default function HomePage() {
             {testimonials.map((testimonial, i) => (
               <div
                 key={i}
-                className="bg-white rounded-2xl shadow-lg p-8 hover:shadow-2xl transition"
+                className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 hover:shadow-2xl transition"
               >
                 <div className="flex justify-center mb-4">
                   <img
@@ -464,7 +426,7 @@ export default function HomePage() {
                   />
                 </div>
                 <Quote className="h-8 w-8 text-pine-green mb-4 opacity-50 mx-auto" />
-                <p className="text-gray-600 mb-6 text-center">
+                <p className="text-gray-600 dark:text-gray-300 mb-6 text-center">
                   {testimonial.content}
                 </p>
                 <div className="flex justify-center gap-1 mb-2">
@@ -475,10 +437,10 @@ export default function HomePage() {
                     />
                   ))}
                 </div>
-                <div className="text-center font-semibold">
+                <div className="text-center font-semibold dark:text-gray-200">
                   {testimonial.name}
                 </div>
-                <div className="text-center text-gray-500">
+                <div className="text-center text-gray-500 dark:text-gray-400">
                   {testimonial.role}
                 </div>
               </div>
@@ -505,7 +467,7 @@ export default function HomePage() {
           <input
             type="email"
             placeholder="Enter your email"
-            className="flex-1 px-6 py-4 rounded-full text-gray-900 focus:outline-none"
+            className="flex-1 px-6 py-4 rounded-full text-gray-900 dark:text-gray-100 dark:bg-gray-700 dark:placeholder-gray-300 focus:outline-none"
           />
           <Link
             to="/signup"

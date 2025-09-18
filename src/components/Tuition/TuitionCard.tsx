@@ -56,10 +56,13 @@ export function TuitionCard({ tuition }: TuitionCardProps) {
           </h3>
           <span
             className={`px-2 py-1 rounded-full text-xs font-medium ml-2 whitespace-nowrap ${getStatusColor(
-              tuition.tStatus
+              tuition.tStatus || "available"
             )}`}
           >
-            {tuition.tStatus.charAt(0).toUpperCase() + tuition.tStatus.slice(1)}
+            {tuition.tStatus
+              ? tuition.tStatus.charAt(0).toUpperCase() +
+                tuition.tStatus.slice(1)
+              : "Available"}
           </span>
         </div>
 
@@ -93,19 +96,19 @@ export function TuitionCard({ tuition }: TuitionCardProps) {
         <div className="space-y-2 text-sm text-gray-500">
           <div className="flex items-center space-x-2">
             <MapPin className="h-4 w-4" />
-            <span>{tuition.location?.name || "Location not specified"}</span>
+            <span>{tuition.location || "Location not specified"}</span>
           </div>
 
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <User className="h-4 w-4" />
-              <span>{tuition.post?.user?.username || "Anonymous"}</span>
+              <span>{tuition.user?.username || "Anonymous"}</span>
             </div>
 
             <div className="flex items-center space-x-2">
               <Clock className="h-4 w-4" />
               <span>
-                {formatDate(tuition.post?.postTime || new Date().toISOString())}
+                {formatDate(tuition.createdAt || new Date().toISOString())}
               </span>
             </div>
           </div>

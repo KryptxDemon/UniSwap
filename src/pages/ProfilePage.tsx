@@ -21,6 +21,8 @@ import {
 import { useAuth } from "../hooks/useAuth";
 import { ItemCard } from "../components/Items/ItemCard";
 import { userAPI, itemAPI, wishlistAPI } from "../services/apiService";
+import { uploadAPI } from "../services/uploadService";
+import { getProfilePictureUrl, fileToDataUrl } from "../utils/imageUtils";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -280,13 +282,13 @@ export function ProfilePage() {
           // Viewing own profile, use authUser
           if (authUser) {
             setProfileUser(authUser);
-            setProfilePic(authUser.profilePicture || "/default-avatar.png");
+            setProfilePic(getProfilePictureUrl(authUser.profilePicture));
           }
         } else {
           // Viewing another user's profile, fetch from backend
           const user = await userAPI.getUserById(Number(id));
           setProfileUser(user);
-          setProfilePic(user.profilePicture || "/default-avatar.png");
+          setProfilePic(getProfilePictureUrl(user.profilePicture));
         }
       } catch (err) {
         console.error("Error fetching profile user:", err);
@@ -297,7 +299,7 @@ export function ProfilePage() {
     if (!id && authUser) {
       // Own profile
       setProfileUser(authUser);
-      setProfilePic(authUser.profilePicture || "/default-avatar.png");
+      setProfilePic(getProfilePictureUrl(authUser.profilePicture));
     } else if (id) {
       // Another user's profile
       fetchProfileUser();
@@ -469,23 +471,34 @@ export function ProfilePage() {
   ) => {
     const file = e.target.files?.[0];
     if (file && authUser) {
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const url = reader.result as string;
-        setProfilePic(url);
-        updateProfile({ profilePicture: url });
+      try {
+        // First show the preview using data URL
+        const previewUrl = await fileToDataUrl(file);
+        setProfilePic(previewUrl);
+        updateProfile({ profilePicture: previewUrl });
 
-        // Also update in backend
-        try {
-          await userAPI.updateUser(Number(authUser.userId), {
-            ...profileUser,
-            profilePicture: url,
-          });
-        } catch (error) {
-          console.error("Error updating profile picture in backend:", error);
-        }
-      };
-      reader.readAsDataURL(file);
+        // Upload the file to the server
+        const uploadedImageUrl = await uploadAPI.uploadImage(file);
+        console.log("Uploaded image URL:", uploadedImageUrl);
+
+        // Update user in backend with the uploaded image URL
+        await userAPI.updateUser(Number(authUser.userId), {
+          ...profileUser,
+          profilePicture: uploadedImageUrl,
+        });
+
+        // Update the profile pic to show the server URL instead of base64
+        setProfilePic(uploadedImageUrl);
+        updateProfile({ profilePicture: uploadedImageUrl });
+
+        console.log("Profile picture updated successfully");
+      } catch (error) {
+        console.error("Error updating profile picture:", error);
+        // Revert the profile pic if upload failed
+        const fallbackUrl = getProfilePictureUrl(profileUser?.profilePicture);
+        setProfilePic(fallbackUrl);
+        updateProfile({ profilePicture: profileUser?.profilePicture || "" });
+      }
     }
   };
 

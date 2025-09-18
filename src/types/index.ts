@@ -89,8 +89,14 @@ export interface Tuition {
   clazz: string;
   subject: string;
   tStatus: "available" | "taken" | "completed";
-  post: Post;
-  location: Location;
+  canSwap?: boolean;
+  swapDetails?: string;
+  contactPhone: string;
+  tutorPreference?: string;
+  addressUrl?: string;
+  location?: string; // Simple location string
+  createdAt?: string;
+  user?: User; // Direct user relationship, not nested in post
 }
 
 export interface Post {

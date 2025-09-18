@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Camera, Upload, X } from "lucide-react";
+import { uploadAPI } from "../../services/uploadService";
 
 interface ProfilePictureUploadProps {
   currentPicture?: string;
@@ -14,6 +15,7 @@ export function ProfilePictureUpload({
 }: ProfilePictureUploadProps) {
   const [imageUrl, setImageUrl] = useState(currentPicture || "");
   const [previewUrl, setPreviewUrl] = useState(currentPicture || "");
+  const [uploadPreviewUrl, setUploadPreviewUrl] = useState(""); // New state for instant preview
   const [error, setError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -23,7 +25,7 @@ export function ProfilePictureUpload({
     setError("");
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
@@ -41,25 +43,33 @@ export function ProfilePictureUpload({
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        const base64String = reader.result as string;
-        setImageUrl(base64String);
-        setPreviewUrl(base64String);
-        setError("");
-      } catch (error) {
-        console.error("Error processing image:", error);
-        setError("Failed to process the image. Please try another one.");
-      }
-    };
+    // Show instant preview using URL.createObjectURL
+    const instantPreview = URL.createObjectURL(file);
+    setUploadPreviewUrl(instantPreview);
+    setPreviewUrl(instantPreview);
+    setError("");
 
-    reader.onerror = () => {
-      console.error("FileReader error:", reader.error);
-      setError("Failed to read the image file. Please try again.");
-    };
+    try {
+      // Upload to backend
+      const url = await uploadAPI.uploadImage(file);
+      setImageUrl(url);
+      // Update preview to use backend URL
+      const backendUrl = `${
+        import.meta.env.VITE_API_BASE_URL || "http://localhost:8080"
+      }/api/uploads/${url}`;
+      setPreviewUrl(backendUrl);
 
-    reader.readAsDataURL(file);
+      // Clean up the object URL
+      URL.revokeObjectURL(instantPreview);
+      setUploadPreviewUrl("");
+    } catch (err) {
+      console.error("Upload error:", err);
+      setError("Failed to upload image. Please try again.");
+      // Revert to no preview on error
+      URL.revokeObjectURL(instantPreview);
+      setUploadPreviewUrl("");
+      setPreviewUrl(currentPicture || "");
+    }
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
