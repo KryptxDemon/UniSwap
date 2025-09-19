@@ -315,6 +315,10 @@ export const messageAPI = {
     return response.data;
   },
 
+  markMessagesAsRead: async (conversationPartnerId: number) => {
+    await apiClient.put(`/api/messages/mark-read/${conversationPartnerId}`);
+  },
+
   deleteMessage: async (messageId: number) => {
     await apiClient.delete(`/api/messages/${messageId}`);
   },

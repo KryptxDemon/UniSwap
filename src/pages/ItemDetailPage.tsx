@@ -152,9 +152,17 @@ export default function ItemDetailPage() {
 
   const handleContactSeller = async () => {
     const sellerId = item?.user?.userId || item?.post?.user?.userId;
-    if (!user?.userId || !sellerId) return;
+    console.log("Contact seller - Item data:", item);
+    console.log("Contact seller - Seller ID:", sellerId);
+    console.log("Contact seller - Current user ID:", user?.userId);
+
+    if (!user?.userId || !sellerId) {
+      console.error("Missing user ID or seller ID");
+      return;
+    }
 
     try {
+      console.log("Navigating to messages with seller ID:", sellerId);
       navigate(`/messages?user=${sellerId}`);
     } catch (error) {
       console.error("Error navigating to messages:", error);

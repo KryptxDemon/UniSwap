@@ -71,6 +71,7 @@ interface ConversationData {
   lastMessage: string;
   lastMessageTime: string;
   messageCount: number;
+  unreadCount?: number;
 }
 
 interface UserSummary {
@@ -97,6 +98,9 @@ export function MessagesPage() {
   const [newMessage, setNewMessage] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [processedUrlParam, setProcessedUrlParam] = useState<string | null>(
+    null
+  );
 
   // Load conversations on component mount
   useEffect(() => {
@@ -108,40 +112,81 @@ export function MessagesPage() {
   // Handle URL parameter for starting conversation with specific user
   useEffect(() => {
     const targetUserId = searchParams.get("user");
-    if (targetUserId && user?.userId && conversations.length > 0) {
-      // Find existing conversation or create new one
-      const existingConversation = conversations.find(
-        (conv) => conv.partnerId === parseInt(targetUserId)
-      );
 
-      if (existingConversation) {
-        setSelectedConversation(existingConversation);
-      } else {
-        // Create a new conversation placeholder
-        startNewConversation(parseInt(targetUserId));
-      }
+    // Skip if we've already processed this URL parameter or if no target user
+    if (!targetUserId || !user?.userId || processedUrlParam === targetUserId) {
+      return;
     }
-  }, [searchParams, conversations, user]);
+
+    console.log("Processing URL parameter 'user':", targetUserId);
+    console.log("Current user ID:", user?.userId);
+    console.log("Conversations count:", conversations.length);
+
+    const targetUserIdNum = parseInt(targetUserId);
+
+    // Find existing conversation
+    const existingConversation = conversations.find(
+      (conv) => conv.partnerId === targetUserIdNum
+    );
+
+    console.log("Existing conversation found:", existingConversation);
+
+    if (existingConversation) {
+      console.log("Loading existing conversation");
+      setSelectedConversation(existingConversation);
+      loadMessages(existingConversation.partnerId);
+    } else {
+      // Create a new conversation placeholder
+      console.log("Creating new conversation");
+      startNewConversation(targetUserIdNum);
+    }
+
+    // Mark this URL parameter as processed
+    setProcessedUrlParam(targetUserId);
+  }, [searchParams, conversations, user, processedUrlParam]);
 
   const startNewConversation = async (partnerId: number) => {
     try {
+      console.log("Starting new conversation with partner ID:", partnerId);
+
       // Fetch partner user details
       const partnerUser = await userAPI.getUserById(partnerId);
+      console.log("Partner user data:", partnerUser);
 
       // Create a new conversation placeholder
       const newConversation: ConversationData = {
         partnerId: partnerId,
-        partnerUsername: partnerUser.username || `User ${partnerId}`,
+        partnerUsername:
+          partnerUser.username ||
+          partnerUser.displayUsername ||
+          `User ${partnerId}`,
         partnerProfilePicture: partnerUser.profilePicture,
         lastMessage: "Start a conversation...",
         lastMessageTime: new Date().toISOString(),
         messageCount: 0,
+        unreadCount: 0,
       };
 
+      console.log("Created new conversation:", newConversation);
       setSelectedConversation(newConversation);
       setMessages([]); // Empty messages for new conversation
     } catch (error) {
       console.error("Error starting new conversation:", error);
+
+      // Create a fallback conversation even if user details fetch fails
+      const fallbackConversation: ConversationData = {
+        partnerId: partnerId,
+        partnerUsername: `User ${partnerId}`,
+        partnerProfilePicture: undefined,
+        lastMessage: "Start a conversation...",
+        lastMessageTime: new Date().toISOString(),
+        messageCount: 0,
+        unreadCount: 0,
+      };
+
+      console.log("Using fallback conversation:", fallbackConversation);
+      setSelectedConversation(fallbackConversation);
+      setMessages([]);
     }
   };
 
@@ -163,6 +208,15 @@ export function MessagesPage() {
         partnerId
       );
       setMessages(messagesData);
+
+      // Mark messages as read when conversation is loaded
+      try {
+        await messageAPI.markMessagesAsRead(partnerId);
+        // Reload conversations to update unread counts
+        await loadConversations();
+      } catch (error) {
+        console.error("Error marking messages as read:", error);
+      }
     } catch (error) {
       console.error("Error loading messages:", error);
     }
@@ -330,7 +384,14 @@ export function MessagesPage() {
                               <p className="text-sm text-gray-600 truncate flex-1">
                                 {conversation.lastMessage || "No messages yet"}
                               </p>
-                              <div className="w-2 h-2 bg-bright-cyan rounded-full ml-2"></div>
+                              {conversation.unreadCount &&
+                                conversation.unreadCount > 0 && (
+                                  <span className="bg-burnt-sienna text-white text-xs rounded-full h-5 w-5 flex items-center justify-center ml-2">
+                                    {conversation.unreadCount > 99
+                                      ? "99+"
+                                      : conversation.unreadCount}
+                                  </span>
+                                )}
                             </div>
                           </div>
                         </div>

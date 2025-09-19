@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import logoImg from "../../assets/logo.jpg";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -5,11 +6,42 @@ import { MessageCircle, PlusCircle, LogOut, Moon, Sun } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import { useTheme } from "../../hooks/useTheme";
 import { getProfilePictureUrl } from "../../utils/imageUtils";
+import { messageAPI } from "../../services/apiService";
 
 export function Header() {
   const { user, signOut } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  // Load unread message count
+  useEffect(() => {
+    const loadUnreadCount = async () => {
+      if (user?.userId) {
+        try {
+          const conversations = await messageAPI.getUserConversations(
+            user.userId
+          );
+          const totalUnread = conversations.reduce(
+            (sum: number, conv: any) => sum + (conv.unreadCount || 0),
+            0
+          );
+          setUnreadCount(totalUnread);
+        } catch (error) {
+          console.error("Error loading unread count:", error);
+          setUnreadCount(0);
+        }
+      } else {
+        setUnreadCount(0);
+      }
+    };
+
+    loadUnreadCount();
+
+    // Refresh unread count every 30 seconds
+    const interval = setInterval(loadUnreadCount, 30000);
+    return () => clearInterval(interval);
+  }, [user?.userId]);
 
   const handleSignOut = async () => {
     try {
@@ -81,36 +113,12 @@ export function Header() {
                 className="text-gray-700 dark:text-gray-300 hover:text-pine-green dark:hover:text-bright-cyan p-2 rounded-md transition-colors relative"
               >
                 <MessageCircle className="h-5 w-5" />
-                {/* Notification badge */}
-                {(() => {
-                  try {
-                    const conversations = JSON.parse(
-                      localStorage.getItem("conversations") || "[]"
-                    );
-                    const messages = JSON.parse(
-                      localStorage.getItem("messages") || "[]"
-                    );
-
-                    // Count unread conversations (conversations with messages not from current user)
-                    const unreadCount = conversations.filter((conv: any) => {
-                      const convMessages = messages.filter(
-                        (msg: any) => msg.conversation_id === conv.id
-                      );
-                      return convMessages.some(
-                        (msg: any) =>
-                          msg.sender_id !== user?.userId && !msg.read
-                      );
-                    }).length;
-
-                    return unreadCount > 0 ? (
-                      <span className="absolute -top-1 -right-1 bg-burnt-sienna text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                        {unreadCount > 99 ? "99+" : unreadCount}
-                      </span>
-                    ) : null;
-                  } catch {
-                    return null;
-                  }
-                })()}
+                {/* Unread message badge */}
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-burnt-sienna text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </span>
+                )}
               </Link>
               <div className="relative">
                 <Link

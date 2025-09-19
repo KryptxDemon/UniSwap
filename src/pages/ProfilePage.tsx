@@ -20,8 +20,14 @@ import {
 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { ItemCard } from "../components/Items/ItemCard";
+import { TuitionCard } from "../components/Tuition/TuitionCard";
 import { AvatarPicker } from "../components/Profile/AvatarPicker";
-import { userAPI, itemAPI, wishlistAPI } from "../services/apiService";
+import {
+  userAPI,
+  itemAPI,
+  wishlistAPI,
+  tuitionAPI,
+} from "../services/apiService";
 import { getProfilePictureUrl } from "../utils/imageUtils";
 
 interface SettingsModalProps {
@@ -270,6 +276,7 @@ export function ProfilePage() {
 
   // State for API data
   const [userItems, setUserItems] = useState<any[]>([]);
+  const [userTuitions, setUserTuitions] = useState<any[]>([]);
   const [wishlistedItems, setWishlistedItems] = useState<any[]>([]);
   const [wishlistedTuitions, setWishlistedTuitions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -321,6 +328,13 @@ export function ProfilePage() {
         // Fetch user's items
         const items = await itemAPI.getUserItems(Number(profileUser.userId));
         setUserItems(items);
+
+        // Fetch user's tuitions
+        const tuitions = await tuitionAPI.getUserTuitions(
+          Number(profileUser.userId)
+        );
+        console.log("Fetched tuitions:", tuitions);
+        setUserTuitions(tuitions);
 
         // If viewing own profile, fetch wishlist data and borrow records
         if (isOwnProfile && authUser) {
@@ -395,6 +409,55 @@ export function ProfilePage() {
     } catch (error) {
       console.error("Error removing from wishlist:", error);
       alert("Failed to remove from wishlist. Please try again.");
+    }
+  };
+
+  // Tuition Management Functions
+  const deleteTuition = async (tuitionId: number) => {
+    if (!authUser || !isOwnProfile) return;
+
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this tuition? This action cannot be undone."
+    );
+    if (!confirmed) return;
+
+    try {
+      await tuitionAPI.deleteTuition(tuitionId);
+
+      // Update local state by removing the deleted tuition
+      setUserTuitions((prev) =>
+        prev.filter((tuition) => tuition.tuitionId !== tuitionId)
+      );
+
+      alert("Tuition deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting tuition:", error);
+      alert("Failed to delete tuition. Please try again.");
+    }
+  };
+
+  const markTuitionAsGiven = async (tuitionId: number) => {
+    if (!authUser || !isOwnProfile) return;
+
+    const confirmed = window.confirm("Mark this tuition as given/completed?");
+    if (!confirmed) return;
+
+    try {
+      await tuitionAPI.markAsCompleted(tuitionId);
+
+      // Update local state
+      setUserTuitions((prev) =>
+        prev.map((tuition) =>
+          tuition.tuitionId === tuitionId
+            ? { ...tuition, tStatus: "completed" }
+            : tuition
+        )
+      );
+
+      alert("Tuition marked as completed!");
+    } catch (error) {
+      console.error("Error marking tuition as completed:", error);
+      alert("Failed to update tuition status. Please try again.");
     }
   };
 
@@ -525,6 +588,16 @@ export function ProfilePage() {
       item.is_exchanged === true
   );
 
+  const activeTuitions = userTuitions.filter(
+    (tuition) => tuition.tStatus === "available"
+  );
+  console.log("Active tuitions:", activeTuitions);
+
+  const completedTuitions = userTuitions.filter(
+    (tuition) => tuition.tStatus === "completed" || tuition.tStatus === "taken"
+  );
+  console.log("Completed tuitions:", completedTuitions);
+
   // Loading and error states
   if (loading) {
     return (
@@ -562,8 +635,15 @@ export function ProfilePage() {
     });
   const stats = [
     { label: "Items Listed", value: userItems.length },
-    { label: "Active Listings", value: activeItems.length },
-    { label: "Successful Exchanges", value: exchangedItems.length },
+    { label: "Tuitions Listed", value: userTuitions.length },
+    {
+      label: "Active Listings",
+      value: activeItems.length + activeTuitions.length,
+    },
+    {
+      label: "Completed",
+      value: exchangedItems.length + completedTuitions.length,
+    },
     {
       label: "Wishlist Items",
       value: wishlistedItems.length + wishlistedTuitions.length,
@@ -698,7 +778,7 @@ export function ProfilePage() {
                     : "text-gray-600 hover:text-gray-900"
                 }`}
               >
-                Active ({activeItems.length})
+                Active ({activeItems.length + activeTuitions.length})
               </button>
               <button
                 onClick={() => setActiveTab("exchanged")}
@@ -708,7 +788,7 @@ export function ProfilePage() {
                     : "text-gray-600 hover:text-gray-900"
                 }`}
               >
-                Exchanged ({exchangedItems.length})
+                Completed ({exchangedItems.length + completedTuitions.length})
               </button>
               {isOwnProfile && (
                 <button
@@ -970,10 +1050,11 @@ export function ProfilePage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              {/* Items */}
               {(activeTab === "active" ? activeItems : exchangedItems).map(
                 (item) => (
                   <div
-                    key={item.id}
+                    key={`item-${item.id}`}
                     className="relative group rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300"
                   >
                     <ItemCard item={item} />
@@ -988,36 +1069,98 @@ export function ProfilePage() {
                   </div>
                 )
               )}
+
+              {/* Tuitions */}
+              {(activeTab === "active"
+                ? activeTuitions
+                : completedTuitions
+              ).map((tuition) => (
+                <div
+                  key={`tuition-${tuition.tuitionId}`}
+                  className="relative group rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300"
+                >
+                  <TuitionCard tuition={tuition} />
+                  {activeTab === "exchanged" && (
+                    <div className="absolute inset-0 bg-black bg-opacity-40 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="bg-green-500 text-white px-5 py-2 rounded-full font-semibold flex items-center space-x-2 shadow-lg">
+                        <Star className="h-5 w-5" />
+                        <span>Completed</span>
+                      </div>
+                    </div>
+                  )}
+                  {/* Management Actions for Active Tuitions (Own Profile Only) */}
+                  {isOwnProfile && activeTab === "active" && (
+                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            markTuitionAsGiven(tuition.tuitionId);
+                          }}
+                          className="bg-green-600 text-white p-2 rounded-full hover:bg-green-700 transition shadow-lg"
+                          title="Mark as Given"
+                        >
+                          <Star className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            deleteTuition(tuition.tuitionId);
+                          }}
+                          className="bg-red-600 text-white p-2 rounded-full hover:bg-red-700 transition shadow-lg"
+                          title="Delete Tuition"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           )}
 
           {activeTab !== "wishlist" &&
-            (activeTab === "active" ? activeItems : exchangedItems).length ===
-              0 && (
+            (activeTab === "active"
+              ? activeItems.length + activeTuitions.length
+              : exchangedItems.length + completedTuitions.length) === 0 && (
               <div className="text-center py-20">
                 <Package className="h-20 w-20 text-gray-400 mx-auto mb-6" />
                 <h3 className="text-2xl font-bold text-gray-900 mb-3">
-                  No {activeTab} items
+                  No {activeTab} listings
                 </h3>
                 <p className="text-gray-600 text-lg mb-8 max-w-xl mx-auto">
                   {activeTab === "active"
                     ? isOwnProfile
-                      ? "You haven't posted any items yet."
-                      : `${profileUser.username} hasn't posted any items yet.`
+                      ? "You haven't posted any items or tuitions yet."
+                      : `${profileUser.username} hasn't posted any items or tuitions yet.`
                     : isOwnProfile
-                    ? "You haven't completed any exchanges yet."
-                    : `${profileUser.username} hasn't completed any exchanges yet.`}
+                    ? "You haven't completed any exchanges or tuitions yet."
+                    : `${profileUser.username} hasn't completed any exchanges or tuitions yet.`}
                 </p>
                 {isOwnProfile && activeTab === "active" && (
-                  <Link
-                    to="/post-item"
-                    className="bg-blue-600 text-white px-8 py-4 rounded-xl hover:bg-blue-700 transition inline-flex items-center space-x-3 shadow-md"
-                  >
-                    <Package className="h-6 w-6" />
-                    <span className="text-lg font-semibold">
-                      Post Your First Item
-                    </span>
-                  </Link>
+                  <div className="flex justify-center gap-4">
+                    <Link
+                      to="/post-item"
+                      className="bg-blue-600 text-white px-8 py-4 rounded-xl hover:bg-blue-700 transition inline-flex items-center space-x-3 shadow-md"
+                    >
+                      <Package className="h-6 w-6" />
+                      <span className="text-lg font-semibold">
+                        Post Your First Item
+                      </span>
+                    </Link>
+                    <Link
+                      to="/post-tuition"
+                      className="bg-green-600 text-white px-8 py-4 rounded-xl hover:bg-green-700 transition inline-flex items-center space-x-3 shadow-md"
+                    >
+                      <Package className="h-6 w-6" />
+                      <span className="text-lg font-semibold">
+                        Post Your First Tuition
+                      </span>
+                    </Link>
+                  </div>
                 )}
               </div>
             )}
