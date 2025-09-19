@@ -54,6 +54,7 @@ function AppContent() {
           <Route path="/browse/items" element={<BrowseItemsPage />} />
           <Route path="/browse/tuitions" element={<BrowseTuitionsPage />} />
           <Route path="/post-item" element={<PostItemPage />} />
+          <Route path="/edit-item/:id" element={<PostItemPage />} />
           <Route path="/post-tuition" element={<PostTuitionPage />} />
           <Route path="/item/:id" element={<ItemDetailPage />} />
           <Route path="/tuition/:id" element={<TuitionDetailPage />} />

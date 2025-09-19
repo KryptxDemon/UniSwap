@@ -1,4 +1,5 @@
 // src/utils/imageUtils.ts
+import { getAvatarById } from "./avatars";
 
 /**
  * Get the full URL for a profile picture
@@ -9,7 +10,15 @@ export function getProfilePictureUrl(
   profilePicture: string | null | undefined
 ): string {
   if (!profilePicture) {
-    return "/default-avatar.png";
+    // Return a default avatar instead of a missing image
+    return createEmojiDataUrl("🙂");
+  }
+
+  // Check if it's an avatar ID first
+  const avatar = getAvatarById(profilePicture);
+  if (avatar) {
+    // Return a data URL with the emoji as an SVG
+    return createEmojiDataUrl(avatar.emoji);
   }
 
   // If it's already a full URL (starts with http/https), return as is
@@ -36,7 +45,24 @@ export function getProfilePictureUrl(
   }
 
   // Fallback to default avatar
-  return "/default-avatar.png";
+  return createEmojiDataUrl("🙂");
+}
+
+/**
+ * Create a data URL from an emoji for use as an avatar
+ * @param emoji - The emoji character
+ * @returns Data URL string
+ */
+export function createEmojiDataUrl(emoji: string): string {
+  const svg = `
+    <svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+      <text x="32" y="44" font-family="system-ui, -apple-system, sans-serif" font-size="48" text-anchor="middle">${emoji}</text>
+    </svg>
+  `;
+
+  // Use URL encoding instead of base64 to handle Unicode characters
+  const encodedSvg = encodeURIComponent(svg);
+  return `data:image/svg+xml;charset=utf-8,${encodedSvg}`;
 }
 
 /**

@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { messageAPI, userAPI } from "../services/apiService";
+import { getProfilePictureUrl } from "../utils/imageUtils";
 
 // Profile Picture Component with fallback
 interface ProfilePictureProps {
@@ -27,6 +28,7 @@ function ProfilePicture({
   className = "",
 }: ProfilePictureProps) {
   const [imageError, setImageError] = useState(false);
+  const profileImageUrl = getProfilePictureUrl(src);
 
   const sizeClasses = {
     sm: "w-8 h-8",
@@ -54,7 +56,7 @@ function ProfilePicture({
 
   return (
     <img
-      src={src}
+      src={profileImageUrl}
       alt={alt}
       className={`${sizeClasses[size]} rounded-full object-cover ${className}`}
       onError={() => setImageError(true)}

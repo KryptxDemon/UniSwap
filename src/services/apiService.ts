@@ -74,12 +74,6 @@ export const userAPI = {
   },
 };
 
-// Helper function to generate item image URL by item ID
-const getItemImageUrl = (itemId: number | string): string => {
-  const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
-  return `${baseUrl}/api/items/${itemId}/image`;
-};
-
 // Import mockLocations for location mapping
 import { mockLocations } from "../lib/mockData";
 
@@ -143,19 +137,44 @@ const normalizeItem = (raw: any) => {
       : null,
   });
 
-  // Get the item ID
-  const itemId = raw.itemId || raw.id;
-
-  // NEW APPROACH: Priority 1 - Always use ID-based URLs for items with imageData and valid itemId
+  // Priority 1: Check if imageData is a filename and use upload URL
   if (
-    itemId &&
     raw.imageData &&
     typeof raw.imageData === "string" &&
     raw.imageData.trim() &&
-    !raw.imageData.startsWith("data:image/") // Not base64
+    !raw.imageData.startsWith("data:image/") && // Not base64
+    !raw.imageData.includes(",") // Not a data URL with comma separator
   ) {
-    console.log("Using NEW ID-based URL for item:", itemId);
-    images = [getItemImageUrl(itemId)];
+    console.log("Raw imageData:", raw.imageData);
+    const baseUrl =
+      import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+
+    // Clean up the imageData to get just the filename
+    let filename = raw.imageData.trim();
+
+    // Remove any existing prefixes to get just the filename
+    if (filename.startsWith("/api/uploads/files/")) {
+      filename = filename.substring("/api/uploads/files/".length);
+    } else if (filename.startsWith("api/uploads/files/")) {
+      filename = filename.substring("api/uploads/files/".length);
+    } else if (filename.startsWith("/api/uploads/")) {
+      filename = filename.substring("/api/uploads/".length);
+    } else if (filename.startsWith("api/uploads/")) {
+      filename = filename.substring("api/uploads/".length);
+    }
+
+    // If it still contains slashes, extract just the last part (filename)
+    if (filename.includes("/")) {
+      filename = filename.split("/").pop() || filename;
+    }
+
+    console.log("Cleaned filename:", filename);
+
+    // Build the final URL - make sure we only have one /api/uploads/files/ prefix
+    const finalUrl = `${baseUrl}/api/uploads/files/${filename}`;
+    console.log("Final URL:", finalUrl);
+
+    images = [finalUrl];
   }
   // Priority 2: Handle base64 data URLs
   else if (

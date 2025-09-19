@@ -88,10 +88,12 @@ export function BrowseTuitionsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-bright-cyan/10 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading tuitions...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 dark:border-bright-cyan mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-300">
+            Loading tuitions...
+          </p>
         </div>
       </div>
     );
@@ -99,13 +101,15 @@ export function BrowseTuitionsPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-bright-cyan/10 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Error</h2>
-          <p className="text-gray-600 mb-6">{error}</p>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+            Error
+          </h2>
+          <p className="text-gray-600 dark:text-gray-300 mb-6">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
+            className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 dark:bg-bright-cyan dark:text-gray-900 dark:hover:bg-powder-blue transition-colors"
           >
             Retry
           </button>
@@ -115,13 +119,13 @@ export function BrowseTuitionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-bright-cyan/10">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8 pt-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
             Browse Tuitions
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-300">
             Find tutoring opportunities from fellow students
           </p>
         </div>
@@ -143,7 +147,7 @@ export function BrowseTuitionsPage() {
         </div>
 
         <div className="mb-4 flex items-center justify-between px-2">
-          <p className="text-gray-600 text-sm">
+          <p className="text-gray-600 dark:text-gray-300 text-sm">
             Showing {filteredTuitions.length}{" "}
             {filteredTuitions.length === 1 ? "tuition" : "tuitions"}
           </p>
@@ -157,11 +161,11 @@ export function BrowseTuitionsPage() {
           </div>
         ) : (
           <div className="text-center py-12 pb-6">
-            <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-            <h3 className="text-base font-medium text-gray-800">
+            <BookOpen className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-3" />
+            <h3 className="text-base font-medium text-gray-800 dark:text-gray-200">
               No tuitions found
             </h3>
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-600 dark:text-gray-400 text-sm">
               {hasActiveFilters
                 ? "Try adjusting your filters"
                 : "No tuitions have been posted yet"}

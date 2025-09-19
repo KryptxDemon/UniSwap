@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { itemAPI, wishlistAPI } from "../services/apiService";
+import { getBestItemDate, formatDetailedDate } from "../utils/dateUtils";
 
 // Helper functions
 const getImages = (item: any): string[] => {
@@ -34,30 +35,6 @@ const getImages = (item: any): string[] => {
 
   console.log("No images found or images array is empty");
   return [];
-};
-
-const formatDate = (dateString?: string) => {
-  console.log("formatDate received:", dateString);
-  if (!dateString) return "Unknown date";
-  try {
-    const date = new Date(dateString);
-    const now = new Date();
-    console.log("Parsed date:", date);
-    console.log("Current time:", now);
-
-    const diffInHours = Math.floor(
-      (now.getTime() - date.getTime()) / (1000 * 60 * 60)
-    );
-    console.log("Time difference in hours:", diffInHours);
-
-    if (diffInHours < 1) return "Just posted";
-    if (diffInHours < 24) return `${diffInHours}h ago`;
-    if (diffInHours < 168) return `${Math.floor(diffInHours / 24)}d ago`;
-    return date.toLocaleDateString();
-  } catch (error) {
-    console.error("Date parsing error:", error);
-    return "Invalid date";
-  }
 };
 
 const getTypeColor = (type: string) => {
@@ -535,71 +512,7 @@ export default function ItemDetailPage() {
                   <div>
                     <p className="text-sm text-gray-500">Posted</p>
                     <p className="font-medium">
-                      {(() => {
-                        console.log("Item date fields:", {
-                          postDate: item.postDate,
-                          postTime: item.post?.postTime,
-                          createdAt: item.createdAt,
-                          datePosted: item.datePosted,
-                          timestamp: item.timestamp,
-                          dateCreated: item.dateCreated,
-                          updatedAt: item.updatedAt,
-                        });
-
-                        // Try to find the most recent timestamp
-                        const possibleDates = [
-                          item.updatedAt,
-                          item.dateCreated,
-                          item.timestamp,
-                          item.createdAt,
-                          item.datePosted,
-                          item.postDate,
-                          item.post?.postTime,
-                        ].filter(Boolean);
-
-                        console.log("Available dates:", possibleDates);
-
-                        // Use the most recent valid date
-                        let dateToUse = possibleDates[0];
-
-                        // If the date seems too old (more than 1 day ago), it might be wrong
-                        if (dateToUse) {
-                          const testDate = new Date(dateToUse);
-                          const now = new Date();
-                          const hoursAgo =
-                            (now.getTime() - testDate.getTime()) /
-                            (1000 * 60 * 60);
-                          console.log(
-                            "Hours difference for",
-                            dateToUse,
-                            ":",
-                            hoursAgo
-                          );
-
-                          // If it's more than 24 hours old, try other dates
-                          if (hoursAgo > 24) {
-                            for (const altDate of possibleDates.slice(1)) {
-                              const altTestDate = new Date(altDate);
-                              const altHoursAgo =
-                                (now.getTime() - altTestDate.getTime()) /
-                                (1000 * 60 * 60);
-                              console.log(
-                                "Alternative date",
-                                altDate,
-                                "hours ago:",
-                                altHoursAgo
-                              );
-                              if (altHoursAgo < 24) {
-                                dateToUse = altDate;
-                                break;
-                              }
-                            }
-                          }
-                        }
-
-                        console.log("Using date:", dateToUse);
-                        return formatDate(dateToUse);
-                      })()}
+                      {formatDetailedDate(getBestItemDate(item))}
                     </p>
                   </div>
                 </div>

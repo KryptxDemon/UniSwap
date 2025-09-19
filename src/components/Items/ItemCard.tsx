@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Clock, MapPin, Tag, User } from "lucide-react";
 import { Item } from "../../types";
+import { getBestItemDate, formatRelativeDate } from "../../utils/dateUtils";
 
 interface ItemCardProps {
   item: Item;
@@ -43,20 +44,7 @@ export function ItemCard({ item }: ItemCardProps) {
   };
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInHours = Math.floor(
-      (now.getTime() - date.getTime()) / (1000 * 60 * 60)
-    );
-
-    if (diffInHours < 24) {
-      return `${diffInHours}h ago`;
-    } else if (diffInHours < 168) {
-      // 7 days
-      return `${Math.floor(diffInHours / 24)}d ago`;
-    } else {
-      return date.toLocaleDateString();
-    }
+    return formatRelativeDate(dateString);
   };
 
   return (
@@ -106,12 +94,12 @@ export function ItemCard({ item }: ItemCardProps) {
           </span>
         </div>
 
-        <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-3">
+        <p className="text-gray-600 dark:text-gray-200 text-sm mb-4 line-clamp-3">
           {item.description}
         </p>
 
         <div className="flex flex-wrap gap-2 mb-4">
-          <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md text-xs">
+          <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-md text-xs">
             {item.category?.categoryName ||
               item.category?.name ||
               (typeof item.category === "string"
@@ -127,7 +115,7 @@ export function ItemCard({ item }: ItemCardProps) {
           </span>
         </div>
 
-        <div className="space-y-2 text-sm text-gray-500 dark:text-gray-400">
+        <div className="space-y-2 text-sm text-gray-500 dark:text-gray-300">
           <div className="flex items-center space-x-2">
             <MapPin className="h-4 w-4" />
             <span>
@@ -152,12 +140,7 @@ export function ItemCard({ item }: ItemCardProps) {
             <div className="flex items-center space-x-2">
               <Clock className="h-4 w-4" />
               <span>
-                {formatDate(
-                  item.post?.postTime ||
-                    item.created_at ||
-                    (item as any).postDate ||
-                    new Date().toISOString()
-                )}
+                {formatDate(getBestItemDate(item) || new Date().toISOString())}
               </span>
             </div>
           </div>

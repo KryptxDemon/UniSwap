@@ -1,12 +1,22 @@
 import { useState, useEffect } from "react";
 import logoImg from "../assets/logo.png";
 import { Link } from "react-router-dom";
-import { Users, ShoppingBag, MessageCircle, Star, Quote } from "lucide-react";
+import {
+  Users,
+  ShoppingBag,
+  MessageCircle,
+  Star,
+  Quote,
+  Moon,
+  Sun,
+} from "lucide-react";
 import { itemAPI } from "../services/apiService";
+import { useTheme } from "../hooks/useTheme";
 
 export default function HomePage() {
   const [recentItems, setRecentItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { isDark, toggleTheme } = useTheme();
 
   useEffect(() => {
     const fetchRecentItems = async () => {
@@ -141,7 +151,7 @@ export default function HomePage() {
     },
     {
       step: 3,
-      title: "Connect & Exchange",
+      title: "Connect",
       description: "Chat and arrange safe pickups",
       icon: MessageCircle,
     },
@@ -174,7 +184,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 transition-colors">
-      <nav className="sticky top-0 z-50 flex items-center justify-between px-8 py-4 max-w-7xl mx-auto bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100">
+      <nav className="sticky top-0 z-50 flex items-center justify-between px-8 py-4 max-w-7xl mx-auto bg-white/95 dark:bg-gray-800/95 backdrop-blur-md shadow-sm border-b border-gray-100 dark:border-gray-700 transition-colors">
         <Link to="/">
           <div className="flex items-center gap-4">
             <div className="p-1 rounded-full bg-gradient-to-r from-pine-green to-dark-teal shadow-lg transform hover:scale-105 transition">
@@ -184,21 +194,34 @@ export default function HomePage() {
                 className="w-12 h-12 rounded-full border-2 border-white shadow-sm"
               />
             </div>
-            <div className="text-4xl font-extrabold text-pine-green tracking-tight">
+            <div className="text-4xl font-extrabold text-pine-green dark:text-bright-cyan tracking-tight">
               UniSwap
             </div>
           </div>
         </Link>
         <div className="flex items-center gap-8">
+          {/* Dark Mode Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="text-gray-700 dark:text-gray-300 hover:text-pine-green dark:hover:text-bright-cyan p-2 rounded-md transition-colors"
+            title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {isDark ? (
+              <Sun className="h-5 w-5" />
+            ) : (
+              <Moon className="h-5 w-5" />
+            )}
+          </button>
+
           <Link
             to="/browse"
-            className="text-gray-700 hover:text-pine-green font-medium transition"
+            className="text-gray-700 dark:text-gray-300 hover:text-pine-green dark:hover:text-bright-cyan font-medium transition-colors"
           >
             Browse
           </Link>
           <Link
             to="/login"
-            className="text-gray-700 hover:text-pine-green font-medium transition"
+            className="text-gray-700 dark:text-gray-300 hover:text-pine-green dark:hover:text-bright-cyan font-medium transition-colors"
           >
             Log in
           </Link>
@@ -223,7 +246,7 @@ export default function HomePage() {
                 Save
               </span>
             </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-lg">
+            <p className="text-xl text-gray-600 dark:text-gray-200 max-w-lg">
               The premium student marketplace for textbooks, electronics, and
               dorm essentials. Build lasting connections while saving money and
               promoting sustainability.
@@ -237,7 +260,7 @@ export default function HomePage() {
               </Link>
               <Link
                 to="/signup"
-                className="border-2 border-pine-green text-pine-green hover:bg-pine-green hover:text-white px-8 py-4 rounded-full font-semibold text-lg transition transform hover:scale-105"
+                className="border-2 border-pine-green text-pine-green dark:border-bright-cyan dark:text-bright-cyan hover:bg-pine-green hover:text-white dark:hover:bg-bright-cyan dark:hover:text-gray-900 px-8 py-4 rounded-full font-semibold text-lg transition transform hover:scale-105"
               >
                 Join Now
               </Link>
@@ -281,12 +304,12 @@ export default function HomePage() {
           {stats.map((stat, i) => (
             <div
               key={i}
-              className="bg-gradient-to-br from-white to-pine-green/10 dark:from-gray-700 dark:to-pine-green/20 rounded-2xl shadow-lg p-8 text-center hover:shadow-2xl hover:scale-105 transition duration-300"
+              className="bg-gradient-to-br from-white to-pine-green/10 dark:from-gray-700 dark:to-bright-cyan/10 rounded-2xl shadow-lg p-8 text-center hover:shadow-2xl hover:scale-105 transition duration-300"
             >
-              <div className="text-4xl font-bold text-pine-green">
+              <div className="text-4xl font-bold text-pine-green dark:text-bright-cyan">
                 {stat.number}
               </div>
-              <div className="text-gray-600 dark:text-gray-300 font-medium">
+              <div className="text-gray-600 dark:text-gray-200 font-medium">
                 {stat.label}
               </div>
             </div>
@@ -300,7 +323,7 @@ export default function HomePage() {
             <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100">
               How It Works
             </h2>
-            <p className="mt-4 text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            <p className="mt-4 text-lg text-gray-600 dark:text-gray-200 max-w-2xl mx-auto">
               Simple steps to start exchanging items on campus.
             </p>
           </div>
@@ -308,15 +331,15 @@ export default function HomePage() {
             {howItWorks.map((step, i) => (
               <div key={i} className="text-center group">
                 <div className="w-20 h-20 mx-auto rounded-full bg-powder-blue dark:bg-powder-blue/70 flex items-center justify-center mb-6 group-hover:bg-bright-cyan/30 transition">
-                  <step.icon className="h-10 w-10 text-pine-green" />
+                  <step.icon className="h-10 w-10 text-pine-green dark:text-dark-teal" />
                 </div>
-                <div className="text-2xl font-bold text-pine-green mb-2">
+                <div className="text-2xl font-bold text-pine-green dark:text-bright-cyan mb-2">
                   {step.step}
                 </div>
                 <h3 className="text-xl font-semibold mb-2 dark:text-gray-200">
                   {step.title}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-300">
+                <p className="text-gray-600 dark:text-gray-200">
                   {step.description}
                 </p>
               </div>
@@ -331,7 +354,7 @@ export default function HomePage() {
             <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100">
               Sample Exchanges
             </h2>
-            <p className="mt-4 text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            <p className="mt-4 text-lg text-gray-600 dark:text-gray-200 max-w-2xl mx-auto">
               A curated showcase to inspire your next swap. Hover to pause
               animations and explore each item.
             </p>
@@ -361,7 +384,7 @@ export default function HomePage() {
                         className="w-full h-full object-cover transform transition duration-500 group-hover:scale-110"
                         loading="lazy"
                       />
-                      <div className="absolute top-3 left-3 bg-pine-green text-white px-3 py-1 rounded-full text-sm font-semibold">
+                      <div className="absolute top-3 left-3 bg-pine-green dark:bg-bright-cyan text-white dark:text-gray-900 px-3 py-1 rounded-full text-sm font-semibold">
                         {item.tags[0]}
                       </div>
                       <div className="absolute top-3 right-3 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 px-2 py-1 rounded-full text-sm shadow">
@@ -392,7 +415,7 @@ export default function HomePage() {
             <div className="mt-6 flex items-center justify-center gap-4">
               <Link
                 to="/browse"
-                className="px-6 py-3 bg-pine-green text-white hover:bg-dark-teal rounded-full font-semibold transition"
+                className="px-6 py-3 bg-pine-green text-white hover:bg-dark-teal dark:bg-bright-cyan dark:text-gray-900 dark:hover:bg-powder-blue rounded-full font-semibold transition"
               >
                 See more exchanges
               </Link>
@@ -407,7 +430,7 @@ export default function HomePage() {
             <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100">
               What Students Say
             </h2>
-            <p className="mt-4 text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            <p className="mt-4 text-lg text-gray-600 dark:text-gray-200 max-w-2xl mx-auto">
               Hear from our community of satisfied users.
             </p>
           </div>
@@ -425,15 +448,15 @@ export default function HomePage() {
                     loading="lazy"
                   />
                 </div>
-                <Quote className="h-8 w-8 text-pine-green mb-4 opacity-50 mx-auto" />
-                <p className="text-gray-600 dark:text-gray-300 mb-6 text-center">
+                <Quote className="h-8 w-8 text-pine-green dark:text-bright-cyan mb-4 opacity-50 mx-auto" />
+                <p className="text-gray-600 dark:text-gray-200 mb-6 text-center">
                   {testimonial.content}
                 </p>
                 <div className="flex justify-center gap-1 mb-2">
                   {[...Array(testimonial.rating)].map((_, j) => (
                     <Star
                       key={j}
-                      className="h-5 w-5 text-pine-green fill-current"
+                      className="h-5 w-5 text-pine-green dark:text-bright-cyan fill-current"
                     />
                   ))}
                 </div>
@@ -471,7 +494,7 @@ export default function HomePage() {
           />
           <Link
             to="/signup"
-            className="bg-white text-pine-green hover:bg-powder-blue hover:text-dark-teal px-8 py-4 rounded-full font-semibold text-lg shadow-lg transition transform hover:scale-105"
+            className="bg-white text-pine-green hover:bg-powder-blue hover:text-dark-teal dark:bg-gray-200 dark:text-dark-teal dark:hover:bg-bright-cyan dark:hover:text-gray-900 px-8 py-4 rounded-full font-semibold text-lg shadow-lg transition transform hover:scale-105"
           >
             Get Started
           </Link>

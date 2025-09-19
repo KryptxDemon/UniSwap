@@ -51,7 +51,7 @@ export function BrowsePage() {
                 <h2 className="text-2xl font-bold mb-2 dark:text-gray-100">
                   Browse Items
                 </h2>
-                <p className="text-gray-600 dark:text-gray-300">
+                <p className="text-gray-600 dark:text-gray-200">
                   Find and exchange electronics, books, accessories, and more,
                   all in one place.
                 </p>
@@ -74,7 +74,7 @@ export function BrowsePage() {
                 <h2 className="text-2xl font-bold mb-2 dark:text-gray-100">
                   Browse Tuitions
                 </h2>
-                <p className="text-gray-600 dark:text-gray-300">
+                <p className="text-gray-600 dark:text-gray-200">
                   Explore available tuition opportunities and exchange according
                   to your preference.
                 </p>

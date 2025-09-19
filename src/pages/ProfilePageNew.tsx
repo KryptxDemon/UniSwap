@@ -22,6 +22,7 @@ import {
 import { useAuth } from "../hooks/useAuth";
 import { ItemCard } from "../components/Items/ItemCard";
 import { userAPI, itemAPI, wishlistAPI } from "../services/apiService";
+import { getProfilePictureUrl } from "../utils/imageUtils";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -283,13 +284,13 @@ export function ProfilePage() {
         if (!id) {
           if (authUser) {
             setProfileUser(authUser);
-            setProfilePic(authUser.profilePicture || "/default-avatar.png");
+            setProfilePic(getProfilePictureUrl(authUser.profilePicture));
             setEditedBio(authUser.bio || "");
           }
         } else {
           const user = await userAPI.getUserById(Number(id));
           setProfileUser(user);
-          setProfilePic(user.profilePicture || "/default-avatar.png");
+          setProfilePic(getProfilePictureUrl(user.profilePicture));
           setEditedBio(user.bio || "");
         }
       } catch (err) {
@@ -300,7 +301,7 @@ export function ProfilePage() {
 
     if (!id && authUser) {
       setProfileUser(authUser);
-      setProfilePic(authUser.profilePicture || "/default-avatar.png");
+      setProfilePic(getProfilePictureUrl(authUser.profilePicture));
       setEditedBio(authUser.bio || "");
     } else if (id) {
       fetchProfileUser();

@@ -20,9 +20,9 @@ import {
 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { ItemCard } from "../components/Items/ItemCard";
+import { AvatarPicker } from "../components/Profile/AvatarPicker";
 import { userAPI, itemAPI, wishlistAPI } from "../services/apiService";
-import { uploadAPI } from "../services/uploadService";
-import { getProfilePictureUrl, fileToDataUrl } from "../utils/imageUtils";
+import { getProfilePictureUrl } from "../utils/imageUtils";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -264,6 +264,7 @@ export function ProfilePage() {
   const [profileUser, setProfileUser] = useState<any>(null);
   const [profilePic, setProfilePic] = useState("/default-avatar.png");
   const [showSettings, setShowSettings] = useState(false);
+  const [showAvatarPicker, setShowAvatarPicker] = useState(false);
 
   const isOwnProfile = !!authUser && (!id || id === authUser.userId.toString());
 
@@ -281,12 +282,14 @@ export function ProfilePage() {
         if (!id) {
           // Viewing own profile, use authUser
           if (authUser) {
+            console.log("Auth user data:", authUser); // Debug log
             setProfileUser(authUser);
             setProfilePic(getProfilePictureUrl(authUser.profilePicture));
           }
         } else {
           // Viewing another user's profile, fetch from backend
           const user = await userAPI.getUserById(Number(id));
+          console.log("Fetched user data:", user); // Debug log
           setProfileUser(user);
           setProfilePic(getProfilePictureUrl(user.profilePicture));
         }
@@ -466,38 +469,27 @@ export function ProfilePage() {
       throw new Error("Failed to submit deletion request. Please try again.");
     }
   };
-  const handleProfilePicChange = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = e.target.files?.[0];
-    if (file && authUser) {
+
+  const handleAvatarSelect = async (avatarId: string) => {
+    if (authUser && profileUser) {
       try {
-        // First show the preview using data URL
-        const previewUrl = await fileToDataUrl(file);
-        setProfilePic(previewUrl);
-        updateProfile({ profilePicture: previewUrl });
-
-        // Upload the file to the server
-        const uploadedImageUrl = await uploadAPI.uploadImage(file);
-        console.log("Uploaded image URL:", uploadedImageUrl);
-
-        // Update user in backend with the uploaded image URL
+        // Update user in backend with the selected avatar ID
         await userAPI.updateUser(Number(authUser.userId), {
           ...profileUser,
-          profilePicture: uploadedImageUrl,
+          profilePicture: avatarId,
         });
 
-        // Update the profile pic to show the server URL instead of base64
-        setProfilePic(uploadedImageUrl);
-        updateProfile({ profilePicture: uploadedImageUrl });
+        // Update local state
+        const avatarUrl = getProfilePictureUrl(avatarId);
+        setProfilePic(avatarUrl);
+        updateProfile({ profilePicture: avatarId });
 
-        console.log("Profile picture updated successfully");
+        console.log("Avatar updated successfully");
       } catch (error) {
-        console.error("Error updating profile picture:", error);
-        // Revert the profile pic if upload failed
+        console.error("Error updating avatar:", error);
+        // Revert if update failed
         const fallbackUrl = getProfilePictureUrl(profileUser?.profilePicture);
         setProfilePic(fallbackUrl);
-        updateProfile({ profilePicture: profileUser?.profilePicture || "" });
       }
     }
   };
@@ -579,10 +571,10 @@ export function ProfilePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Profile Header */}
-        <div className="bg-white rounded-3xl shadow-lg p-10 mb-10 flex flex-col md:flex-row items-center md:items-start gap-8">
+        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg p-10 mb-10 flex flex-col md:flex-row items-center md:items-start gap-8">
           <div className="relative flex-shrink-0">
             <img
               src={profilePic}
@@ -590,36 +582,39 @@ export function ProfilePage() {
               className="w-28 h-28 rounded-full border-8 border-pine-green object-cover shadow-md"
             />
             {isOwnProfile && (
-              <label className="absolute bottom-1 right-1 bg-pine-green text-white rounded-full p-3 cursor-pointer hover:bg-dark-teal transition shadow-lg">
+              <button
+                onClick={() => setShowAvatarPicker(true)}
+                className="absolute bottom-1 right-1 bg-pine-green text-white rounded-full p-3 cursor-pointer hover:bg-dark-teal transition shadow-lg"
+              >
                 <Edit3 className="h-5 w-5" />
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleProfilePicChange}
-                />
-              </label>
+              </button>
             )}
           </div>
 
           <div className="flex-1">
             <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4">
               <div className="flex-1">
-                <h1 className="text-4xl font-extrabold text-gray-900">
+                <h1 className="text-4xl font-extrabold text-gray-900 dark:text-gray-100">
                   {profileUser.username}
                 </h1>
 
                 {/* Enhanced User Information */}
                 <div className="mt-3 space-y-2">
-                  <div className="flex items-center space-x-2 text-gray-600">
+                  <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-300">
                     <Mail className="h-4 w-4" />
                     <span>{profileUser.email}</span>
                   </div>
-                  <div className="flex items-center space-x-2 text-gray-600">
+                  <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-300">
                     <CreditCard className="h-4 w-4" />
-                    <span>Student ID: {profileUser.studentId}</span>
+                    <span>
+                      Student ID:{" "}
+                      {profileUser.studentId &&
+                      profileUser.studentId.trim() !== ""
+                        ? profileUser.studentId
+                        : "Not provided"}
+                    </span>
                   </div>
-                  <div className="flex items-center space-x-2 text-gray-600">
+                  <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-300">
                     <User className="h-4 w-4" />
                     <span>Username: {profileUser.username}</span>
                   </div>
@@ -1035,6 +1030,15 @@ export function ProfilePage() {
             onClose={() => setShowSettings(false)}
             onPasswordChange={handlePasswordChange}
             onAccountDeletion={handleAccountDeletion}
+          />
+        )}
+
+        {/* Avatar Picker Modal */}
+        {isOwnProfile && showAvatarPicker && (
+          <AvatarPicker
+            onClose={() => setShowAvatarPicker(false)}
+            onAvatarChange={handleAvatarSelect}
+            currentAvatar={profileUser?.profilePicture}
           />
         )}
       </div>

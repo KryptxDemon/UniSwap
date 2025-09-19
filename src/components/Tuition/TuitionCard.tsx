@@ -21,9 +21,9 @@ export function TuitionCard({ tuition }: TuitionCardProps) {
       case "taken":
         return "bg-burnt-sienna/20 text-burnt-sienna";
       case "completed":
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-gray-200";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-gray-200";
     }
   };
 
@@ -47,11 +47,11 @@ export function TuitionCard({ tuition }: TuitionCardProps) {
   return (
     <Link
       to={`/tuition/${tuition.tuitionId}`}
-      className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden group"
+      className="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden group"
     >
       <div className="p-6">
         <div className="flex items-start justify-between mb-3">
-          <h3 className="text-lg font-semibold text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-bright-cyan transition-colors">
             {tuition.subject} - {tuition.clazz}
           </h3>
           <span
@@ -66,22 +66,22 @@ export function TuitionCard({ tuition }: TuitionCardProps) {
           </span>
         </div>
 
-        <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+        <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-3">
           Tuition for {tuition.subject} - {tuition.clazz}
         </p>
 
         <div className="space-y-2 mb-4">
-          <div className="flex items-center space-x-2 text-sm text-gray-600">
+          <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
             <DollarSign className="h-4 w-4" />
             <span>৳{tuition.salary}/month</span>
           </div>
 
-          <div className="flex items-center space-x-2 text-sm text-gray-600">
+          <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
             <Calendar className="h-4 w-4" />
             <span>{tuition.daysWeek} days/week</span>
           </div>
 
-          <div className="flex items-center space-x-2 text-sm text-gray-600">
+          <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
             <BookOpen className="h-4 w-4" />
             <span>{tuition.clazz}</span>
           </div>
@@ -93,7 +93,7 @@ export function TuitionCard({ tuition }: TuitionCardProps) {
           </span>
         </div>
 
-        <div className="space-y-2 text-sm text-gray-500">
+        <div className="space-y-2 text-sm text-gray-500 dark:text-gray-400">
           <div className="flex items-center space-x-2">
             <MapPin className="h-4 w-4" />
             <span>{tuition.location || "Location not specified"}</span>

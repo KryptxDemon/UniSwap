@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Edit3, X } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { userAPI } from "../services/apiService";
+import { getProfilePictureUrl } from "../utils/imageUtils";
 
 interface EditProfilePageProps {
   userId: string;
@@ -17,7 +18,9 @@ export function EditProfilePage({ userId }: EditProfilePageProps) {
 
   const [username, setUsername] = useState(user.username);
   const [bio, setBio] = useState(user.bio || "");
-  const [profilePic, setProfilePic] = useState(user.profilePicture);
+  const [profilePic, setProfilePic] = useState(
+    getProfilePictureUrl(user.profilePicture)
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
