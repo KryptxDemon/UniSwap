@@ -1,0 +1,18 @@
+# Redirect all pages to index.html for client-side routing
+/                   /index.html   200
+/browse             /index.html   200
+/browse-items       /index.html   200
+/browse-tuitions    /index.html   200
+/post-item         /index.html   200
+/post-tuition      /index.html   200
+/profile           /index.html   200
+/profile/*         /index.html   200
+/messages          /index.html   200
+/login             /index.html   200
+/signup            /index.html   200
+/item/*            /index.html   200
+/tuition/*         /index.html   200
+/editprofile       /index.html   200
+
+# Catch all route for any other paths
+/*                 /index.html   200
